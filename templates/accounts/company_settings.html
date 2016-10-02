@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+
+{% block title %}{{ company.name }} / Settings{% endblock title %}
+
+{% block css %}
+    <style>
+        .has-error .control-label, .has-error .help-block, .errorlist {
+            color: #8F0000
+        }
+
+        .has-error .form-control, .has-error .input-group-addon {
+            border-color: #8F0000
+        }
+
+        .has-error .form-control:focus, .has-error .input-group-addon:focus {
+            border-color: inherit
+        }
+
+        .errorlist {
+            list-style: none;
+            margin-top: 9px;
+            padding-left: 0
+        }
+    </style>
+{% endblock css %}
+
+{% block content %}
+    <div class="right_col" role="main">
+        <div class="">
+            <div class="page-title">
+                <div class="title_left">
+                    <h3>Company Settings</h3>
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_content">
+                        <br/>
+                        <form action="." method="POST" enctype="multipart/form-data" role="form">
+                            <fieldset>
+
+                                <div class="row">
+                                    <div class="form-group col-md-6 col-sm-6 col-xs-12 {% if form.name.errors %}has-error{% endif %}">
+                                        <label for="{{ form.name.auto_id }}" class="control-label">
+                                            {{ form.name.label }}
+                                        </label>
+                                        {{ form.name|add_class:"form-control" }}
+                                        {{ form.name.errors }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-6 col-sm-6 col-xs-12 {% if form.username.errors %}has-error{% endif %}">
+                                        <label for="{{ form.username.auto_id }}" class="control-label">
+                                            {{ form.username.label }}
+                                        </label>
+                                        {{ form.username|add_class:"form-control" }}
+                                        {{ form.username.errors }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-6 col-sm-6 col-xs-12 {% if form.logo.errors %}has-error{% endif %}">
+                                        <label for="{{ form.logo.auto_id }}" class="control-label">
+                                            {{ form.logo.label }}
+                                        </label>
+                                        {{ form.logo|add_class:"form-control" }}
+                                        {{ form.logo.errors }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-6 col-sm-6 col-xs-12 {% if form.website.errors %}has-error{% endif %}">
+                                        <label for="{{ form.website.auto_id }}" class="control-label">
+                                            {{ form.website.label }}
+                                        </label>
+                                        {{ form.website|add_class:"form-control" }}
+                                        {{ form.website.errors }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-6 col-sm-6 col-xs-12 {% if form.bio.errors %}has-error{% endif %}">
+                                        <label for="{{ form.bio.auto_id }}" class="control-label">
+                                            {{ form.bio.label }}
+                                        </label>
+                                        {{ form.bio|add_class:"form-control" }}
+                                        {{ form.bio.errors }}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="control-group col-md-6 col-sm-6 col-xs-12 {% if form.collaborators.errors %}has-error{% endif %}">
+                                        <label for="{{ form.collaborators.auto_id }}" class="control-label">
+                                            {{ form.collaborators.label }}
+                                        </label>
+                                        <input id="tags_1" type="text" class="tags form-control" value="{{ initial_collaborators }}" />
+                                        <div id="suggestions-container" style="position: relative; float: left; width: 250px; margin: 10px;"></div>
+                                        {{ form.collaborators|add_class:"form-control" }}
+                                        {{ form.collaborators.errors }}
+                                    </div>
+                                </div>
+
+                                <div class="ln_solid"></div>
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                        {% csrf_token %}
+                                        <button id="submitButton" type="submit" class="btn btn-primary btn-block active">Update</button>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block scripts %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Toggle form submit content when clicked
+            var submitButton = $('#submitButton');
+
+            submitButton.on('click', function() {
+                // disable the button to prevent multiple submissions
+                submitButton.attr('disabled', 'disabled').addClass('btn-disabled');
+                submitButton.parents('form:first').submit();
+            });
+        });
+    </script>
+{% endblock scripts %}
+
+<script>
+    {% block jquery %}
+        // jQuery Tags Input
+        $('#tags_1').tagsInput({
+            width: 'auto'
+        });
+        // /jQuery Tags Input
+    {% endblock jquery %}
+</script>

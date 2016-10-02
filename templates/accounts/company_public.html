@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}{{ company.name }}{% endblock title %}
+
+{% block stylesheets %}
+    <link href="{% static 'vendors/datatables.net-bs/css/dataTables.bootstrap.min.css' %}" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block css %}
+    <style>
+        h5{
+            color: #ea0f58;
+            font-weight: 450;
+        }
+        p{
+            color: #333;
+            font-size: 1em;
+        }
+    </style>
+{% endblock css %}
+
+{% block content %}
+    <div class="right_col" role="main">
+        <div class="">
+            <div class="page-title">
+                <div class="title_left">&nbsp;</div>
+                {% include 'search/_search_bar.html' %}
+            </div>
+        
+            <div class="clearfix"></div>
+
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="x_panel">
+                        {% if request.user == company.user or request.user == company.collaborators %}
+                            <a class="btn btn-info active pull-right" href="{% url 'accounts:company_settings' company.username %}"><i class="fa fa-edit"></i> Edit</a>
+                        {% endif %}
+                        <div class="x_content">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <div class="row text-center">
+                                    {% if company.logo %}
+                                        <img src="{{ company.company_logo }}" class="img-rounded" style="height:150px;" alt="Logo">
+                                        <h3>{{ company.name }}</h3>
+                                    {% else %}
+                                        <img data-src="holder.js/1200x100/auto/#354458:#fff/text:{{ company.name }}" class="img-responsive img-rounded" alt="Company">
+                                    {% endif %}
+                                </div>
+                                <br>
+                                <div class="row">
+                                    {% if company.bio %}
+                                        <h5>About:</h5>
+                                        <p>{{ company.bio }}</p>
+                                    {% endif %}
+                                    {% if company.website %}
+                                        <h5>Website:</h5>
+                                        <p><a href="{{ company.website }}">{{ company.website }}</a></p>
+                                    {% endif %}
+                                </div>
+
+                                <div class="row" style="margin-top:30px;">
+                                    <h5>Jobs Available:</h5>
+                                    <br>
+                                    <table id="datatable" class="table table-striped table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Position</th>
+                                                <th>Location</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            {% for job in jobs %}
+                                                <tr>
+                                                    <td> <a href="{{ job.get_absolute_url }}">{{ job.title }}</a></td>
+                                                    <td>{{ job.location }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block js %}
+    <script src="{% static 'vendors/holder/holder.js' %}" type="text/javascript"></script>
+    <script src="{% static 'vendors/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'vendors/datatables.net-bs/js/dataTables.bootstrap.min.js' %}"></script>
+{% endblock js %}
+
+{% block scripts %}
+    <script>
+        $(document).ready(function() {
+            $('#datatable').dataTable();
+        });
+    </script>
+{% endblock scripts%}

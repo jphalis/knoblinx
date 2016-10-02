@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <!-- Meta, title, CSS, favicons, etc. -->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="application-name" content="KnobLinx"/>
+        <link rel="apple-touch-icon-precomposed" sizes="57x57" href="{% static 'img/favicon/apple-touch-icon-57x57.png' %}" />
+        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{% static 'img/favicon/apple-touch-icon-114x114.png' %}" />
+        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{% static 'img/favicon/apple-touch-icon-72x72.png' %}" />
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{% static 'img/favicon/apple-touch-icon-144x144.png' %}" />
+        <link rel="apple-touch-icon-precomposed" sizes="60x60" href="{% static 'img/favicon/apple-touch-icon-60x60.png' %}" />
+        <link rel="apple-touch-icon-precomposed" sizes="120x120" href="{% static 'img/favicon/apple-touch-icon-120x120.png' %}" />
+        <link rel="apple-touch-icon-precomposed" sizes="76x76" href="{% static 'img/favicon/apple-touch-icon-76x76.png' %}" />
+        <link rel="apple-touch-icon-precomposed" sizes="152x152" href="{% static 'img/favicon/apple-touch-icon-152x152.png' %}" />
+        <link rel="icon" type="image/png" sizes="196x196" href="{% static 'img/favicon/favicon-196x196.png' %}" />
+        <link rel="icon" type="image/png" sizes="96x96" href="{% static 'img/favicon/favicon-96x96.png' %}" />
+        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon/favicon-32x32.png' %}" />
+        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicon/favicon-16x16.png' %}" />
+        <link rel="icon" type="image/png" sizes="128x128" href="{% static 'img/favicon/favicon-128x128.png' %}" />
+        <meta name="msapplication-TileColor" content="#FFFFFF" />
+        <meta name="msapplication-TileImage" content="{% static 'img/favicon/mstile-144x144.png' %}" />
+        <meta name="msapplication-square70x70logo" content="{% static 'img/favicon/mstile-70x70.png' %}" />
+        <meta name="msapplication-square150x150logo" content="{% static 'img/favicon/mstile-150x150.png' %}" />
+        <meta name="msapplication-wide310x150logo" content="{% static 'img/favicon/mstile-310x150.png' %}" />
+        <meta name="msapplication-square310x310logo" content="{% static 'img/favicon/mstile-310x310.png' %}" />
+
+        <title>KnobLinx / 500 Error</title>
+
+        <!-- Bootstrap -->
+        <link href="{% static 'vendors/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+        <!-- Font Awesome -->
+        <link href="{% static 'vendors/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
+        <!-- Custom Theme Style -->
+        <link href="{% static 'custom/css/error.css' %}" rel="stylesheet">
+    </head>
+
+    <body class="error">
+        <div class="container">
+            <div class="col-lg-8 col-lg-offset-2 text-center">
+                <div class="logo"><h1>500 Error</h1></div>
+                <p class="lead text-muted">Oops, an error has occurred. Internal server error!</p>
+                <br>
+                <div class="col-lg-6 col-lg-offset-3">
+                    <div class="btn-group btn-group-justified">
+                        <a href="{% url 'home' %}" class="btn btn-danger">Return Home</a> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

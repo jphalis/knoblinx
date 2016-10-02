@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+
+{% block title %}{{ user.get_full_name }} / Settings{% endblock title %}
+
+{% block css %}
+    <style>
+        .has-error .control-label, .has-error .help-block, .errorlist {
+            color: #8F0000
+        }
+
+        .has-error .form-control, .has-error .input-group-addon {
+            border-color: #8F0000
+        }
+
+        .has-error .form-control:focus, .has-error .input-group-addon:focus {
+            border-color: inherit
+        }
+
+        .errorlist {
+            list-style: none;
+            margin-top: 9px;
+            padding-left: 0
+        }
+    </style>
+{% endblock css %}
+
+{% block content %}
+    <div class="right_col" role="main">
+        <div class="">
+            <div class="page-title">
+                <div class="title_left"><h3>Settings</h3></div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <!-- tab content -->
+                <div class="" role="tabpanel" data-example-id="togglable-tabs">
+                    <ul id="myTab" class="nav nav-tabs bar_tabs" style="margin-bottom:0px;" role="tablist">
+                        <li role="presentation" class="active"><a href="#tab_content1" role="tab" id="tab-1" data-toggle="tab" aria-expanded="true">Account Basics</a></li>
+                        <li role="presentation" class=""><a href="#tab_content2" role="tab" id="tab-2" data-toggle="tab" aria-expanded="false">Profile</a></li>
+                    </ul>
+                    <form action="." method="POST" enctype="multipart/form-data" role="form">
+                        {% csrf_token %}
+                        <div id="myTabContent" class="tab-content">
+                            <!-- tab 1 -->
+                            <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="tab-1">
+                                <div class="x_panel">
+                                    <div class="x_content">
+                                        <br/>
+                                        <div class="col-md-8 col-sm-8">
+                                            <fieldset>
+                                                <div class="row">
+                                                    <div class="form-group col-md-11 col-sm-11 col-xs-12 {% if form.first_name.errors %}has-error{% endif %}">
+                                                        <label for="{{ form.first_name.auto_id }}" class="control-label">
+                                                            {{ form.first_name.label }}
+                                                        </label>
+                                                        {{ form.first_name|add_class:"form-control" }}
+                                                        {{ form.first_name.errors }}
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group col-md-11 col-sm-11 col-xs-12 {% if form.last_name.errors %}has-error{% endif %}">
+                                                        <label for="{{ form.last_name.auto_id }}" class="control-label">
+                                                            {{ form.last_name.label }}
+                                                        </label>
+                                                        {{ form.last_name|add_class:"form-control" }}
+                                                        {{ form.last_name.errors }}
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group col-md-11 col-sm-11 col-xs-12 {% if form.email.errors %}has-error{% endif %}">
+                                                        <label for="{{ form.email.auto_id }}" class="control-label">
+                                                            {{ form.email.label }}
+                                                        </label>
+                                                        {{ form.email|add_class:"form-control" }}
+                                                        {{ form.email.errors }}
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group col-md-11 col-sm-11 col-xs-12 {% if form.username.errors %}has-error{% endif %}">
+                                                        <label for="{{ form.username.auto_id }}" class="control-label">
+                                                            {{ form.username.label }}
+                                                        </label>
+                                                        {{ form.username|add_class:"form-control" }}
+                                                        {{ form.username.errors }}
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group col-md-11 col-sm-11 col-xs-12 {% if form.gender.errors %}has-error{% endif %}">
+                                                        <label for="{{ form.gender.auto_id }}" class="control-label">
+                                                            {{ form.gender.label }}
+                                                        </label>
+                                                        {{ form.gender|add_class:"form-control" }}
+                                                        {{ form.gender.errors }}
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group col-md-11 col-sm-11 col-xs-12 {% if form.password_new_confirm.errors %}has-error{% endif %}">
+                                                        <label for="{{ form.password_new.auto_id }}" class="control-label">
+                                                            {{ form.password_new.label }}
+                                                        </label>
+                                                        {{ form.password_new|add_class:"form-control" }}
+                                                        {{ form.password_new_confirm.errors }}
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group col-md-11 col-sm-11 col-xs-12 {% if form.password_new_confirm.errors %}has-error{% endif %}">
+                                                        <label for="{{ form.password_new_confirm.auto_id }}" class="control-label">
+                                                            {{ form.password_new_confirm.label }}
+                                                        </label>
+                                                        {{ form.password_new_confirm|add_class:"form-control" }}
+                                                        {{ form.password_new_confirm.errors }}
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /tab 1 -->
+                            <!-- tab 2 -->
+                            <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="tab-2">
+                                <div class="x_panel">
+                                    <div class="x_content">
+                                        <br/>
+                                        <div class="col-md-4 col-sm-4 text-center">
+                                            <div class="row">
+                                                <img class="img-circle" src="{{ user.user_profile_pic }}">
+                                            </div>
+                                            <br>
+                                            {% if user.video %}
+                                                <div class="row">
+                                                    <iframe class="col-md-12 col-sm-12 col-xs-12" src="{{ user.video|safe }}" frameborder="0" allowfullscreen></iframe>
+                                                </div>
+                                                <br>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-8 col-sm-8">
+                                            <fieldset>
+                                                <div class="row">
+                                                    <div class="form-group col-md-11 col-sm-11 col-xs-12 {% if form.profile_picture.errors %}has-error{% endif %}">
+                                                        <label for="{{ form.profile_picture.auto_id }}" class="control-label">
+                                                            {{ form.profile_picture.label }}
+                                                        </label>
+                                                        {{ form.profile_picture|add_class:"form-control" }}
+                                                        {{ form.profile_picture.errors }}
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group col-md-11 col-sm-11 col-xs-12 {% if form.video.errors %}has-error{% endif %}">
+                                                        <label for="{{ form.video.auto_id }}" class="control-label">
+                                                            {{ form.video.label }} <small style="color:#A9A8AE;">({{ form.video.help_text|safe }})</small>
+                                                        </label>
+                                                        {{ form.video|add_class:"form-control" }}
+                                                        {{ form.video.errors }}
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group col-md-11 col-sm-11 col-xs-12 {% if form.university.errors %}has-error{% endif %}">
+                                                        <label for="{{ form.university.auto_id }}" class="control-label">
+                                                            {{ form.university.label }}
+                                                        </label>
+                                                        {{ form.university|add_class:"form-control" }}
+                                                        {{ form.university.errors }}
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group col-md-11 col-sm-11 col-xs-12 {% if form.degree.errors %}has-error{% endif %}">
+                                                        <label for="{{ form.degree.auto_id }}" class="control-label">
+                                                            {{ form.degree.label }}
+                                                        </label>
+                                                        {{ form.degree|add_class:"form-control" }}
+                                                        {{ form.degree.errors }}
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="control-group col-md-11 col-sm-11 col-xs-12">
+                                                        <label for="{{ form.skills.auto_id }}" class="control-label">
+                                                            {{ form.skills.label }}
+                                                        </label>
+                                                        <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left:0px;">
+                                                            <input id="tags" type="text" class="tags form-control" name="skills" />
+                                                            <br>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /tab2 -->
+                            <div class="row">
+                                <div class="ln_solid"></div>
+                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom:7em;">
+                                    <button id="submitButton" type="submit" class="btn btn-primary btn-block active">Update</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!-- /tab content -->
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block js %}
+    <!-- jquery tags -->
+    <script src="{% static 'vendors/jquery.tagsinput/src/jquery.tagsinput.js' %}"></script>
+{% endblock js %}
+
+{% block scripts %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Toggle form submit content when clicked
+            var submitButton = $('#submitButton');
+
+            submitButton.on('click', function() {
+                // disable the button to prevent multiple submissions
+                submitButton.attr('disabled', 'disabled').addClass('btn-disabled');
+                submitButton.parents('form:first').submit();
+            });
+        });
+    </script>
+
+    <!-- jQuery tags -->
+    <script type="text/javascript">
+        function onAddTag(tag) {
+            // alert("Added a tag: " + tag);
+        }
+        function onRemoveTag(tag) {
+            // alert("Removed a tag: " + tag);
+        }
+        function onChangeTag(tag) {
+            // alert("Changed tag: " + tag);
+        }
+        $(document).ready(function() {
+            $('#tags').tagsInput({
+                width: 'auto',
+                // 'autocomplete_url': url_to_autocomplete,
+                'defaultText': 'add a skill',
+                // 'onAddTag': onAddTag,
+                // 'onRemoveTag': onRemoveTag,
+                // 'onChange': onChangeTag,
+                // 'delimiter': [','],   // Or a string with a single delimiter. Ex: ';'
+                'removeWithBackspace': false,
+                // 'minChars': 0,
+                // 'maxChars' : 0, // if not provided there is no limit
+                'placeholderColor': '#808282'
+            });
+            $('#tags').importTags('{% for skill in user.skills.split %}{{ skill }},{% endfor %}');
+        });
+    </script>
+{% endblock scripts %}
