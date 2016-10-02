@@ -1,11 +1,9 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse, reverse_lazy
-from django.http import (HttpResponseForbidden, HttpResponseRedirect,
-                         JsonResponse)
+from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.cache import cache_page
-from django.views.decorators.http import require_http_methods
 from django.views.generic.edit import DeleteView
 
 from accounts.models import Company
@@ -18,71 +16,75 @@ from .models import Applicant, Job
 
 @login_required
 def create(request, company_pk):
-    form = JobCreateForm(request.POST or None)
+    user = request.user
     company = Company.objects.get(pk=company_pk)
+    _is_company_collab = company.collaborators.filter(pk=user.pk).exists()
 
-    if form.is_valid():
-        # Create the new job.
-        new_job = Job.objects.create(
-            company=Company.objects.get(pk=company_pk),
-            title=form.cleaned_data['title'],
-            location=form.cleaned_data['location'],
-            contact_email=form.cleaned_data['contact_email'],
-            list_date_start=form.cleaned_data['list_date_start'],
-            list_date_end=form.cleaned_data['list_date_end'],
-            description=form.cleaned_data['description']
-        )
-        new_job.save()
+    if company.user == user or _is_company_collab:
+        form = JobCreateForm(request.POST or None)
 
-        messages.success(request, 'Your job has been successfully created!')
-        return HttpResponseRedirect(reverse(
-            'jobs:detail',
-            kwargs={'username': company.username, 'job_pk': new_job.pk}))
+        if form.is_valid():
+            # Create the new job.
+            new_job = Job.objects.create(
+                company=Company.objects.get(pk=company_pk),
+                title=form.cleaned_data['title'],
+                location=form.cleaned_data['location'],
+                contact_email=form.cleaned_data['contact_email'],
+                list_date_start=form.cleaned_data['list_date_start'],
+                list_date_end=form.cleaned_data['list_date_end'],
+                description=form.cleaned_data['description']
+            )
+            new_job.save()
 
-    context = {
-        'company': company,
-        'form': form
-    }
-    return render(request, 'jobs/create.html', context)
+            messages.success(request, 'Your job has been created!')
+            return HttpResponseRedirect(reverse(
+                'jobs:detail',
+                kwargs={'username': company.username, 'job_pk': new_job.pk}))
+
+        context = {
+            'company': company,
+            'form': form
+        }
+        return render(request, 'jobs/create.html', context)
+    return HttpResponseForbidden()
 
 
 @login_required
 def apply(request, job_pk):
-    form = ApplicantApplyForm(request.POST or None)
+    user = request.user
     job = Job.objects.get(pk=job_pk)
 
-    if form.is_valid():
+    if not job.applicants.filter(pk=user.pk).exists():
+        form = ApplicantApplyForm(request.POST or None,
+                                  request.FILES or None,
+                                  instance=user, user=user)
 
-        """
-        1. Redirect to a review page for students to see
-        how their application will appear to employers.
-            - show link to settings page to edit information
+        if form.is_valid():
+            _user_degree = '({})'.format(user.degree) if user.degree else ''
+            applicant = Applicant.objects.create(
+                user=user,
+                resume=form.cleaned_data['resume'],
+                name='{0} {1}'.format(user.first_name, user.last_name),
+                email=form.cleaned_data['email'],
+                university='{} {}'.format(user.university, _user_degree),
+                cover_letter=form.cleaned_data['cover_letter']
+            )
+            job.applicants.add(applicant)
 
-        2. Apply for job
-        """
+            # Send company an email with applicants information?
 
-        # Create the new applicant.
-        new_applicant = Applicant.objects.create(
-            user=request.user,
-            resume=form.cleaned_data['resume'],
-            cover_letter=form.cleaned_data['cover_letter']
-        )
-        new_applicant.save()
+            messages.success(request, 'Thank you for applying!')
+            return HttpResponseRedirect(reverse(
+                'jobs:detail',
+                kwargs={'username': job.company.username, 'job_pk': job_pk}))
 
-        # Add applicant to job applicants.
-        job.applicants.add(new_applicant)
-
-        # Send company an email with applicants information?
-
-        messages.success(request, 'Thank you for applying!')
-        return HttpResponseRedirect(reverse(
-            'jobs:detail', kwargs={'job_pk': job_pk}))
-
-    context = {
-        'form': form,
-        'job': job
-    }
-    return render(request, 'jobs/apply.html', context)
+        context = {
+            'form': form,
+            'job': job,
+            'user': user
+        }
+        return render(request, 'jobs/apply.html', context)
+    return HttpResponseForbidden()
 
 
 @login_required
@@ -117,6 +119,7 @@ def edit(request, username, job_pk):
     _is_company_collab = company.collaborators.filter(pk=user.pk).exists()
 
     if company.user == user or _is_company_collab:
+
         if form.is_valid():
             form.save()
             messages.success(request,
@@ -131,19 +134,6 @@ def edit(request, username, job_pk):
         }
         return render(request, 'jobs/edit.html', context)
     return HttpResponseForbidden()
-
-
-@login_required
-@require_http_methods(['POST'])
-def job_active_ajax(request):
-    job_pk = request.POST.get('job_pk')
-    job = get_object_or_404(Job, pk=job_pk)
-    if job.is_active:
-        job_active = False
-    else:
-        job_active = True
-    job.save()
-    return JsonResponse({'job_active': job_active})
 
 
 class Delete(DeleteView, LoginRequiredMixin):

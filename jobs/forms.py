@@ -10,14 +10,8 @@ from .models import Applicant, Job
 class ApplicantApplyForm(forms.ModelForm):
     resume = forms.FileField(
         widget=ClearableFileInput(
-            attrs={'class': 'form-control'})
-    )
-    name = forms.CharField(
-        label=_('Name *'),
-        widget=forms.TextInput(
             attrs={'class': 'form-control',
-                   'name': 'name'}),
-        max_length=120
+                   'name': 'resume'})
     )
     email = forms.EmailField(
         label=_('Email *'),
@@ -26,17 +20,11 @@ class ApplicantApplyForm(forms.ModelForm):
                    'name': 'email'}),
         max_length=120
     )
-    university = forms.CharField(
-        label=_('Education *'),
-        widget=forms.TextInput(
-            attrs={'class': 'form-control',
-                   'name': 'university'}),
-        max_length=120
-    )
     cover_letter = forms.CharField(
         label=_('Cover Letter'),
         widget=forms.Textarea(
-            attrs={'style': 'height: 7em;',
+            attrs={'style': 'height: 12em;',
+                   'class': 'textarea editor-cls form-control',
                    'name': 'cover_letter',
                    'placeholder': 'Leave a message for the employer'}),
         max_length=1000,
@@ -45,10 +33,17 @@ class ApplicantApplyForm(forms.ModelForm):
 
     class Meta:
         model = Applicant
-        fields = ('resume', 'name', 'email', 'university', 'cover_letter',)
+        fields = ('resume', 'email', 'cover_letter',)
 
     def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
         super(ApplicantApplyForm, self).__init__(*args, **kwargs)
+
+    def clean_email(self):
+        """
+        Return the lowercase value of the email.
+        """
+        return self.cleaned_data['email'].lower()
 
 
 class JobCreateForm(forms.ModelForm):

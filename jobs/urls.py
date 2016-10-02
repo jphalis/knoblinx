@@ -20,6 +20,4 @@ urlpatterns = [
         views.detail, name="detail"),
     url(r"^(?P<username>[\w.@+-]+)/(?P<job_pk>\d+)/edit/$",
         views.edit, name="edit"),
-    url(r'^active_state/$',
-        views.job_active_ajax, name='job_active_ajax'),
 ]

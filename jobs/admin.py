@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
-from .models import Job
+from .models import Applicant, Job
 
 # Register your models here.
 
@@ -43,4 +43,23 @@ class JobAdmin(admin.ModelAdmin):
     disable.short_description = _("Remove selected jobs from listings")
 
 
+class ApplicantAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'created', 'job_title',)
+    list_display_links = ('id', 'user',)
+    raw_id_fields = ['user']
+    fieldsets = (
+        (None,
+            {'fields': ('user', 'resume', 'name', 'email', 'university',
+                        'cover_letter',)}),
+        (_('Dates'),
+            {'fields': ('created', 'modified',)}),
+    )
+    readonly_fields = ('created', 'modified',)
+    search_fields = ('name', 'email',)
+
+    class Meta:
+        model = Applicant
+
+
 admin.site.register(Job, JobAdmin)
+admin.site.register(Applicant, ApplicantAdmin)

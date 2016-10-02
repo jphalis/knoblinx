@@ -23,6 +23,13 @@ def get_profile_pic_path(instance, filename):
     return "/".join(['profile_pictures', instance.username, filename])
 
 
+def get_resume_path(instance, filename):
+    """
+    Stores the resume in /applicant_resumes/username/filename.
+    """
+    return "/".join(['resumes', instance.username, filename])
+
+
 @python_2_unicode_compatible
 class MyUser(AbstractBaseUser, PermissionsMixin, TagMixin):
     MALE = 0
@@ -43,6 +50,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin, TagMixin):
                                     null=True, blank=True)
     video = models.CharField(_('profile video'), max_length=250, blank=True,
                              help_text='Preferably embed from YouTube')
+    resume = models.FileField(upload_to=get_resume_path, null=True, blank=True)
     university = models.CharField(max_length=180, blank=True)
     degree = models.CharField(max_length=120, blank=True)
     skills = models.CharField(max_length=250, blank=True)

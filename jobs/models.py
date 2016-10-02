@@ -17,7 +17,7 @@ from .managers import ApplicantManager, JobManager
 
 def get_resume_path(instance, filename):
     """
-    Stores the profile picture in /profile_pictures/username/filename.
+    Stores the resume in /applicant_resumes/username/filename.
     """
     return "/".join(['applicant_resumes', instance.username, filename])
 
@@ -41,6 +41,10 @@ class Applicant(TimeStampedModel):
     def __str__(self):
         return u'{0}'.format(self.user.get_full_name)
 
+    def job_title(self):
+        _job = Job.objects.filter(applicants__user=self.user)
+        return '{0}'.format(_job.values_list('title', flat=True))
+
 
 @python_2_unicode_compatible
 class Job(TimeStampedModel):
@@ -50,7 +54,7 @@ class Job(TimeStampedModel):
         Applicant, related_name='job_applicants', blank=True)
     title = models.CharField(max_length=120)
     location = models.CharField(max_length=120)
-    contact_email = models.EmailField(max_length=120)
+    contact_email = models.EmailField(max_length=120, null=True)
     description = models.TextField(max_length=1000)
 
     list_date_start = models.DateTimeField(_('Listing Start Date'), null=True)

@@ -6,40 +6,35 @@
 
 /* Job application */
 .applicant-headline{
-  color: #ea0f58;
-  font-size: 2rem;
-  font-weight: 300;
-  text-align: center;
+  color: #000;
+  font-size: 1.8rem;
+  font-weight: 500;
   margin-bottom: 40px;
 }
 .applicant-headline .icon {
-  display: block;
+  display: inline-block;
   background: #333;
   color: #fff;
-  width: 55px;
+  width: 40px;
   border-radius: 50px;
-  height: 55px;
-  padding-top: 10px;
-  margin: 50px auto 10px;
+  height: 40px;
+  padding-top: 11px;
+  margin-right: 18px;
+  text-align: center;
 }
 .applicant-info {
   color: #000;
-  display: block;
-  font-size: 1em;
-  margin-bottom: 50px;
-  text-align: left;
-  margin-left: 15%;
+  font-size: 16px;
+  margin-bottom: 30px;
 }
 .applicant-info .key {
-  display: inline-block;
+  display: block;
   vertical-align: top;
-  width: 35%;
   font-weight: 700;
 }
 .applicant-info .value{
-  display: inline-block;
+  display: block;
   vertical-align: top;
-  width: 65%;
 }
 
 /* Form errors */

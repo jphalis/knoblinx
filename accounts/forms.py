@@ -134,6 +134,12 @@ class AccountSettingsForm(forms.ModelForm):
         required=False,
         help_text='Upload your video to <a href="https://www.youtube.com/upload">YouTube</a> first'
     )
+    resume = forms.FileField(
+        widget=ClearableFileInput(
+            attrs={'class': 'form-control',
+                   'name': 'resume'}),
+        required=False
+    )
     gender = forms.ChoiceField(
         choices=MyUser.GENDER_CHOICES
     )
@@ -166,7 +172,7 @@ class AccountSettingsForm(forms.ModelForm):
     class Meta:
         model = MyUser
         fields = ('first_name', 'last_name', 'email', 'username',
-                  'profile_picture', 'video', 'gender', 'university',
+                  'profile_picture', 'video', 'resume', 'gender', 'university',
                   'degree', 'skills', 'password_new', 'password_new_confirm',)
 
     def __init__(self, *args, **kwargs):
