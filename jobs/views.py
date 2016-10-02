@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponseForbidden, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import cache_page
 from django.views.generic.edit import DeleteView
 
@@ -53,6 +53,10 @@ def create(request, company_pk):
 def apply(request, job_pk):
     user = request.user
     job = Job.objects.get(pk=job_pk)
+
+    if not user.gpa:
+        messages.error(request, 'Please add your GPA first.')
+        return redirect('accounts:account_settings')
 
     if not job.applicants.filter(pk=user.pk).exists():
         form = ApplicantApplyForm(request.POST or None,
