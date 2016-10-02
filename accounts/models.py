@@ -53,6 +53,8 @@ class MyUser(AbstractBaseUser, PermissionsMixin, TagMixin):
     resume = models.FileField(upload_to=get_resume_path, null=True, blank=True)
     university = models.CharField(max_length=180, blank=True)
     degree = models.CharField(max_length=120, blank=True)
+    gpa = models.DecimalField(_('GPA'), max_digits=3, decimal_places=2,
+                              null=True, blank=True)
     skills = models.CharField(max_length=250, blank=True)
 
     date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)

@@ -161,20 +161,25 @@ def account_settings(request):
                                request.FILES or None,
                                instance=user, user=user)
 
-    if request.method == 'POST' and form.is_valid():
-        form.email = form.cleaned_data['email']
-        form.username = form.cleaned_data['username']
-        form.video = form.cleaned_data['video']
-        form.skills = form.cleaned_data['skills']
-        password = form.cleaned_data['password_new_confirm']
-        if password:
-            current_user = form.user
-            current_user.set_password(password)
-            current_user.save()
-            update_session_auth_hash(request, current_user)
-        form.save()
-        messages.success(request,
-                         "You have successfully updated your profile.")
+    if request.method == 'POST':
+
+        if form.is_valid():
+            form.email = form.cleaned_data['email']
+            form.username = form.cleaned_data['username']
+            form.video = form.cleaned_data['video']
+            form.skills = form.cleaned_data['skills']
+            password = form.cleaned_data['password_new_confirm']
+
+            if password:
+                current_user = form.user
+                current_user.set_password(password)
+                current_user.save()
+                update_session_auth_hash(request, current_user)
+            form.save()
+            messages.success(request,
+                             "You have successfully updated your profile.")
+        else:
+            messages.error(request, "There was an error.")
     context = {
         'form': form,
         'user': user,

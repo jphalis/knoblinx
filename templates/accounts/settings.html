@@ -146,6 +146,15 @@
                                                     </div>
                                                 </div>
                                                 <div class="row">
+                                                    <div class="form-group col-md-11 col-sm-11 col-xs-12 {% if form.gpa.errors %}has-error{% endif %}">
+                                                        <label for="{{ form.gpa.auto_id }}" class="control-label">
+                                                            {{ form.gpa.label }}
+                                                        </label>
+                                                        {{ form.gpa|add_class:"form-control" }}
+                                                        {{ form.gpa.errors }}
+                                                    </div>
+                                                </div>
+                                                <div class="row">
                                                     <div class="form-group col-md-11 col-sm-11 col-xs-12 {% if form.university.errors %}has-error{% endif %}">
                                                         <label for="{{ form.university.auto_id }}" class="control-label">
                                                             {{ form.university.label }}

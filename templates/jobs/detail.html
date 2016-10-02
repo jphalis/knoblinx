@@ -49,6 +49,10 @@
                                 <a href="{{ job.get_edit_url }}" class="btn btn-info active">
                                     Update Job
                                 </a>
+                            {% elif not user.gpa %}
+                                <a href="{% url 'accounts:account_settings' %}" class="btn btn-info btn-block">
+                                    Add your GPA first <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                                </a>
                             {% else %}
                                 <a href="{% url 'jobs:apply' job.pk %}" class="btn btn-success btn-block">
                                     Apply For Position <i class="fa fa-check" aria-hidden="true"></i>

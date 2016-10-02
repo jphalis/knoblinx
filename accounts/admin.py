@@ -26,7 +26,7 @@ class MyUserAdmin(UserAdmin):
         ('Basic information',
             {'fields': ('first_name', 'last_name', 'username', 'gender',
                         'profile_pic', 'video', 'resume', 'university',
-                        'degree', 'skills',)}),
+                        'degree', 'gpa', 'skills',)}),
         ('Permissions',
             {'fields': ('is_active', 'is_confirmed', 'is_staff',
                         'is_superuser', 'user_permissions')}),

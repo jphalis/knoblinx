@@ -123,8 +123,7 @@ class AccountSettingsForm(forms.ModelForm):
     )
     profile_picture = forms.ImageField(
         label=_('Profile Picture'),
-        widget=ClearableFileInput(
-            attrs={'class': 'form-control'}),
+        widget=ClearableFileInput(),
         required=False
     )
     video = forms.CharField(
@@ -135,9 +134,7 @@ class AccountSettingsForm(forms.ModelForm):
         help_text='Upload your video to <a href="https://www.youtube.com/upload">YouTube</a> first'
     )
     resume = forms.FileField(
-        widget=ClearableFileInput(
-            attrs={'class': 'form-control',
-                   'name': 'resume'}),
+        widget=ClearableFileInput(),
         required=False
     )
     gender = forms.ChoiceField(
@@ -152,6 +149,17 @@ class AccountSettingsForm(forms.ModelForm):
         widget=forms.TextInput(),
         max_length=120,
         required=False
+    )
+    gpa = forms.DecimalField(
+        label=_('GPA*'),
+        widget=forms.NumberInput(
+            attrs={'min': 0,
+                   'max': 4,
+                   'step': 0.01}),
+        min_value=0,
+        max_value=4,
+        max_digits=3,
+        decimal_places=2
     )
     skills = forms.CharField(
         widget=forms.TextInput(),
@@ -171,7 +179,7 @@ class AccountSettingsForm(forms.ModelForm):
 
     class Meta:
         model = MyUser
-        fields = ('first_name', 'last_name', 'email', 'username',
+        fields = ('first_name', 'last_name', 'email', 'username', 'gpa',
                   'profile_picture', 'video', 'resume', 'gender', 'university',
                   'degree', 'skills', 'password_new', 'password_new_confirm',)
 
