@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}KnobLinx / Delete Job{% endblock title %}
+
+{% block stylesheets %}
+    <link href="{% static 'custom/css/user_dash/pages/blog.css' %}" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block content %}
+    <div class="right_col" role="main">
+        <div class="">
+            <div class="page-title">
+                <div class="title_left"><h3>Delete {{ job.title }}?</h3></div>
+            </div>
+            
+            <div class="clearfix"></div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="featured-post-wide">
+                        <img data-src="holder.js/1900x150/auto/#354458:#fff/text:{{ job.company.name }}" class="img-responsive" alt="Company">
+                        <div class="featured-text relative-left">
+                            <p class="additional-post-wrap">
+                                <span class="additional-post">
+                                    <a href="{{ job.company.get_absolute_url }}">
+                                        <span class="label label-default square">
+                                            <i class="fa fa-user" aria-hidden="true"></i> {{ job.company.name }}
+                                        </span>
+                                    </a>
+                                </span>
+                                <span class="additional-post">
+                                    <span class="label label-default square">
+                                        <i class="fa fa-clock-o" aria-hidden="true"></i> {{ job.listing_start_date }}
+                                    </span>
+                                </span>
+                            </p>
+                            <p>{{ job.description|safe }}</p>
+                        </div>
+                    </div>
+                    <form action="." method="POST" class="pull-right">
+                        {% csrf_token %}
+                        <button id="cancelButton" class="btn btn-default" style="margin-right:7px;">Cancel</button>
+                        <button id="submitButton" class='btn btn-danger active' type="submit">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block js %}
+    <script src="{% static 'vendors/holder/holder.js' %}" type="text/javascript"></script>
+{% endblock js %}
+
+{% block scripts %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Toggle form submit content when clicked
+            var submitButton = $('#submitButton');
+            submitButton.on('click', function() {
+                // disable the button to prevent multiple submissions
+                submitButton.attr('disabled', 'disabled').addClass('btn-disabled');
+                submitButton.parents('form:first').submit();
+            });
+
+            // Toggle form cancel button when clicked
+            var cancelButton = $('#cancelButton');
+            cancelButton.on('click', function() {
+                window.history.back();
+            });
+        });
+    </script>
+{% endblock scripts %}

@@ -22,22 +22,22 @@ def create(request, company_pk):
     company = Company.objects.get(pk=company_pk)
 
     if form.is_valid():
-
         # Create the new job.
-        new_job = Job.objects.job_create(
+        new_job = Job.objects.create(
             company=Company.objects.get(pk=company_pk),
             title=form.cleaned_data['title'],
-            description=form.cleaned_data['description'],
-            contact_email=form.cleaned_data['contact_email'],
             location=form.cleaned_data['location'],
+            contact_email=form.cleaned_data['contact_email'],
             list_date_start=form.cleaned_data['list_date_start'],
-            list_date_end=form.cleaned_data['list_date_end']
+            list_date_end=form.cleaned_data['list_date_end'],
+            description=form.cleaned_data['description']
         )
         new_job.save()
 
         messages.success(request, 'Your job has been successfully created!')
         return HttpResponseRedirect(reverse(
-            'jobs:detail', kwargs={'job_pk': new_job.pk}))
+            'jobs:detail',
+            kwargs={'username': company.username, 'job_pk': new_job.pk}))
 
     context = {
         'company': company,
@@ -62,7 +62,7 @@ def apply(request, job_pk):
         """
 
         # Create the new applicant.
-        new_applicant = Applicant.objects.applicant_create(
+        new_applicant = Applicant.objects.create(
             user=request.user,
             resume=form.cleaned_data['resume'],
             cover_letter=form.cleaned_data['cover_letter']
@@ -110,13 +110,13 @@ def detail(request, job_pk, username):
 @login_required
 def edit(request, username, job_pk):
     user = request.user
-    form = JobCreateForm(request.POST or None)
-    company = Company.objects.get(username=username)
     job = Job.objects.get(pk=job_pk)
+    form = JobCreateForm(request.POST or None,
+                         instance=job)
+    company = Company.objects.get(username=username)
     _is_company_collab = company.collaborators.filter(pk=user.pk).exists()
 
     if company.user == user or _is_company_collab:
-
         if form.is_valid():
             form.save()
             messages.success(request,
@@ -155,9 +155,9 @@ class Delete(DeleteView, LoginRequiredMixin):
     def get_object(self):
         user = self.request.user
         job = Job.objects.get(pk=self.kwargs['job_pk'])
-        _is_company_collab = job.company.collaborators(pk=user.pk).exists()
+        _is_company_collab = job.company.collaborators.filter(pk=user.pk)
 
-        if job.company.user == user or _is_company_collab:
+        if job.company.user == user or _is_company_collab.exists():
             return job
         raise HttpResponseForbidden()
 

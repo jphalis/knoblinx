@@ -4,28 +4,6 @@
 
 {% block title %}{{ user.get_full_name }} / Settings{% endblock title %}
 
-{% block css %}
-    <style>
-        .has-error .control-label, .has-error .help-block, .errorlist {
-            color: #8F0000
-        }
-
-        .has-error .form-control, .has-error .input-group-addon {
-            border-color: #8F0000
-        }
-
-        .has-error .form-control:focus, .has-error .input-group-addon:focus {
-            border-color: inherit
-        }
-
-        .errorlist {
-            list-style: none;
-            margin-top: 9px;
-            padding-left: 0
-        }
-    </style>
-{% endblock css %}
-
 {% block content %}
     <div class="right_col" role="main">
         <div class="">

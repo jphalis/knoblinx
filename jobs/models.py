@@ -49,9 +49,9 @@ class Job(TimeStampedModel):
     applicants = models.ManyToManyField(
         Applicant, related_name='job_applicants', blank=True)
     title = models.CharField(max_length=120)
+    location = models.CharField(max_length=120)
+    contact_email = models.EmailField(max_length=120)
     description = models.TextField(max_length=1000)
-    location = models.CharField(max_length=80, blank=True)
-    contact_email = models.EmailField(max_length=120, null=True, blank=True)
 
     list_date_start = models.DateTimeField(_('Listing Start Date'), null=True)
     list_date_end = models.DateTimeField(_('Listing Expiration'), null=True)

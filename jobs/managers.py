@@ -10,7 +10,7 @@ from django.utils import timezone
 
 
 class ApplicantManager(models.Manager):
-    def create(self, user, resume, cover_letter=None,
+    def create(self, user, resume, name, email, university, cover_letter=None,
                **extra_fields):
         """
         Creates an applicant.
@@ -22,6 +22,9 @@ class ApplicantManager(models.Manager):
 
         applicant = self.model(user=user,
                                resume=resume,
+                               name=name,
+                               email=email,
+                               university=university,
                                cover_letter=cover_letter,
                                **extra_fields)
         applicant.save(using=self._db)

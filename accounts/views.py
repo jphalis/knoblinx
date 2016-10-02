@@ -132,10 +132,12 @@ def profile(request, username):
 @login_required
 @cache_page(60)
 def company_dash(request, username):
+    user = request.user
     company = get_object_or_404(
         Company, Q(is_active=True), username=username)
+    _is_company_collab = company.collaborators.filter(pk=user.pk).exists()
 
-    if company.user == request.user or request.user in company.collaborators:
+    if company.user == user or _is_company_collab:
         jobs = Job.objects.own(company=company)
 
         context = {

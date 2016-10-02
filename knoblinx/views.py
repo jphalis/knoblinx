@@ -106,7 +106,7 @@ def generate_data(request):
     ]
     for job in jobs:
         if not Job.objects.filter(title=job[1]).exists():
-            Job.objects.job_create(
+            Job.objects.create(
                 company=job[0],
                 title=job[1],
                 contact_email=contact_email,
