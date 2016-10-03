@@ -11,7 +11,8 @@ from django.views.generic.edit import DeleteView
 
 from core.mixins import LoginRequiredMixin
 from jobs.models import Job
-from .forms import AccountSettingsForm, CompanySettingsForm, ExperienceForm
+from .forms import (AccountSettingsForm, AddCollaboratorForm,
+                    CompanySettingsForm, ExperienceForm)
 from .models import Company, Experience, MyUser
 
 # Create your views here.
@@ -119,11 +120,18 @@ def profile(request, username):
         if not company.is_active:
             raise Http404
 
+        _user_can_edit = False
+        _is_company_collab = company.collaborators.filter(pk=request.user.pk)
+
+        if company.user == request.user or _is_company_collab.exists():
+            _user_can_edit = True
+
         jobs = Job.objects.own(company=company).filter(is_active=True)
 
         context = {
             'company': company,
-            'jobs': jobs
+            'jobs': jobs,
+            'user_can_edit': _user_can_edit
         }
         template = 'accounts/company_public.html'
     return render(request, template, context)
@@ -190,21 +198,47 @@ def account_settings(request):
 @login_required
 @never_cache
 def company_settings(request, username):
+    user = request.user
     company = get_object_or_404(Company, Q(is_active=True), username=username)
+    _is_company_collab = company.collaborators.filter(pk=user.pk).exists()
 
-    if request.user == company.user:
+    if company.user == user or _is_company_collab:
         form = CompanySettingsForm(request.POST or None,
                                    request.FILES or None,
                                    instance=company, company=company)
+        collab_form = AddCollaboratorForm(request.POST or None)
+
         if request.method == 'POST':
+
             if form.is_valid():
                 form.username = form.cleaned_data['username']
-                form.collaborators = form.cleaned_data['collaborators']
                 form.save()
-                messages.success(request,
-                                 "You have successfully updated your company.")
+                messages.success(
+                    request,
+                    "You have successfully updated your company.")
+
+            if collab_form.is_valid():
+                email = collab_form.cleaned_data['email']
+
+                if email:
+                    if not company.collaborators.filter(email__iexact=email).exists():
+                        if MyUser.objects.filter(email__iexact=email).exists():
+                            new_collab = MyUser.objects.get(email=email)
+                            company.collaborators.add(new_collab)
+                            messages.success(
+                                request,
+                                "That user has been added as a collaborator.")
+                        else:
+                            messages.error(
+                                request,
+                                "That user does not exist on this website.")
+                    else:
+                        messages.error(
+                            request,
+                            "That user is already a collaborator.")
 
         context = {
+            'collab_form': collab_form,
             'company': company,
             'form': form,
             'initial_collaborators': company.get_collaborators_email,

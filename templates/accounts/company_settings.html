@@ -4,28 +4,6 @@
 
 {% block title %}{{ company.name }} / Settings{% endblock title %}
 
-{% block css %}
-    <style>
-        .has-error .control-label, .has-error .help-block, .errorlist {
-            color: #8F0000
-        }
-
-        .has-error .form-control, .has-error .input-group-addon {
-            border-color: #8F0000
-        }
-
-        .has-error .form-control:focus, .has-error .input-group-addon:focus {
-            border-color: inherit
-        }
-
-        .errorlist {
-            list-style: none;
-            margin-top: 9px;
-            padding-left: 0
-        }
-    </style>
-{% endblock css %}
-
 {% block content %}
     <div class="right_col" role="main">
         <div class="">
@@ -42,8 +20,8 @@
                     <div class="x_content">
                         <br/>
                         <form action="." method="POST" enctype="multipart/form-data" role="form">
+                            {% csrf_token %}
                             <fieldset>
-
                                 <div class="row">
                                     <div class="form-group col-md-6 col-sm-6 col-xs-12 {% if form.name.errors %}has-error{% endif %}">
                                         <label for="{{ form.name.auto_id }}" class="control-label">
@@ -90,21 +68,50 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="control-group col-md-6 col-sm-6 col-xs-12 {% if form.collaborators.errors %}has-error{% endif %}">
-                                        <label for="{{ form.collaborators.auto_id }}" class="control-label">
-                                            {{ form.collaborators.label }}
+                                    <div class="control-group col-md-6 col-sm-6 col-xs-12 {% if collab_form.email.errors %}has-error{% endif %}">
+                                        <label class="control-label">
+                                            Collaborators <small>(These users will have administrative access to your company.)</small>
                                         </label>
-                                        <input id="tags_1" type="text" class="tags form-control" value="{{ initial_collaborators }}" />
-                                        <div id="suggestions-container" style="position: relative; float: left; width: 250px; margin: 10px;"></div>
-                                        {{ form.collaborators|add_class:"form-control" }}
-                                        {{ form.collaborators.errors }}
+                                        <ul>
+                                            <li>
+                                                <p>{{ company.user.get_full_name }}, {{ company.user.email }}</p>
+                                            </li>
+                                            {% if company.collaborators %}
+                                                {% for obj in company.collaborators.all %}
+                                                    <li>
+                                                        <p>{{ obj.get_full_name }}, {{ obj.email }}</p>
+                                                    </li>
+                                                {% endfor %}
+                                            {% endif %}
+                                        </ul>
+                                        <a class="btn btn-default" data-toggle="modal" href="#addModal">Add Collaborator</a>
+                                        <!-- add collaborator modal -->
+                                        <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-hidden="false" style="display:none;">
+                                            <div class="modal-dialog modal-md">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                        <h4 class="modal-title">Add Collaborator</h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <label>Email</label>
+                                                        <p>{{ collab_form.email }}</p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button data-dismiss="modal" class="btn btn-default">Close</button>
+                                                        <button id="submitButton" class="btn btn-primary active" type="submit">Add</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- /add collaborator modal -->
+                                        {{ collab_form.email.errors }}
                                     </div>
                                 </div>
 
                                 <div class="ln_solid"></div>
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                        {% csrf_token %}
                                         <button id="submitButton" type="submit" class="btn btn-primary btn-block active">Update</button>
                                     </div>
                                 </div>
@@ -114,6 +121,8 @@
                 </div>
             </div>
         </div>
+        <br>
+        <br>
     </div>
 {% endblock content %}
 
@@ -131,13 +140,3 @@
         });
     </script>
 {% endblock scripts %}
-
-<script>
-    {% block jquery %}
-        // jQuery Tags Input
-        $('#tags_1').tagsInput({
-            width: 'auto'
-        });
-        // /jQuery Tags Input
-    {% endblock jquery %}
-</script>

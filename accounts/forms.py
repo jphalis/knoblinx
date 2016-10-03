@@ -3,6 +3,7 @@ Glossary of accounts/forms.py:
 
 - Add experience form
 - Account settings form
+- Add collaborator form
 - Company settings form
 - MyUser change form (admin only)
 - Company change form (admin only)
@@ -237,18 +238,34 @@ class AccountSettingsForm(forms.ModelForm):
         return self.cleaned_data['password_new_confirm']
 
 
+class AddCollaboratorForm(forms.Form):
+    email = email = forms.EmailField(
+        label=_('Email*'),
+        widget=forms.EmailInput(
+            attrs={'class': 'form-control'}),
+        max_length=120,
+        required=False
+    )
+
+    def clean_email(self):
+        """
+        Returns the email in a lowercase value.
+        """
+        return self.cleaned_data['email'].lower()
+
+
 class CompanySettingsForm(forms.ModelForm):
     """
     A form used for companies to update their account
     information.
     """
     name = forms.CharField(
-        label=_('Company Name'),
+        label=_('Company Name*'),
         widget=forms.TextInput(),
         max_length=120
     )
     username = forms.SlugField(
-        label=_('Company Username'),
+        label=_('Company Username*'),
         widget=forms.TextInput(),
         max_length=120
     )
@@ -267,38 +284,19 @@ class CompanySettingsForm(forms.ModelForm):
     bio = forms.CharField(
         label=_('About'),
         widget=forms.Textarea(
-            attrs={'style': 'height: 5em;',
-                   'placeholder': 'Tell us a little about yourself'}),
+            attrs={'style': 'height: 7em;',
+                   'placeholder': 'Tell us a little about your company'}),
         max_length=500,
-        required=False
-    )
-    collaborators = forms.CharField(
-        label=_('Collaborators'),
-        help_text=_('These users will have administrative access '
-                    'to your company.'),
-        widget=forms.Textarea(),
         required=False
     )
 
     class Meta:
         model = Company
-        fields = ('name', 'username', 'logo', 'website', 'bio',
-                  'collaborators',)
+        fields = ('name', 'username', 'logo', 'website', 'bio',)
 
     def __init__(self, *args, **kwargs):
         self.company = kwargs.pop('company')
         super(CompanySettingsForm, self).__init__(*args, **kwargs)
-
-    def clean_collaborators(self):
-        """
-        Add new collaborators based on the user's input.
-        """
-        value = self.cleaned_data['collaborators'].lower()
-        for email in value:
-            if not self.company.collaborators.filter(email__iexact=email):
-                new_user = MyUser.objects.get(email=email)
-                self.company.collaborators.add(new_user)
-        return value
 
     def clean_username(self):
         """

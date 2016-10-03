@@ -12,7 +12,7 @@ app_name = 'accounts'
 urlpatterns = [
     url(r"^settings/$",
         views.account_settings, name="account_settings"),
-    url(r"^settings/company/(?P<username>[\w-]+)/$",
+    url(r"^settings/(?P<username>[\w-]+)/$",
         views.company_settings, name="company_settings"),
     url(r"^experience/(?P<exp_pk>\d+)/edit/$",
         views.exp_edit, name="exp_edit"),

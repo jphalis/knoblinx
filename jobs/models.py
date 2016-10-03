@@ -42,8 +42,8 @@ class Applicant(TimeStampedModel):
         return u'{0}'.format(self.user.get_full_name)
 
     def job_title(self):
-        _job = Job.objects.filter(applicants__user=self.user)
-        return '{0}'.format(_job.values_list('title', flat=True))
+        _job = Job.objects.get(applicants__pk=self.pk)
+        return '{0} ({1})'.format(_job.title, _job.company.name)
 
 
 @python_2_unicode_compatible
