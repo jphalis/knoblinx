@@ -14,6 +14,8 @@ urlpatterns = [
         views.account_settings, name="account_settings"),
     url(r"^settings/(?P<username>[\w-]+)/$",
         views.company_settings, name="company_settings"),
+    url(r'^remove_collaborator/$',
+        views.remove_collab, name="remove_collab"),
     url(r"^experience/(?P<exp_pk>\d+)/edit/$",
         views.exp_edit, name="exp_edit"),
     url(r'^experience/(?P<exp_pk>\d+)/delete/$',

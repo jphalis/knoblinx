@@ -74,12 +74,23 @@
                                         </label>
                                         <ul>
                                             <li>
-                                                <p>{{ company.user.get_full_name }}, {{ company.user.email }}</p>
+                                                <p>
+                                                    {{ company.user.get_full_name }},
+                                                    {{ company.user.email }}
+                                                </p>
                                             </li>
                                             {% if company.collaborators %}
                                                 {% for obj in company.collaborators.all %}
                                                     <li>
-                                                        <p>{{ obj.get_full_name }}, {{ obj.email }}</p>
+                                                        <p>
+                                                            {{ obj.get_full_name }},
+                                                            {{ obj.email }}
+                                                            {% if not obj == request.user %}
+                                                                <a href="#" class="remove_collab_btn" data-user="{{ obj.pk }}" data-company="{{ company.pk }}">
+                                                                    <i class="fa fa-times" style="margin-left:7px;" aria-hidden="true"></i>
+                                                                </a>
+                                                            {% endif %}
+                                                        </p>
                                                     </li>
                                                 {% endfor %}
                                             {% endif %}
@@ -99,7 +110,7 @@
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button data-dismiss="modal" class="btn btn-default">Close</button>
-                                                        <button id="submitButton" class="btn btn-primary active" type="submit">Add</button>
+                                                        <button class="btn btn-primary active" type="submit">Add</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -136,6 +147,27 @@
                 // disable the button to prevent multiple submissions
                 submitButton.attr('disabled', 'disabled').addClass('btn-disabled');
                 submitButton.parents('form:first').submit();
+            });
+
+            $(".remove_collab_btn").click(function(e) {
+                e.preventDefault();
+                var a = $(e.target);
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'accounts:remove_collab' %}",
+                    data: {
+                        user_pk: $(this).attr("data-user"),
+                        company_pk: $(this).attr("data-company"),
+                        csrfmiddlewaretoken: "{{ csrf_token }}"
+                    },
+                    dataType: "json",
+                    success: function(e) {
+                        window.location.href = window.location.href;
+                    },
+                    error: function() {
+                        alert("Sorry, there was an error with your request. Please try again later.")
+                    }
+                })
             });
         });
     </script>

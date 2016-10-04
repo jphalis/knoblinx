@@ -3,10 +3,12 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.db.models import Q
-from django.http import Http404, HttpResponseForbidden, HttpResponseRedirect
+from django.http import (HttpResponseForbidden, HttpResponseRedirect,
+                         JsonResponse)
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import cache_page, never_cache
 from django.views.decorators.debug import sensitive_post_parameters
+from django.views.decorators.http import require_http_methods
 from django.views.generic.edit import DeleteView
 
 from core.mixins import LoginRequiredMixin
@@ -80,13 +82,14 @@ def profile(request, username):
         user = MyUser.objects.get(username=username)
 
         if not user.is_active:
-            raise Http404
+            return HttpResponseForbidden()
 
         experiences = Experience.objects.own(user=user)
         form = ExperienceForm(request.POST or None,
                               instance=user, user=user)
 
         if request.method == 'POST':
+
             if form.is_valid():
                 exp, created = Experience.objects.get_or_create(
                     user=user,
@@ -118,7 +121,7 @@ def profile(request, username):
             Company, Q(is_active=True), username=username)
 
         if not company.is_active:
-            raise Http404
+            return HttpResponseForbidden()
 
         _user_can_edit = False
         _is_company_collab = company.collaborators.filter(pk=request.user.pk)
@@ -196,6 +199,19 @@ def account_settings(request):
 
 
 @login_required
+@require_http_methods(['POST'])
+def remove_collab(request):
+    company = get_object_or_404(Company, pk=request.POST.get('company_pk'))
+
+    try:
+        user = company.collaborators.get(pk=request.POST.get('user_pk'))
+        company.collaborators.remove(user)
+    except:
+        user = None
+    return JsonResponse({})
+
+
+@login_required
 @never_cache
 def company_settings(request, username):
     user = request.user
@@ -221,13 +237,14 @@ def company_settings(request, username):
                 email = collab_form.cleaned_data['email']
 
                 if email:
-                    if not company.collaborators.filter(email__iexact=email).exists():
-                        if MyUser.objects.filter(email__iexact=email).exists():
-                            new_collab = MyUser.objects.get(email=email)
-                            company.collaborators.add(new_collab)
+                    if not company.collaborators.filter(email__iexact=email):
+                        new_collab = MyUser.objects.filter(email__iexact=email)
+
+                        if new_collab:
+                            company.collaborators.add(new_collab[0])
                             messages.success(
                                 request,
-                                "That user has been added as a collaborator.")
+                                "User has been added as a collaborator.")
                         else:
                             messages.error(
                                 request,
@@ -244,4 +261,4 @@ def company_settings(request, username):
             'initial_collaborators': company.get_collaborators_email,
         }
         return render(request, 'accounts/company_settings.html', context)
-    raise Http404
+    return HttpResponseForbidden()
