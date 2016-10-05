@@ -140,7 +140,6 @@ def get_company_ajax(request):
         })
     except:
         company = None
-
     return JsonResponse(data)
 
 
@@ -168,11 +167,6 @@ def home(request):
         'user': request.user,
     }
     return render(request, 'jobs/list.html', context)
-
-
-@cache_page(60 * 60 * 24 * 60)
-def about(request):
-    return render(request, 'general/about.html', {})
 
 
 @cache_page(60 * 60 * 24 * 60)

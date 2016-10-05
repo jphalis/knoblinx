@@ -43,7 +43,7 @@
                                     Already Applied <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
                                 </button>
                             {% elif viewer_can_delete %}
-                                <a href="{% url 'jobs:delete' job.pk %}" class="btn btn-danger active pull-right">
+                                <a href="{{ job.get_delete_url }}" class="btn btn-danger active pull-right">
                                     Delete Job
                                 </a>
                                 <a href="{{ job.get_edit_url }}" class="btn btn-info active">

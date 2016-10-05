@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 import datetime
 
 from django.db import models
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.utils import timezone
 
 # Create your managers here.
@@ -37,16 +37,17 @@ class JobManager(models.Manager):
         Returns all active jobs.
         """
         return super(JobManager, self).get_queryset() \
-            .filter(is_active=True) \
-            .select_related('company') \
-            .prefetch_related('applicants')
+            .filter(Q(list_date_start__lte=timezone.now()) &
+                    Q(list_date_end__gt=timezone.now())) \
+            .select_related('company')
 
     def trending(self):
         """
         Returns all jobs with 10 or more applicants.
         """
         return super(JobManager, self).get_queryset() \
-            .filter(is_active=True) \
+            .filter(Q(list_date_start__lte=timezone.now()) &
+                    Q(list_date_end__gt=timezone.now())) \
             .annotate(the_count=(Count('applicants'))) \
             .filter(the_count__gte=10) \
             .order_by('-the_count')
@@ -56,7 +57,9 @@ class JobManager(models.Manager):
         Returns all recent jobs.
         """
         return super(JobManager, self).get_queryset() \
-            .filter(is_active=True) \
+            .filter(Q(list_date_start__lte=timezone.now()) &
+                    Q(list_date_end__gt=timezone.now())) \
+            .select_related('company') \
             .order_by('-list_date_start')
 
     def own(self, company):
@@ -66,7 +69,6 @@ class JobManager(models.Manager):
         return super(JobManager, self).get_queryset() \
             .filter(company=company) \
             .select_related('company') \
-            .prefetch_related('applicants') \
             .order_by('list_date_end')
 
     def user_applied(self, user):
@@ -106,7 +108,6 @@ class JobManager(models.Manager):
                          list_date_start=start_date,
                          list_date_end=end_date,
                          description=description,
-                         is_active=timezone.now() >= start_date,
                          **extra_fields)
         job.save(using=self._db)
         return job

@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
@@ -60,8 +61,6 @@ class Job(TimeStampedModel):
     list_date_start = models.DateTimeField(_('Listing Start Date'), null=True)
     list_date_end = models.DateTimeField(_('Listing Expiration'), null=True)
 
-    is_active = models.BooleanField(_('active'), default=True)
-
     objects = JobManager()
 
     class Meta:
@@ -87,6 +86,12 @@ class Job(TimeStampedModel):
         return reverse('jobs:edit',
                        kwargs={"job_pk": self.pk,
                                "username": self.company.username})
+
+    def get_delete_url(self):
+        """
+        Returns the delete url for the job.
+        """
+        return reverse('jobs:delete', kwargs={"job_pk": self.pk})
 
     @cached_property
     def get_applicants_info(self):
@@ -118,3 +123,9 @@ class Job(TimeStampedModel):
         Returns the time since the job has been posted.
         """
         return naturaltime(self.list_date_start)
+
+    def is_active_job(self):
+        start = self.list_date_start
+        end = self.list_date_end
+        return start <= timezone.now() and end >= timezone.now()
+    is_active_job.boolean = True

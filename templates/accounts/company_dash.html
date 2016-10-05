@@ -3,192 +3,216 @@
 
 {% block title %}{{ company.name }} / Dashboard{% endblock title %}
 
+{% block stylesheets %}
+  <link href="{% static 'vendors/datatables.net-bs/css/dataTables.bootstrap.min.css' %}" rel="stylesheet">
+{% endblock stylesheets %}
+
 {% block content %}
-    <div class="right_col" role="main">
-
-        <!-- top tiles -->
-        <div class="row tile_count">
-            <div class="col-md-4 col-sm-4 col-xs-12 tile_stats_count">
-                <span class="count_top"><i class="fa fa-user"></i> Jobs Created</span>
-                <div class="count">{{ jobs_count }}</div>
-            </div>
-            <div class="col-md-4 col-sm-4 col-xs-12 tile_stats_count">
-                <span class="count_top"><i class="fa fa-user"></i> Active Jobs</span>
-                <div class="count green">{{ active_job_count }}</div>
-            </div>
-            <div class="col-md-4 col-sm-4 col-xs-12 tile_stats_count">
-                <span class="count_top"><i class="fa fa-user"></i> Company Administrators</span>
-                <div class="count">{{ collaborator_count }}</div>
-            </div>
-        </div>
-        <!-- /top tiles -->
-
-        <!-- jobs created table -->
-        <div class="row">
-            <div class="col-md-12 col-sm-12 col-xs-12">
-                <div class="x_panel">
-                    <div class="x_title">
-                        <h2>Jobs Created</h2>
-                        <ul class="nav navbar-right panel_toolbox">
-                            <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-                            <li><a href="{% url 'jobs:create' company.pk %}"><i class="fa fa-plus" aria-hidden="true"></i></a></li>
-                        </ul>
-                        <div class="clearfix"></div>
-                    </div>
-                    <div class="x_content">
-                        <p class="text-muted font-13 m-b-30">
-                            The following jobs have been created by your company.
-                        </p>
-                        <table id="datatable-fixed-header" class="table table-striped jambo_table">
-                            <thead>
-                                <tr>
-                                    <th>Position</th>
-                                    <th>Location</th>
-                                    <th>Salary</th>
-                                    <th>Applicants</th>
-                                    <th>Active</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                               {% for job in jobs %}
-                                    <tr>
-                                        <td>{{ job.title }}</td>
-                                        <td>{{ job.location }}</td>
-                                        <td>{{ job.salary }}</td>
-                                        <td>{{ job.applicant_count }}</td>
-                                        <td>{{ job.is_active }}</td>
-                                        <td>
-                                            <a href="{{ job.get_absolute_url }}">
-                                                View <i class="fa fa-chevron-up"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- /jobs created table -->
-
-        <div class="row">
-
-            <!-- recent activity -->
-            <div class="col-md-4 col-sm-4 col-xs-12">
-                <div class="x_panel">
-                    <div class="x_title">
-                        <h2>Recent Activity</h2>
-                        <ul class="nav navbar-right panel_toolbox">
-                            <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-                        </ul>
-                        <div class="clearfix"></div>
-                    </div>
-                    <div class="x_content">
-                        <div class="dashboard-widget-content">
-                            <ul class="list-unstyled timeline widget">
-                                <li>
-                                    <div class="block">
-                                        <div class="block_content">
-                                            <h2 class="title">
-                                                <a>Who Needs Sundance When You’ve Got&nbsp;Crowdfunding?</a>
-                                            </h2>
-                                            <div class="byline">
-                                                <span>13 hours ago</span> by <a>Jane Smith</a>
-                                            </div>
-                                            <p class="excerpt">Film festivals used to be do-or-die moments for movie makers. They were where you met the producers that could fund your project, and if the buyers liked your flick, they’d pay to Fast-forward and… <a>Read&nbsp;More</a></p>
-                                        </div>
-                                    </div>
-                                 </li>
-                                 <li>
-                                    <div class="block">
-                                        <div class="block_content">
-                                            <h2 class="title">
-                                                <a>Who Needs Sundance When You’ve Got&nbsp;Crowdfunding?</a>
-                                            </h2>
-                                            <div class="byline">
-                                                <span>13 hours ago</span> by <a>Jane Smith</a>
-                                            </div>
-                                            <p class="excerpt">Film festivals used to be do-or-die moments for movie makers. They were where you met the producers that could fund your project, and if the buyers liked your flick, they’d pay to Fast-forward and… <a>Read&nbsp;More</a></p>
-                                        </div>
-                                    </div>
-                                 </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- /recent activity -->
-
-            <div class="col-md-8 col-sm-8 col-xs-12">
-                <div class="row">
-
-                    <!-- collaborators -->
-                    <div class="col-md-12 col-sm-12 col-xs-12">
-                        <div class="x_panel">
-                            <div class="x_title">
-                                <h2>Administrators <small>of {{ company.name }}</small></h2>
-                                <ul class="nav navbar-right panel_toolbox">
-                                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-                                </ul>
-                                <div class="clearfix"></div>
-                            </div>
-                            <div class="x_content">
-                                <div class="col-md-4 col-sm-4 col-xs-12 profile_details">
-                                    <div class="well profile_view">
-                                        <div class="col-sm-12">
-                                            <h4 class="brief"><i>Digital Strategist <small>(Company profile owner)</small></i></h4>
-                                            <div class="left col-xs-7">
-                                                <h2>{{ company.user.get_full_name }}</h2>
-                                                <ul class="list-unstyled">
-                                                    <li><i class="fa fa-building"></i> Email: {{ company.user.email }}</li>
-                                                </ul>
-                                            </div>
-                                            <div class="right col-xs-5 text-center">
-                                                <img src="{{ company.user.user_profile_pic }}" alt="" class="img-circle img-responsive">
-                                            </div>
-                                        </div>
-                                        <div class="col-xs-12 bottom text-center">
-                                            <div class="col-xs-12 col-sm-6 emphasis">
-                                                <a href="{{ company.user.get_absolute_url }}" class="btn btn-primary btn-xs"><i class="fa fa-user"> </i> View Profile</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                {% for user in collaborators %}
-                                    <div class="col-md-4 col-sm-4 col-xs-12 profile_details">
-                                        <div class="well profile_view">
-                                            <div class="col-sm-12">
-                                                <h4 class="brief"><i>Digital Strategist</i></h4>
-                                                <div class="left col-xs-7">
-                                                    <h2>{{ user.get_full_name }}</h2>
-                                                    <ul class="list-unstyled">
-                                                        <li><i class="fa fa-building"></i> Email: {{ user.email }}</li>
-                                                    </ul>
-                                                </div>
-                                                <div class="right col-xs-5 text-center">
-                                                    <img src="{{ user.user_profile_pic }}" alt="" class="img-circle img-responsive">
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12 bottom text-center">
-                                                <div class="col-xs-12 col-sm-6 emphasis">
-                                                    <a href="{{ user.get_absolute_url }}" class="btn btn-primary btn-xs"><i class="fa fa-user"> </i> View Profile</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                    <!-- /collaborators -->
-
-                </div>
-            </div>
-
-        </div>
-
+  <div class="right_col" role="main">
+    <!-- top tiles -->
+    <div class="row tile_count">
+      <div class="col-md-4 col-sm-4 col-xs-12 tile_stats_count">
+        <span class="count_top"><i class="fa fa-user"></i> Jobs Created</span>
+        <div class="count">{{ jobs_count }}</div>
+      </div>
+      <div class="col-md-4 col-sm-4 col-xs-12 tile_stats_count">
+        <span class="count_top"><i class="fa fa-user"></i> Active Jobs</span>
+        <div class="count green">{{ active_job_count }}</div>
+      </div>
+      <div class="col-md-4 col-sm-4 col-xs-12 tile_stats_count">
+        <span class="count_top"><i class="fa fa-user"></i> Company Administrators</span>
+        <div class="count">{{ collaborator_count }}</div>
+      </div>
     </div>
+    <!-- /top tiles -->
+    <!-- jobs created table -->
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+          <div class="x_title">
+            <h2>Jobs Created</h2>
+            <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+              <li><a href="{% url 'jobs:create' company.pk %}"><i class="fa fa-plus" aria-hidden="true"></i></a></li>
+            </ul>
+            <div class="clearfix"></div>
+          </div>
+          <div class="x_content">
+            <p class="text-muted font-13 m-b-30">
+              The following jobs have been created by your company.
+            </p>
+            <table id="datatable" class="table table-striped jambo_table">
+              <thead>
+                <tr>
+                  <th>Position</th>
+                  <th>Location</th>
+                  <th>Applicants</th>
+                  <th>Active</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+
+              <tbody>
+               {% for job in jobs %}
+                  <tr>
+                    <td>
+                      <a href="{{ job.get_absolute_url }}">{{ job.title }}</a>
+                    </td>
+                    <td>{{ job.location }}</td>
+                    <td>{{ job.applicant_count }}</td>
+                    <td>{{ job.is_active_job }}</td>
+                    <td>
+                      <a href="{{ job.get_absolute_url }}"><i class="fa fa-search" aria-hidden="true"></i></a>
+                      &nbsp;
+                      <a href="{{ job.get_edit_url }}"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                      &nbsp;
+                      <a href="{{ job.get_delete_url }}"><i class="fa fa-times" aria-hidden="true"></i></a>
+                      &nbsp;
+                      <a href="#"><i class="fa fa-bar-chart" aria-hidden="true"></i></a>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /jobs created table -->
+    <div class="row">
+        <!-- recent activity -->
+        <div class="col-md-4 col-sm-4 col-xs-12">
+          <div class="x_panel">
+            <div class="x_title">
+              <h2>Recent Activity</h2>
+              <ul class="nav navbar-right panel_toolbox">
+                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+              </ul>
+              <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+              <div class="dashboard-widget-content">
+                <ul class="list-unstyled timeline widget">
+                  <li>
+                    <div class="block">
+                      <div class="block_content">
+                        <h2 class="title"><a>Who Needs Sundance When You’ve Got&nbsp;Crowdfunding?</a></h2>
+                        <div class="byline">
+                          <span>13 hours ago</span> by <a>Jane Smith</a>
+                        </div>
+                        <p class="excerpt">
+                          Film festivals used to be do-or-die moments for movie makers. They were where you met the producers that could fund your project, and if the buyers liked your flick, they’d pay to Fast-forward and… <a>Read&nbsp;More</a>
+                        </p>
+                      </div>
+                    </div>
+                   </li>
+                   <li>
+                    <div class="block">
+                      <div class="block_content">
+                        <h2 class="title"><a>Who Needs Sundance When You’ve Got&nbsp;Crowdfunding?</a></h2>
+                        <div class="byline">
+                          <span>13 hours ago</span> by <a>Jane Smith</a>
+                        </div>
+                        <p class="excerpt">
+                          Film festivals used to be do-or-die moments for movie makers. They were where you met the producers that could fund your project, and if the buyers liked your flick, they’d pay to Fast-forward and… <a>Read&nbsp;More</a>
+                        </p>
+                      </div>
+                    </div>
+                   </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /recent activity -->
+        <div class="col-md-8 col-sm-8 col-xs-12">
+          <div class="row">
+            <!-- collaborators -->
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <div class="x_panel">
+                <div class="x_title">
+                  <h2>Collaborators <small style="margin-left:0px;">of {{ company.name }}</small></h2>
+                  <ul class="nav navbar-right panel_toolbox">
+                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+                    <li><a href="{% url 'accounts:company_settings' company.username %}"><i class="fa fa-pencil" aria-hidden="true"></i></a></li>
+                  </ul>
+                  <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                  <div class="col-md-6 col-sm-4 col-xs-12 profile_details">
+                    <div class="card radius shadowDepth1">
+                      <div class="card_image border-tlr-radius">
+                        <img src="{% static 'img/default-profile-pic.jpg'%}" alt="Avatar" class="border-tlr-radius">
+                      </div>
+                      <div class="card_content card_padding">
+                        <div class="card_share">
+                          <div class="card_social">
+                            <a class="share-icon mail" href="mailto:{{ company.user.email }}"><span class="fa fa-envelope"></span></a>
+                          </div>
+                          <a id="share" class="share-toggle share-icon" href="#"></a>
+                        </div>
+                        <article class="card_article">
+                          <h2>{{ company.user.first_name }} {{ company.user.last_name }}</h2>
+                          <p>
+                            <a href="mailto:{{ company.user.email }}">
+                              <i class="fa fa-envelope-o" aria-hidden="true"></i> {{ company.user.email }}
+                            </a>
+                          </p>
+                        </article>
+                      </div>
+                    </div>
+                  </div>
+                  {% for user in collaborators %}
+                    <div class="col-md-6 col-sm-4 col-xs-12 profile_details">
+                      <div class="card radius shadowDepth1">
+                        <div class="card_image border-tlr-radius">
+                          <img src="{% static 'img/default-profile-pic.jpg'%}" alt="Avatar" class="border-tlr-radius">
+                        </div>
+                        <div class="card_content card_padding">
+                          <div class="card_share">
+                            <div class="card_social">
+                              <a class="share-icon mail" href="mailto:{{ user.email }}"><span class="fa fa-envelope"></span></a>
+                            </div>
+                            <a id="share" class="share-toggle share-icon" href="#"></a>
+                          </div>
+                          <article class="card_article">
+                            <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+                            <p>
+                              <a href="mailto:{{ user.email }}">
+                                <i class="fa fa-envelope-o" aria-hidden="true"></i> {{ user.email }}
+                              </a>
+                            </p>
+                          </article>
+                        </div>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+            <!-- /collaborators -->
+          </div>
+      </div>
+    </div>
+  </div>
 {% endblock content %}
+
+{% block js %}
+  <script src="{% static 'vendors/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'vendors/datatables.net-bs/js/dataTables.bootstrap.min.js' %}"></script>
+{% endblock js %}
+
+{% block scripts %}
+  <script>
+    $(document).ready(function($) {
+      $('#datatable').dataTable();
+
+      $('.card_share > a').on('click', function(e) {
+        e.preventDefault() // prevent default action - hash doesn't appear in url
+        $(this).parent().find('div').toggleClass('card_social--active');
+        $(this).toggleClass('share-expanded');
+      });
+
+    });
+  </script>
+{% endblock scripts %}

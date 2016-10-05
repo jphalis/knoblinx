@@ -4,6 +4,139 @@
   background: #fec503;
 }
 
+/* Company collaborators*/
+.card {
+  margin-bottom: 1.6rem;
+  border: 1px solid #e3e3e3;
+  border-radius: 4px;
+}
+.card_padding {
+  padding: 1.6rem;
+}
+.card_image {
+  min-height: 100px;
+  background-color: #eee;
+}
+.card_image img {
+  max-height: 100px;
+  max-width: 100%;
+  display: block;
+}
+.card_content {
+  position: relative;
+}
+.card_share {
+  float: right;
+  position: relative;
+  margin-top: -42px;
+}
+.card_social {
+  position: absolute;
+  top: 0;
+  right: 0;
+  visibility: hidden;
+  width: 45px;
+  transform: translateZ(0);
+  transform: translateX(0px);
+  transition: transform 0.35s ease;
+}
+.card_social--active {
+  visibility: visible;
+  transform: translateZ(0);
+  transform: translateX(-48px);
+  transition: transform 0.35s ease;
+}
+.share-toggle {
+  z-index: 2;
+}
+.share-toggle:before {
+  content: "\f1e0";
+  font-family: 'FontAwesome';
+  color: #3498db;
+}
+.share-toggle.share-expanded:before {
+  content: "\f00d";
+}
+.share-icon {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  border-radius: 50%;
+  background-color: #fff;
+  transition: all 0.3s ease;
+  outline: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+}
+.share-icon:hover,
+.share-icon:focus {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12), 0 3px 6px rgba(0, 0, 0, 0.24);
+  -webkit-transform: scale(1.2);
+  -moz-transform: scale(1.2);
+  -ms-transform: scale(1.2);
+  -o-transform: scale(1.2);
+  transform: scale(1.2);
+}
+.mail {
+  background-color: #2a3f54;
+  color: #fff;
+}
+.mail:hover {
+  color: #eee;
+}
+/* Search results */
+.box-widget {
+  border: none;
+  position: relative;
+}
+.widget-user-2 .box-footer {
+  text-align: center;
+}
+.widget-user-2 .widget-user-header {
+  padding: 7px 7px 18px;
+  border-top-right-radius: 3px;
+  border-top-left-radius: 3px;
+}
+.widget-user-2 .widget-user-username {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  font-size: 18px;
+  font-weight: 300;
+}
+.widget-user-2 .widget-user-desc {
+  margin-top: 0;
+  font-style: italic;
+  font-size: 12px;
+}
+.widget-user-2 .widget-user-username,
+.widget-user-2 .widget-user-desc {
+  margin-left: 75px;
+}
+.widget-user-2 .widget-job {
+  margin-left: 0px;
+}
+.widget-user-2 .widget-user-desc a{
+  color: #fff;
+}
+.widget-user-2 .widget-user-desc a:hover{
+  color: #D7DBDE;
+}
+.widget-user-2 .widget-user-image > img {
+  width: 65px;
+  height: auto;
+  float: left;
+}
+.bg-dark {
+  background-color: #3E5367 !important;
+}
+.bg-light {
+  background-color: #3a9ad9 !important;
+}
+.bg-job {
+  background-color: #DC301C !important;
+}
+
 /* Job application */
 .applicant-headline{
   color: #000;
@@ -397,9 +530,6 @@ body .container.body .right_col {
 .left_col .mCSB_scrollTools {
   width: 6px; }
 
-.left_col .mCSB_dragger {
-  max-height: 400px !important; }
-
 /**  ------------------------------------------  **/
 .blue {
   color: #3498DB; }
@@ -529,15 +659,6 @@ body {
 
 .overflow_hidden {
   overflow: hidden; }
-
-.progress-bar-dark {
-  background-color: #34495E !important; }
-
-.progress-bar-gray {
-  background-color: #BDC3C7 !important; }
-
-table.no-margin .progress {
-  margin-bottom: 0; }
 
 .main_content {
   padding: 10px 20px; }
@@ -1148,43 +1269,9 @@ td span {
   text-align: center;
   padding: 10px 20px; }
 
-h3.degrees {
-  font-size: 22px;
-  font-weight: 400;
-  text-align: center; }
-
-.degrees:after {
-  content: "o";
-  position: relative;
-  top: -12px;
-  font-size: 13px;
-  font-weight: 300; }
-
-.daily-weather .day {
-  font-size: 14px;
-  border-top: 2px solid rgba(115, 135, 156, 0.36);
-  text-align: center;
-  border-bottom: 2px solid rgba(115, 135, 156, 0.36);
-  padding: 5px 0; }
-
-.weather-days .col-sm-2 {
-  overflow: hidden;
-  width: 16.66666667%; }
-
-.weather .row {
-  margin-bottom: 0; }
-
 /* *********  tables styling  ******************************* */
 .bulk-actions {
   display: none; }
-
-table.countries_list {
-  width: 100%; }
-
-table.countries_list td {
-  padding: 0 10px;
-  line-height: 30px;
-  border-top: 1px solid #eeeeee; }
 
 .dataTables_paginate a {
   padding: 6px 9px !important;
@@ -1703,11 +1790,6 @@ ul.top_profiles li:nth-child(odd) {
 
 .event .media-body p {
   margin-bottom: 0; }
-
-h4.graph_title {
-  margin: 7px;
-  text-align: center; }
-
 /* *********  /widgets  *************************************** */
 /* *********  iconts-display  **************************** */
 .fontawesome-icon-list .fa-hover a:hover {
@@ -2034,29 +2116,6 @@ input.parsley-error, textarea.parsley-error, select.parsley-error {
   color: #bbb;
   text-transform: uppercase;
   letter-spacing: 1px; }
-
-/* ***** autocomplete ***** */
-.autocomplete-suggestions {
-  border: 1px solid #e4e4e4;
-  background: #F4F4F4;
-  cursor: default;
-  overflow: auto; }
-
-.autocomplete-suggestion {
-  padding: 2px 5px;
-  font-size: 1.2em;
-  white-space: nowrap;
-  overflow: hidden; }
-
-.autocomplete-selected {
-  background: #f0f0f0; }
-
-.autocomplete-suggestions strong {
-  font-weight: normal;
-  color: #3399ff;
-  font-weight: bolder; }
-
-/* ***** /autocomplete *****/
 /* ***** buttons ********/
 .btn {
   border-radius: 3px; }
@@ -2226,7 +2285,6 @@ a:focus {
 /* *********  timeline  **************************** */
 ul.timeline li {
   position: relative;
-  border-bottom: 1px solid #e8e8e8;
   clear: both; }
 
 .timeline .block {
@@ -2311,92 +2369,7 @@ ul.social li {
   border: 0; }
 
 /* *********  /timeline  **************************** */
-/* *********  profile/social  **************************** */
-.social-sidebar, .social-body {
-  float: right; }
-
-.social-sidebar {
-  background: #EDEDED;
-  width: 22%; }
-
-.social-body {
-  border: 1px solid #ccc;
-  width: 78%; }
-
-.thumb img {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%; }
-
-.chat .thumb img {
-  width: 27px;
-  height: 27px;
-  border-radius: 50%; }
-
-.chat .status {
-  float: left;
-  margin: 16px 0 0 -16px;
-  font-size: 14px;
-  font-weight: bold;
-  width: 12px;
-  height: 12px;
-  display: block;
-  border: 2px solid #FFF;
-  z-index: 12312;
-  border-radius: 50%; }
-
-.chat .status.online {
-  background: #1ABB9C; }
-
-.chat .status.away {
-  background: #F39C12; }
-
-.chat .status.offline {
-  background: #ccc; }
-
-.chat .media-body {
-  padding-top: 5px; }
-
-/* *********  /profile/social  **************************** */
 /* *********  widgets  **************************** */
-.dashboard_graph .x_title {
-  padding: 5px 5px 7px; }
-
-.dashboard_graph .x_title h3 {
-  margin: 0;
-  font-weight: normal; }
-
-.chart {
-  position: relative;
-  display: inline-block;
-  width: 110px;
-  height: 110px;
-  margin-top: 5px;
-  margin-bottom: 5px;
-  text-align: center; }
-
-.chart canvas {
-  position: absolute;
-  top: 0;
-  left: 0; }
-
-.percent {
-  display: inline-block;
-  line-height: 110px;
-  z-index: 2;
-  font-size: 18px; }
-
-.percent:after {
-  content: '%';
-  margin-left: 0.1em;
-  font-size: .8em; }
-
-.angular {
-  margin-top: 100px; }
-
-.angular .chart {
-  margin-top: 0; }
-
 .widget {
   min-width: 250px;
   max-width: 310px; }
@@ -2481,42 +2454,6 @@ ul.widget_profile_box li .profile_img {
   height: 85px;
   margin: 0;
   margin-top: -28px; }
-
-.widget_tally_box p, .widget_tally_box span {
-  text-align: center; }
-
-.widget_tally_box .name {
-  text-align: center;
-  margin: 25px; }
-
-.widget_tally_box .name_title {
-  text-align: center;
-  margin: 5px; }
-
-.widget_tally_box ul.legend {
-  margin: 0; }
-
-.widget_tally_box ul.legend p, .widget_tally_box ul.legend span {
-  text-align: left; }
-
-.widget_tally_box ul.legend li .icon {
-  font-size: 20px;
-  float: left;
-  width: 14px; }
-
-.widget_tally_box ul.legend li .name {
-  font-size: 14px;
-  margin: 5px 0 0 14px;
-  text-overflow: ellipsis;
-  float: left; }
-
-.widget_tally_box ul.legend p {
-  display: inline-block;
-  margin: 0; }
-
-.widget_tally_box ul.verticle_bars li {
-  height: 140px;
-  width: 23%; }
 
 .widget .verticle_bars li .progress.vertical.progress_wide {
   width: 65%; }
@@ -2741,35 +2678,6 @@ ul.project_files li a i {
   transform: rotate(-90deg); }
 
 /* *********  /verticle tabs  **************************** */
-/** Select2 **/
-.select2-container--default .select2-selection--single,
-.select2-container--default .select2-selection--multiple {
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 0;
-  min-height: 38px; }
-
-.select2-container--default .select2-selection--single .select2-selection__rendered {
-  color: #73879C;
-  padding-top: 5px; }
-
-.select2-container--default .select2-selection--multiple .select2-selection__rendered {
-  padding-top: 3px; }
-
-.select2-container--default .select2-selection--single .select2-selection__arrow {
-  height: 36px; }
-
-.select2-container--default .select2-selection--multiple .select2-selection__choice,
-.select2-container--default .select2-selection--multiple .select2-selection__clear {
-  margin-top: 2px;
-  border: none;
-  border-radius: 0;
-  padding: 3px 5px; }
-
-.select2-container--default.select2-container--focus .select2-selection--multiple {
-  border: 1px solid #ccc; }
-
-/** /Select2 **/
 /** Switchery **/
 .switchery {
   width: 32px;
@@ -2957,325 +2865,3 @@ fieldset {
   display: none; }
 
 /** jQuery Smart Wizard  **/
-/** bootstrap-progressbar  **/
-.progress {
-  border-radius: 0; }
-
-.progress-bar-info {
-  background-color: #3498DB; }
-
-.progress-bar-success {
-  background-color: #26B99A; }
-
-.progress_summary .progress {
-  margin: 5px 0 12px !important; }
-
-.progress_summary .row {
-  margin-bottom: 5px; }
-
-.progress_summary .row .col-xs-2 {
-  padding: 0; }
-
-.progress_summary .more_info span {
-  text-align: right;
-  float: right; }
-
-.progress_summary .data span {
-  text-align: right;
-  float: right; }
-
-.progress_summary p {
-  margin-bottom: 3px;
-  width: 100%; }
-
-.progress_title .left {
-  float: left;
-  text-align: left; }
-
-.progress_title .right {
-  float: right;
-  text-align: right;
-  font-weight: 300; }
-
-.progress.progress_sm {
-  border-radius: 0;
-  margin-bottom: 18px;
-  height: 10px !important; }
-
-.progress.progress_sm .progress-bar {
-  height: 10px !important; }
-
-.dashboard_graph p {
-  margin: 0 0 4px; }
-
-ul.verticle_bars {
-  width: 100%; }
-
-ul.verticle_bars li {
-  width: 23%;
-  height: 200px;
-  margin: 0; }
-
-.progress.vertical.progress_wide {
-  width: 35px; }
-
-/** bootstrap-progressbar  **/
-/** bootstrap-daterangepicker **/
-.daterangepicker.dropdown-menu {
-  font-size: 13px;
-  padding: 0;
-  overflow: hidden; }
-
-.daterangepicker.picker_1 {
-  background: #34495E;
-  color: #ECF0F1; }
-
-.daterangepicker.picker_1 table.table-condensed thead tr:first-child {
-  background: #1ABB9C; }
-
-.daterangepicker table.table-condensed thead tr:first-child th {
-  line-height: 28px;
-  text-align: center; }
-
-.daterangepicker.picker_1 table.table-condensed thead tr {
-  background: #213345; }
-
-.daterangepicker table.table-condensed thead tr {
-  line-height: 14px; }
-
-.daterangepicker table.table-condensed tbody tr:first-child td {
-  padding-top: 10px; }
-
-.daterangepicker table.table-condensed th:first-child, .daterangepicker table.table-condensed td:first-child {
-  padding-left: 12px; }
-
-.daterangepicker table.table-condensed th:last-child, .daterangepicker table.table-condensed td:last-child {
-  padding-right: 12px; }
-
-.table-condensed > thead > tr > th, .table-condensed > tbody > tr > th, .table-condensed > tfoot > tr > th, .table-condensed > thead > tr > td, .table-condensed > tbody > tr > td, .table-condensed > tfoot > tr > td {
-  padding: 5px 7px;
-  text-align: center; }
-
-.daterangepicker table.table-condensed tbody tr:last-child td {
-  padding-bottom: 10px; }
-
-.daterangepicker.picker_2 table.table-condensed thead tr:first-child {
-  color: inherit; }
-
-.daterangepicker.picker_2 table.table-condensed thead tr {
-  color: #1ABB9C; }
-
-.daterangepicker.picker_3 table.table-condensed thead tr:first-child {
-  background: #1ABB9C;
-  color: #ECF0F1; }
-
-.daterangepicker.picker_4 table.table-condensed tbody td {
-  background: #ECF0F1;
-  color: #34495E;
-  border: 1px solid #fff;
-  padding: 4px 7px; }
-
-.daterangepicker.picker_4 table.table-condensed tbody td.active {
-  background: #536A7F;
-  color: #fff; }
-
-.daterangepicker.picker_4 table.table-condensed thead tr:first-child {
-  background: #34495E;
-  color: #ECF0F1; }
-
-.xdisplay_input {
-  width: 240px;
-  overflow: hidden;
-  padding: 0; }
-
-.xdisplay {
-  background-color: #fff;
-  background-clip: padding-box;
-  border: 1px solid #ccc;
-  margin-bottom: 20px;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 4px;
-  width: 230px;
-  overflow: hidden;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175); }
-
-.daterangepicker.opensright .ranges, .daterangepicker.opensright .calendar, .daterangepicker.openscenter .ranges, .daterangepicker.openscenter .calendar {
-  float: right; }
-
-.daterangepicker table {
-  width: 100%;
-  margin: 0; }
-
-.daterangepicker td, .daterangepicker th {
-  text-align: center;
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-  white-space: nowrap; }
-
-.daterangepicker td.off {
-  color: #999; }
-
-.daterangepicker td.disabled {
-  color: #999; }
-
-.daterangepicker td.available:hover, .daterangepicker th.available:hover {
-  background: #eee;
-  color: #34495E; }
-
-.daterangepicker td.in-range {
-  background: #E4E7EA;
-  border-radius: 0; }
-
-.daterangepicker td.available + td.start-date {
-  border-radius: 4px 0 0 4px; }
-
-.daterangepicker td.in-range + td.end-date {
-  border-radius: 0 4px 4px 0; }
-
-.daterangepicker td.start-date.end-date {
-  border-radius: 4px !important; }
-
-.daterangepicker td.active, .daterangepicker td.active:hover {
-  background-color: #536A7F;
-  color: #fff; }
-
-.daterangepicker td.week, .daterangepicker th.week {
-  font-size: 80%;
-  color: #ccc; }
-
-.daterangepicker select.monthselect, .daterangepicker select.yearselect {
-  font-size: 12px;
-  padding: 1px;
-  height: auto;
-  margin: 0;
-  cursor: default;
-  height: 30px;
-  border: 1px solid #ADB2B5;
-  line-height: 30px;
-  border-radius: 0px !important; }
-
-.daterangepicker select.monthselect {
-  margin-right: 2%;
-  width: 56%; }
-
-.daterangepicker select.yearselect {
-  width: 40%; }
-
-.daterangepicker select.hourselect, .daterangepicker select.minuteselect, .daterangepicker select.ampmselect {
-  width: 50px;
-  margin-bottom: 0; }
-
-.daterangepicker_start_input {
-  float: left; }
-
-.daterangepicker_end_input {
-  float: left;
-  padding-left: 11px; }
-
-.daterangepicker th.month {
-  width: auto; }
-
-.daterangepicker .daterangepicker_start_input label, .daterangepicker .daterangepicker_end_input label {
-  color: #333;
-  display: block;
-  font-size: 11px;
-  font-weight: normal;
-  height: 20px;
-  line-height: 20px;
-  margin-bottom: 2px;
-  text-shadow: #fff 1px 1px 0px;
-  text-transform: uppercase;
-  width: 74px; }
-
-.daterangepicker .ranges input {
-  font-size: 11px; }
-
-.daterangepicker .ranges .input-mini {
-  background-color: #eee;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  color: #555;
-  display: block;
-  font-size: 11px;
-  height: 30px;
-  line-height: 30px;
-  vertical-align: middle;
-  margin: 0 0 10px 0;
-  padding: 0 6px;
-  width: 74px; }
-
-.daterangepicker .ranges .input-mini:hover {
-  cursor: pointer; }
-
-.daterangepicker .ranges ul {
-  list-style: none;
-  margin: 0;
-  padding: 0; }
-
-.daterangepicker .ranges li {
-  font-size: 13px;
-  background: #f5f5f5;
-  border: 1px solid #f5f5f5;
-  color: #536A7F;
-  padding: 3px 12px;
-  margin-bottom: 8px;
-  border-radius: 5px;
-  cursor: pointer; }
-
-.daterangepicker .ranges li.active, .daterangepicker .ranges li:hover {
-  background: #536A7F;
-  border: 1px solid #536A7F;
-  color: #fff; }
-
-.daterangepicker .calendar {
-  display: none;
-  max-width: 270px; }
-
-.daterangepicker.show-calendar .calendar {
-  display: block; }
-
-.daterangepicker .calendar.single .calendar-date {
-  border: none; }
-
-.daterangepicker.single .ranges, .daterangepicker.single .calendar {
-  float: none; }
-
-.daterangepicker .ranges {
-  width: 160px;
-  text-align: left;
-  margin: 4px; }
-
-.daterangepicker .ranges .range_inputs > div {
-  float: left; }
-
-.daterangepicker .ranges .range_inputs > div:nth-child(2) {
-  padding-left: 11px; }
-
-.daterangepicker.opensleft .ranges, .daterangepicker.opensleft .calendar {
-  float: left;
-  margin: 4px; }
-
-.daterangepicker .icon {
-  width: 20px;
-  height: 20px;
-  display: inline-block;
-  vertical-align: middle; }
-
-/** bootstrap-daterangepicker **/
-/** FullCalendar **/
-.fc-state-default {
-  background: #f5f5f5;
-  color: #73879C; }
-
-.fc-state-down,
-.fc-state-active {
-  color: #333;
-  background: #ccc; }
-
-/** /FullCalendar **/
-/** Dropzone.js **/
-.dropzone {
-  min-height: 300px;
-  border: 1px solid #e5e5e5; }
-/** /Dropzone.js **/

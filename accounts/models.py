@@ -80,18 +80,23 @@ class MyUser(AbstractBaseUser, PermissionsMixin, TagMixin):
         return '{0} {1}'.format(self.first_name, self.last_name)
 
     def get_absolute_url(self):
-        """ Returns the url for the user."""
+        """
+        Returns the url for the user.
+        """
         return reverse('profile', kwargs={"username": self.username})
 
     @cached_property
     def get_full_name(self):
-        """Returns the first_name plus the last_name,
-        with a space in between."""
+        """
+        Returns the first_name plus the last_name.
+        """
         return '{0} {1}'.format(self.first_name, self.last_name)
 
     @cached_property
     def get_short_name(self):
-        """Returns the first name for the user."""
+        """
+        Returns the first name for the user.
+        """
         return self.first_name
 
     @cached_property
@@ -103,33 +108,45 @@ class MyUser(AbstractBaseUser, PermissionsMixin, TagMixin):
 
     @property
     def user_profile_pic(self):
-        """Returns the profile picture of a user.
-        If there is no profile picture, a default one will be rendered."""
+        """
+        Returns the profile picture of a user.
+        If there is no profile picture, a default one will be rendered.
+        """
         if self.profile_pic:
             return "{0}{1}".format(settings.MEDIA_URL, self.profile_pic)
         return settings.STATIC_URL + 'img/default-profile-pic.jpg'
 
     @cached_property
     def skills_split(self):
-        """Returns a comma-separated list of the user's skills."""
+        """
+        Returns a comma-separated list of the user's skills.
+        """
         return self.skills.split(',')
 
     @cached_property
     def skills_count(self):
-        """Returns the number of skills the user has."""
+        """
+        Returns the number of skills the user has.
+        """
         return self.skills_split.count()
 
     def has_module_perms(self, app_label):
-        """Does the user have permissions to view the app `app_label`?"""
+        """
+        Does the user have permissions to view the app `app_label`?
+        """
         return True
 
     def has_perm(self, perm, obj=None):
-        """Does the user have a specific permission?"""
+        """
+        Does the user have a specific permission?
+        """
         return True
 
 
 def get_company_logo_path(instance, filename):
-    """Stores the logo in /logos/username/filename."""
+    """
+    Stores the logo in /logos/username/filename.
+    """
     return "/".join(['logos', instance.username, filename])
 
 
@@ -162,32 +179,41 @@ class Company(TimeStampedModel):
         return u'{0}'.format(self.name)
 
     def get_absolute_url(self):
-        """Returns the url for the company."""
+        """
+        Returns the url for the company.
+        """
         return reverse('profile', kwargs={"username": self.username})
 
     @property
     def company_logo(self):
-        """Returns the logo of a company. If there is no logo,
-        a default one will be rendered."""
+        """
+        Returns the logo of a company. If there is no logo,
+        a default one will be rendered.
+        """
         if self.logo:
             return "{0}{1}".format(settings.MEDIA_URL, self.logo)
         return settings.STATIC_URL + 'img/default-profile-pic.jpg'
 
     @cached_property
     def get_collaborators_info(self):
-        """Returns the information for each collaborator as a list."""
+        """
+        Returns the information for each collaborator as a list.
+        """
         return self.collaborators.values(
-            'username', 'first_name', 'last_name',
-            'profile_pic', 'email')
+            'username', 'first_name', 'last_name', 'profile_pic', 'email',)
 
     @cached_property
     def get_collaborators_email(self):
-        """Returns the information for each collaborator as a list."""
+        """
+        Returns the information for each collaborator as a list.
+        """
         return self.collaborators.values_list('email', flat=True)
 
     @property
     def collaborators_count(self):
-        """Returns the number of collaborators in the company."""
+        """
+        Returns the number of collaborators in the company.
+        """
         return self.get_collaborators_info.count()
 
 
@@ -213,17 +239,23 @@ class Experience(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        """Returns the url for the experience."""
+        """
+        Returns the url for the experience.
+        """
         return reverse('accounts:exp_edit', kwargs={"exp_pk": self.pk})
 
     @cached_property
     def experience_start_date(self):
-        """Returns the start date in the format: MM/YYYY"""
+        """
+        Returns the start date in the format: MM/YYYY
+        """
         return self.date_start.strftime("%m/%Y")
 
     @cached_property
     def experience_end_date(self):
-        """Returns the end date in the format: MM/YYYY"""
+        """
+        Returns the end date in the format: MM/YYYY
+        """
         if not self.date_end:
             return "present"
         return self.date_end.strftime("%m/%Y")
@@ -245,7 +277,3 @@ class School(models.Model):
 
     def __str__(self):
         return self.name
-
-    # def get_absolute_url(self):
-    #     """Returns the url for the school."""
-    #     return reverse('school_detail', kwargs={"school_pk": self.pk})

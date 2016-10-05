@@ -21,7 +21,7 @@
                 <div class="featured-post-wide">
                     <!-- <img data-src="holder.js/100%x69/auto/> -->
                     <!-- <img data-src="holder.js/1900x150/auto/{% cycle '#418bca:#fff' '#39dbac:#fff' '#5bc0de:#fff' '#fec503:#fff' '#3a5a97:#fff' '#BE2B2D:#fff' '#CA3DB9:#fff' '#0d8fdb:#fff' %}/text:{{ job.company.name }}" class="img-responsive" alt="Company"> -->
-                    <img data-src="holder.js/1900x150/auto/{% cycle '#354458:#fff' '#3a9ad9:#fff' %}/text:{{ job.company.name }}" class="img-responsive" alt="Company">
+                    <img data-src="holder.js/1900x150/auto/{% cycle '#354458:#fff' '#3a9ad9:#fff' %}/text:{{ job.company.name }}" class="img-responsive" alt="{{ job.company.name }}">
                     <div class="featured-text relative-left">
                         <h3>
                             <a href="{{ job.get_absolute_url }}">{{ job.title }}</a>

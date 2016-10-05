@@ -2,198 +2,156 @@
 {% load staticfiles %}
 
 {% block stylesheets %}
-    <!-- Datatables -->
-    <link href="{% static 'vendors/datatables.net-bs/css/dataTables.bootstrap.min.css' %}" rel="stylesheet">
+  <!-- Datatables -->
+  <link href="{% static 'vendors/datatables.net-bs/css/dataTables.bootstrap.min.css' %}" rel="stylesheet">
 {% endblock stylesheets %}
 
 {% block css %}
-<style>
+  <style>
     div.box {
-        height: 100%;
-        padding: 0px;
-        color: #fff;
-        border: none;
-        background-color: #fff; 
-        box-shadow: rgba(0, 0, 0, 0.0980392) 0px 1px 1px;
-        margin-bottom: 12px;
-    }
-    .box-widget {
-      border: none;
-      position: relative;
-    }
-    .widget-user-2 .box-footer {
-      text-align: center;
-    }
-    .widget-user-2 .widget-user-header {
-      padding: 7px 7px 18px;
-      border-top-right-radius: 3px;
-      border-top-left-radius: 3px;
-    }
-    .widget-user-2 .widget-user-username {
-      margin-top: 5px;
-      margin-bottom: 5px;
-      font-size: 18px;
-      font-weight: 300;
-    }
-    .widget-user-2 .widget-user-desc {
-      margin-top: 0;
-      font-style: italic;
-      font-size: 12px;
-    }
-    .widget-user-2 .widget-user-username,
-    .widget-user-2 .widget-user-desc {
-      margin-left: 75px;
-    }
-    .widget-user-2 .widget-job {
-      margin-left: 0px;
-    }
-    .widget-user-2 .widget-user-desc a{
+      height: 100%;
+      padding: 0px;
       color: #fff;
+      border: none;
+      background-color: #fff; 
+      box-shadow: rgba(0, 0, 0, 0.0980392) 0px 1px 1px;
+      margin-bottom: 12px;
     }
-    .widget-user-2 .widget-user-desc a:hover{
-      color: #D7DBDE;
-    }
-    .widget-user-2 .widget-user-image > img {
-      width: 65px;
-      height: auto;
-      float: left;
-    }
-    .bg-dark {
-      background-color: #3E5367 !important;
-    }
-    .bg-light {
-      background-color: #3a9ad9 !important;
-    }
-    .bg-job {
-      background-color: #DC301C !important;
-    }
-</style>
+  </style>
 {% endblock css %}
 
 {% block title %}KnobLinx / Search Results{% endblock title %}
 
 {% block content %}
-    <section>
-        <div class="right_col" role="main">
-            <div class="">
-                <div class="page-title">
-                    <div class="title_left">
-                        <h3>You searched for: <small style="font-size:0.9em;">{{ query }}</small></h3>
-                    </div>
-                    {% include 'search/_search_bar.html' %}
-                </div>
-                <div class="clearfix"></div>
-                <div class="row" style="padding-bottom:30px;">
-                    <div class="col-md-12 col-sm-12 col-xs-12">
-                        {% if object_list %}
-                            {% if users %}
-                                <div class="col-md-4">
-                                    <h2>Users</h2>
-                                    {% for obj in users %}
-                                        <div class="box box-widget widget-user-2">
-                                            <div class="widget-user-header {% cycle 'bg-dark' 'bg-light' %}">
-                                                <div class="widget-user-image">
-                                                    <img class="img-circle" src="{{ obj.user_profile_pic }}" alt="User Avatar">
-                                                </div>
-                                                <h3 class="widget-user-username">{{ obj.get_full_name }}</h3>
-                                                {% if obj.university %}
-                                                    <h5 class="widget-user-desc">{{ obj.university }}</h5>
-                                                {% else %}
-                                                    <h5 class="widget-user-desc">&nbsp;</h5>
-                                                {% endif %}
-                                            </div>
-                                            <div class="box-footer no-padding">
-                                                <ul class="nav nav-stacked">
-                                                    <li>
-                                                        <a href="{{ obj.get_absolute_url }}" style="color:#444; font-size:1.1em; padding:6px; font-weight:lighter; letter-spacing:7px;">PROFILE</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                            {% if companies %}
-                                <div class="col-md-4">
-                                    <h2>Companies</h2>
-                                    {% for obj in companies %}
-                                        <div class="box box-widget widget-user-2">
-                                            <div class="widget-user-header {% cycle 'bg-light' 'bg-dark' %}">
-                                                <div class="widget-user-image">
-                                                    <img class="img-circle" src="{{ obj.company_logo }}" alt="User Avatar">
-                                                </div>
-                                                <h3 class="widget-user-username">{{ obj.name }}</h3>
-                                                <h5 class="widget-user-desc">
-                                                    <a href="{{ obj.website }}">
-                                                        {{ obj.website }}
-                                                    </a>
-                                                </h5>
-                                            </div>
-                                            <div class="box-footer no-padding">
-                                                <ul class="nav nav-stacked">
-                                                    <li>
-                                                        <a href="{{ obj.get_absolute_url }}" style="color:#444; font-size:1.1em; padding:6px; font-weight:lighter; letter-spacing:7px;">PAGE</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                            {% if jobs %}
-                                <div class="col-md-4">
-                                    <h2>Jobs</h2>
-                                    {% for obj in jobs %}
-                                        <div class="box box-widget widget-user-2">
-                                            <div class="widget-user-header bg-job" style="margin-left: 0px;">
-                                                <h3 class="widget-user-username widget-job">{{ obj.title }}</h3>
-                                                <h5 class="widget-user-desc widget-job">
-                                                    <a href="{{ obj.company.get_absolute_url }}">
-                                                        {{ obj.company.name }}
-                                                    </a>
-                                                </h5>
-                                            </div>
-                                            <div class="box-footer no-padding">
-                                                <ul class="nav nav-stacked">
-                                                    <li>
-                                                        <a href="{{ obj.get_absolute_url }}" style="color:#444; font-size:1.1em; padding:6px; font-weight:lighter; letter-spacing:7px;">DETAILS</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        {% else %}
-                            <h4 style="margin-bottom:3em;">No results found.</h4>
-                            {% if recent_jobs %}
-                                <h2>Recent Job Listings</h2>
-                                {% for obj in recent_jobs %}
-                                    <div class="col-md-4">
-                                        <div class="box box-widget widget-user-2">
-                                            <div class="widget-user-header bg-job" style="margin-left: 0px;">
-                                                <h3 class="widget-user-username widget-job">{{ obj.title }}</h3>
-                                                <h5 class="widget-user-desc widget-job">
-                                                    <a href="{{ obj.company.get_absolute_url }}">
-                                                        {{ obj.company.name }}
-                                                    </a>
-                                                </h5>
-                                            </div>
-                                            <div class="box-footer no-padding">
-                                                <ul class="nav nav-stacked">
-                                                    <li>
-                                                        <a href="{{ obj.get_absolute_url }}" style="color:#444; font-size:1.1em; padding:6px; font-weight:lighter; letter-spacing:7px;">DETAILS</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                            {% endif %}
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
+  <section>
+    <div class="right_col" role="main">
+      <div class="">
+        <div class="page-title">
+          <div class="title_left">
+            <h3>You searched for: <small style="font-size:0.9em;">{{ query }}</small></h3>
+          </div>
+          {% include 'search/_search_bar.html' %}
         </div>
-    </section>
+        <div class="clearfix"></div>
+        <div class="row" style="padding-bottom:30px;">
+          <div class="col-md-12 col-sm-12 col-xs-12">
+            {% if object_list %}
+                {% if users %}
+                  <div class="col-md-4">
+                    <h2>Users</h2>
+                    {% for obj in users %}
+                      <div class="box box-widget widget-user-2">
+                        <div class="widget-user-header {% cycle 'bg-dark' 'bg-light' %}">
+                          <div class="widget-user-image">
+                            <img class="img-circle" src="{{ obj.user_profile_pic }}" alt="User Avatar">
+                          </div>
+                          <h3 class="widget-user-username">{{ obj.get_full_name }}</h3>
+                          {% if obj.university %}
+                            <h5 class="widget-user-desc">{{ obj.university }}</h5>
+                          {% else %}
+                            <h5 class="widget-user-desc">&nbsp;</h5>
+                          {% endif %}
+                        </div>
+                        <div class="box-footer no-padding">
+                          <ul class="nav nav-stacked">
+                            <li>
+                              <a href="{{ obj.get_absolute_url }}" style="color:#444; font-size:1.1em; padding:6px; font-weight:lighter; letter-spacing:7px;">
+                                PROFILE <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i>
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+                {% if companies %}
+                  <div class="col-md-4">
+                    <h2>Companies</h2>
+                    {% for obj in companies %}
+                      <div class="box box-widget widget-user-2">
+                        <div class="widget-user-header {% cycle 'bg-light' 'bg-dark' %}">
+                          <div class="widget-user-image">
+                            <img class="img-circle" src="{{ obj.company_logo }}" alt="User Avatar">
+                          </div>
+                          <h3 class="widget-user-username">{{ obj.name }}</h3>
+                          <h5 class="widget-user-desc">
+                            <a href="{{ obj.website }}">
+                              {{ obj.website }}
+                            </a>
+                          </h5>
+                        </div>
+                        <div class="box-footer no-padding">
+                          <ul class="nav nav-stacked">
+                            <li>
+                              <a href="{{ obj.get_absolute_url }}" style="color:#444; font-size:1.1em; padding:6px; font-weight:lighter; letter-spacing:7px;">
+                                PAGE <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i>
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+                {% if jobs %}
+                  <div class="col-md-4">
+                    <h2>Jobs</h2>
+                    {% for obj in jobs %}
+                      <div class="box box-widget widget-user-2">
+                        <div class="widget-user-header bg-job" style="margin-left: 0px;">
+                          <h3 class="widget-user-username widget-job">{{ obj.title }}</h3>
+                          <h5 class="widget-user-desc widget-job">
+                            <a href="{{ obj.company.get_absolute_url }}">
+                              {{ obj.company.name }}
+                            </a>
+                          </h5>
+                        </div>
+                        <div class="box-footer no-padding">
+                          <ul class="nav nav-stacked">
+                            <li>
+                              <a href="{{ obj.get_absolute_url }}" style="color:#444; font-size:1.1em; padding:6px; font-weight:lighter; letter-spacing:7px;">
+                                DETAILS <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i>
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+            {% else %}
+                <h4 style="margin-bottom:3em;">No results found.</h4>
+                {% if recent_jobs %}
+                  <h2>Recent Job Listings</h2>
+                  {% for obj in recent_jobs %}
+                    <div class="col-md-4">
+                      <div class="box box-widget widget-user-2">
+                        <div class="widget-user-header bg-job" style="margin-left: 0px;">
+                          <h3 class="widget-user-username widget-job">{{ obj.title }}</h3>
+                          <h5 class="widget-user-desc widget-job">
+                            <a href="{{ obj.company.get_absolute_url }}">
+                              {{ obj.company.name }}
+                            </a>
+                          </h5>
+                        </div>
+                        <div class="box-footer no-padding">
+                          <ul class="nav nav-stacked">
+                            <li>
+                              <a href="{{ obj.get_absolute_url }}" style="color:#444; font-size:1.1em; padding:6px; font-weight:lighter; letter-spacing:7px;">
+                                DETAILS
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  {% endfor %}
+                {% endif %}
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 {% endblock content %}

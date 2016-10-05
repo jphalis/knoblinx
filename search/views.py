@@ -22,7 +22,8 @@ class SearchListView(LoginRequiredMixin, ListView):
 
     def jobs(self, query):
         results = Job.objects.filter(
-            Q(is_active=True) &
+            Q(list_date_start__lte=timezone.now()) &
+            Q(list_date_end__gt=timezone.now()) &
             Q(title__icontains=query) |
             Q(location__icontains=query)
         )
@@ -58,15 +59,3 @@ class SearchListView(LoginRequiredMixin, ListView):
         all_results = list(chain(companies, jobs, users))
         # all_results.sort(key=lambda x: x.created)
         return all_results
-
-
-# @login_required
-# @require_http_methods(['GET'])
-# def search_ajax(request):
-#     q = request.GET.get('q', None)
-#     data = {}
-
-#     if q:
-#         users = MyUser.objects.filter(username__icontains=q, is_active=True)
-#         data = [{'username': user.username} for user in users]
-#     return JsonResponse(data, safe=False)

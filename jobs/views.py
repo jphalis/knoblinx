@@ -127,7 +127,7 @@ def edit(request, username, job_pk):
         if form.is_valid():
             form.save()
             messages.success(request,
-                             'Your job has been successfully created!')
+                             'Your job listing has been updated!')
             return HttpResponseRedirect(reverse(
                 'jobs:detail',
                 kwargs={'job_pk': job.pk, 'username': company.username}))

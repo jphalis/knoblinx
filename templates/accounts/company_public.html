@@ -24,7 +24,15 @@
     <div class="right_col" role="main">
         <div class="">
             <div class="page-title">
-                <div class="title_left">&nbsp;</div>
+                <div class="title_left">
+                    {% if user_can_edit %}
+                        <a class="btn btn-default" href="{% url 'accounts:company_settings' company.username %}">
+                            Edit Profile
+                        </a>
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                </div>
                 {% include 'search/_search_bar.html' %}
             </div>
         
@@ -33,17 +41,14 @@
             <div class="row">
                 <div class="col-md-12 col-sm-12 col-xs-12">
                     <div class="x_panel">
-                        {% if user_can_edit %}
-                            <a class="btn btn-info active pull-right" href="{% url 'accounts:company_settings' company.username %}"><i class="fa fa-edit"></i></a>
-                        {% endif %}
                         <div class="x_content">
                             <div class="col-md-12 col-sm-12 col-xs-12">
                                 <div class="row text-center">
                                     {% if company.logo %}
-                                        <img src="{{ company.company_logo }}" class="img-rounded" style="height:150px;" alt="Logo">
+                                        <img src="{{ company.company_logo }}" class="img-rounded" style="height:150px;" alt="{{ company.name }}">
                                         <h3>{{ company.name }}</h3>
                                     {% else %}
-                                        <img data-src="holder.js/1200x100/auto/#354458:#fff/text:{{ company.name }}" class="img-responsive img-rounded" alt="Company">
+                                        <img data-src="holder.js/1200x100/auto/#354458:#fff/text:{{ company.name }}" class="img-responsive img-rounded" alt="{{ company.name }}">
                                     {% endif %}
                                 </div>
                                 <br>

@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.http import (HttpResponseForbidden, HttpResponseRedirect,
                          JsonResponse)
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 from django.views.decorators.cache import cache_page, never_cache
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.http import require_http_methods
@@ -129,7 +130,10 @@ def profile(request, username):
         if company.user == request.user or _is_company_collab.exists():
             _user_can_edit = True
 
-        jobs = Job.objects.own(company=company).filter(is_active=True)
+        jobs = Job.objects.own(company=company).filter(
+            Q(list_date_start__lte=timezone.now()) &
+            Q(list_date_end__gt=timezone.now())
+        )
 
         context = {
             'company': company,
@@ -150,12 +154,16 @@ def company_dash(request, username):
 
     if company.user == user or _is_company_collab:
         jobs = Job.objects.own(company=company)
+        active_job_count = jobs.filter(
+            Q(list_date_start__lte=timezone.now()) &
+            Q(list_date_end__gt=timezone.now())
+        ).count()
 
         context = {
             'company': company,
             'jobs': jobs,
             'jobs_count': jobs.count,
-            'active_job_count': jobs.filter(is_active=True).count(),
+            'active_job_count': active_job_count,
             'collaborator_count': company.collaborators.count() + 1,
             'collaborators': company.get_collaborators_info,
         }
