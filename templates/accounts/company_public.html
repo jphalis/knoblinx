@@ -11,12 +11,10 @@
     <style>
         h5{
             color: #ea0f58;
-            font-weight: 450;
-        }
+            font-weight: 450; }
         p{
             color: #333;
-            font-size: 1em;
-        }
+            font-size: 1em; }
     </style>
 {% endblock css %}
 
@@ -26,9 +24,7 @@
             <div class="page-title">
                 <div class="title_left">
                     {% if user_can_edit %}
-                        <a class="btn btn-default" href="{% url 'accounts:company_settings' company.username %}">
-                            Edit Profile
-                        </a>
+                        <a class="btn btn-default" href="{{ company.get_edit_url }}">Edit Profile</a>
                     {% else %}
                         &nbsp;
                     {% endif %}

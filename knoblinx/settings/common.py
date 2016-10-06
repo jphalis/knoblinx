@@ -65,6 +65,7 @@ INSTALLED_APPS = (
     'widget_tweaks',
 
     'accounts',
+    'activity',
     'authentication',
     'jobs',
     'search',

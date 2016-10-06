@@ -12,6 +12,7 @@ from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.http import require_http_methods
 from django.views.generic.edit import DeleteView
 
+from activity.models import Activity
 from core.mixins import LoginRequiredMixin
 from jobs.models import Job
 from .forms import (AccountSettingsForm, AddCollaboratorForm,
@@ -167,6 +168,15 @@ def company_dash(request, username):
             'collaborator_count': company.collaborators.count() + 1,
             'collaborators': company.get_collaborators_info,
         }
+
+        try:
+            activity = Activity.objects.own(company=company)[:12]
+        except:
+            activity = None
+
+        if activity:
+            context.update({'activity': activity})
+
         return render(request, 'accounts/company_dash.html', context)
     return HttpResponseForbidden()
 
@@ -266,7 +276,6 @@ def company_settings(request, username):
             'collab_form': collab_form,
             'company': company,
             'form': form,
-            'initial_collaborators': company.get_collaborators_email,
         }
         return render(request, 'accounts/company_settings.html', context)
     return HttpResponseForbidden()

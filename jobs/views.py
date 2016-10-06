@@ -7,6 +7,7 @@ from django.views.decorators.cache import cache_page
 from django.views.generic.edit import DeleteView
 
 from accounts.models import Company
+from activity.signals import activity_item
 from core.mixins import LoginRequiredMixin
 from .forms import ApplicantApplyForm, JobCreateForm
 from .models import Applicant, Job
@@ -126,6 +127,11 @@ def edit(request, username, job_pk):
 
         if form.is_valid():
             form.save()
+            activity_item.send(
+                company,
+                verb='Edited a job listing.',
+                target=job,
+            )
             messages.success(request,
                              'Your job listing has been updated!')
             return HttpResponseRedirect(reverse(
@@ -173,5 +179,10 @@ class Delete(DeleteView, LoginRequiredMixin):
         success_url = self.get_success_url()
         self._delete_applicants()
         self.object.delete()
+        activity_item.send(
+            self.object.company,
+            verb='Deleted a job listing.',
+            target=self.object,
+        )
         messages.success(self.request, self.success_message)
         return HttpResponseRedirect(success_url)

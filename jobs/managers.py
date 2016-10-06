@@ -6,6 +6,8 @@ from django.db import models
 from django.db.models import Count, Q
 from django.utils import timezone
 
+from activity.signals import activity_item
+
 # Create your managers here.
 
 
@@ -110,4 +112,9 @@ class JobManager(models.Manager):
                          description=description,
                          **extra_fields)
         job.save(using=self._db)
+        activity_item.send(
+            company,
+            verb='Created a new job listing.',
+            target=job,
+        )
         return job

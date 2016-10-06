@@ -12,15 +12,15 @@
     <!-- top tiles -->
     <div class="row tile_count">
       <div class="col-md-4 col-sm-4 col-xs-12 tile_stats_count">
-        <span class="count_top"><i class="fa fa-user"></i> Jobs Created</span>
+        <span class="count_top"><i class="fa fa-briefcase" aria-hidden="true"></i> Jobs Created</span>
         <div class="count">{{ jobs_count }}</div>
       </div>
       <div class="col-md-4 col-sm-4 col-xs-12 tile_stats_count">
-        <span class="count_top"><i class="fa fa-user"></i> Active Jobs</span>
+        <span class="count_top"><i class="fa fa-briefcase" aria-hidden="true"></i> Active Jobs</span>
         <div class="count green">{{ active_job_count }}</div>
       </div>
       <div class="col-md-4 col-sm-4 col-xs-12 tile_stats_count">
-        <span class="count_top"><i class="fa fa-user"></i> Company Administrators</span>
+        <span class="count_top"><i class="fa fa-user" aria-hidden="true"></i> Company Administrators</span>
         <div class="count">{{ collaborator_count }}</div>
       </div>
     </div>
@@ -92,34 +92,27 @@
             </div>
             <div class="x_content">
               <div class="dashboard-widget-content">
-                <ul class="list-unstyled timeline widget">
-                  <li>
-                    <div class="block">
-                      <div class="block_content">
-                        <h2 class="title"><a>Who Needs Sundance When You’ve Got&nbsp;Crowdfunding?</a></h2>
-                        <div class="byline">
-                          <span>13 hours ago</span> by <a>Jane Smith</a>
+                {% if activity %}
+                  <ul class="list-unstyled timeline widget">
+                    {% for obj in activity %}
+                      <li>
+                        <div class="block">
+                          <div class="block_content">
+                            <h2 class="title">
+                              {% if obj.target_object %}
+                                <a href="{{ obj.get_target_url }}">{{ obj.target_object }}</a>
+                              {% endif %}
+                            </h2>
+                            <div class="byline"><span>{{ obj.time_since }}</span></div>
+                            <p class="excerpt">{{ obj }}</p>
+                          </div>
                         </div>
-                        <p class="excerpt">
-                          Film festivals used to be do-or-die moments for movie makers. They were where you met the producers that could fund your project, and if the buyers liked your flick, they’d pay to Fast-forward and… <a>Read&nbsp;More</a>
-                        </p>
-                      </div>
-                    </div>
-                   </li>
-                   <li>
-                    <div class="block">
-                      <div class="block_content">
-                        <h2 class="title"><a>Who Needs Sundance When You’ve Got&nbsp;Crowdfunding?</a></h2>
-                        <div class="byline">
-                          <span>13 hours ago</span> by <a>Jane Smith</a>
-                        </div>
-                        <p class="excerpt">
-                          Film festivals used to be do-or-die moments for movie makers. They were where you met the producers that could fund your project, and if the buyers liked your flick, they’d pay to Fast-forward and… <a>Read&nbsp;More</a>
-                        </p>
-                      </div>
-                    </div>
-                   </li>
-                </ul>
+                       </li>
+                     {% endfor %}
+                  </ul>
+                {% else %}
+                  <h4>No new activity.</h4>
+                {% endif %}
               </div>
             </div>
           </div>

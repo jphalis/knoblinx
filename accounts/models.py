@@ -184,6 +184,13 @@ class Company(TimeStampedModel):
         """
         return reverse('profile', kwargs={"username": self.username})
 
+    def get_edit_url(self):
+        """
+        Returns the url for the company settings.
+        """
+        return reverse('accounts:company_settings',
+                       kwargs={"username": self.username})
+
     @property
     def company_logo(self):
         """
@@ -201,13 +208,6 @@ class Company(TimeStampedModel):
         """
         return self.collaborators.values(
             'username', 'first_name', 'last_name', 'profile_pic', 'email',)
-
-    @cached_property
-    def get_collaborators_email(self):
-        """
-        Returns the information for each collaborator as a list.
-        """
-        return self.collaborators.values_list('email', flat=True)
 
     @property
     def collaborators_count(self):

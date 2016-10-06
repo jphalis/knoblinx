@@ -134,7 +134,6 @@ def get_company_ajax(request):
     try:
         company = Company.objects.get(Q(user=user) | Q(collaborators=user))
         data.update({
-            'company_logo': company.company_logo,
             'company_name': company.name,
             'company_username': company.username,
         })
