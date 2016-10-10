@@ -58,6 +58,14 @@ def apply(request, job_pk):
     if not user.gpa:
         messages.error(request, 'Please add your GPA first.')
         return redirect('accounts:account_settings')
+    elif not user.university:
+        messages.error(request, 'Please add your university first.')
+        return redirect('accounts:account_settings')
+    elif not user.is_confirmed:
+        messages.error(request, 'Please confirm your account before applying.')
+        return redirect(reverse(
+            'jobs:detail',
+            kwargs={'username': job.company.username, 'job_pk': job_pk}))
 
     if not job.applicants.filter(pk=user.pk).exists():
         form = ApplicantApplyForm(request.POST or None,

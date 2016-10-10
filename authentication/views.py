@@ -33,6 +33,7 @@ def auth_login_register(request):
 
     # Login form
     login_form = LoginForm(request.POST or None)
+
     if login_form.is_valid() and 'login_form' in request.POST:
         email = login_form.cleaned_data['email']
         password = login_form.cleaned_data['password']
@@ -46,6 +47,7 @@ def auth_login_register(request):
 
     # Registration form
     register_form = SignupForm(request.POST or None)
+
     if register_form.is_valid() and 'register_form' in request.POST:
         email = register_form.cleaned_data['email']
         password = register_form.cleaned_data['password_confirm']
@@ -57,6 +59,7 @@ def auth_login_register(request):
         new_user.set_password(password)
         new_user.save()
         user = authenticate(email=email, password=password)
+
         if user is not None:
             login(request, user)
 
@@ -86,6 +89,7 @@ def company_register(request):
 
     form = CompanySignupForm(request.POST or None,
                              request.FILES or None)
+
     if form.is_valid():
         new_company = Company.objects.create(
             user=user,
@@ -105,6 +109,7 @@ def company_register(request):
 def account_confirm(request, uidb64=None, token=None,
                     token_generator=default_token_generator):
     assert uidb64 is not None and token is not None
+
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = MyUser._default_manager.get(pk=uid)
@@ -115,9 +120,8 @@ def account_confirm(request, uidb64=None, token=None,
 
     if user is not None and token_generator.check_token(user, token):
         validlink = True
-        # user.is_confirmed = True
-        # user.save()
         confirm = EmailConfirmation.objects.confirm(user=user)
+
         if confirm:
             messages.success(request, "Thank you for confirming your account!")
             return redirect('home')
@@ -137,6 +141,7 @@ def password_reset(request, from_email=settings.DEFAULT_FROM_EMAIL,
     else:
         if request.method == "POST":
             form = password_reset_form(request.POST)
+
             if form.is_valid():
                 opts = {
                     'use_https': request.is_secure(),
@@ -169,6 +174,7 @@ def password_reset_confirm(request, uidb64=None, token=None,
         return HttpResponseForbidden()
 
     assert uidb64 is not None and token is not None
+
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = MyUser._default_manager.get(pk=uid)
@@ -178,7 +184,9 @@ def password_reset_confirm(request, uidb64=None, token=None,
     if user is not None and token_generator.check_token(user, token):
         validlink = True
         form = PasswordResetTokenForm(request.POST or None, user=user)
+
         if request.method == 'POST':
+
             if form.is_valid():
                 form.save()
                 messages.success(request, "Password reset successfully.")

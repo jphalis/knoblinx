@@ -9,6 +9,8 @@ from django.template import loader
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
+from accounts.models import MyUser
+
 # Create your managers here.
 
 
@@ -23,8 +25,10 @@ class EmailConfirmationManager(models.Manager):
             from_email=settings.DEFAULT_FROM_EMAIL,
             html_email_template_name='auth/account_confirm_email.html'):
 
+        _user = MyUser.objects.get(pk=user.user.pk)
+
         obj, created = self.model.objects.using('default').get_or_create(
-            user=user, key=token_generator.make_token(user))
+            user=_user, key=token_generator.make_token(user=_user))
 
         context = {
             'email': obj.user.email,
@@ -32,7 +36,7 @@ class EmailConfirmationManager(models.Manager):
             'site_name': request.META['SERVER_NAME'],
             'uid': urlsafe_base64_encode(force_bytes(obj.user.pk)),
             'user': obj.user,
-            'token': token_generator.make_token(obj.user),
+            'token': obj.key,
             'protocol': 'https' if use_https else 'http',
         }
         subject = subject_template_name

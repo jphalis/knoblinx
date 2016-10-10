@@ -24,8 +24,8 @@ class EmailConfirmationAdmin(admin.ModelAdmin):
         """
         Re-sends a confirmation email to the selected users.
         """
-        for user in queryset:
-            self.model.send_confirmation(user)
+        for obj in queryset:
+            self.model.objects.send_confirmation(user=obj, request=request)
     resend.short_description = _("Re-send confirmation email")
 
 

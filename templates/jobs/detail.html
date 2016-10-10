@@ -53,6 +53,18 @@
                                 <a href="{% url 'accounts:account_settings' %}" class="btn btn-info btn-block">
                                     Add your GPA first <i class="fa fa-arrow-right" aria-hidden="true"></i>
                                 </a>
+                            {% elif not user.university %}
+                                <a href="{% url 'accounts:account_settings' %}" class="btn btn-info btn-block">
+                                    Add your university first <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                                </a>
+                            {% elif not user.university %}
+                                <a href="{% url 'accounts:account_settings' %}" class="btn btn-info btn-block">
+                                    Confirm your account first <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                                </a>
+                            {% elif not user.is_confirmed %}
+                                <button type="button" class="btn btn-block btn-warning" disabled="disabled">
+                                    Please confirm your account first <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                                </button>
                             {% else %}
                                 <a href="{% url 'jobs:apply' job.pk %}" class="btn btn-success btn-block">
                                     Apply For Position <i class="fa fa-check" aria-hidden="true"></i>
