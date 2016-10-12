@@ -13,6 +13,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic.edit import DeleteView
 
 from activity.models import Activity
+from activity.signals import activity_item
 from core.mixins import LoginRequiredMixin
 from jobs.models import Job
 from .forms import (AccountSettingsForm, AddCollaboratorForm,
@@ -224,6 +225,11 @@ def remove_collab(request):
     try:
         user = company.collaborators.get(pk=request.POST.get('user_pk'))
         company.collaborators.remove(user)
+        activity_item.send(
+            company,
+            verb='Removed a collaborator.',
+            target=user,
+        )
     except:
         user = None
     return JsonResponse({})
@@ -260,6 +266,11 @@ def company_settings(request, username):
 
                         if new_collab:
                             company.collaborators.add(new_collab[0])
+                            activity_item.send(
+                                company,
+                                verb='Added a collaborator.',
+                                target=new_collab[0],
+                            )
                             messages.success(
                                 request,
                                 "User has been added as a collaborator.")

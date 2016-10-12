@@ -12,7 +12,15 @@
 {% block css %}
     <style>
         body {
-            background: #0f1f33;
+            /*background: #0f1f33;*/
+            background-image: url({% static 'img/skin_background.jpg' %});
+            background-repeat: no-repeat;
+            background-position: 50% 50%;
+            -ms-filter: "progid:DXImageTransform.Microsoft.gradient (GradientType=0, startColorstr= #379BE8, endColorstr= #1241af)";
+            background: linear-gradient(to top right, rgba(18, 142, 212, 0.57) 0%, rgba(36, 156, 221, 0) 50%, rgba(70, 116, 235, 0.3) 75%, rgba(24, 53, 211, 0.8) 100%), linear-gradient(to bottom right, rgba(13, 65, 175, 0.5) 100%, rgba(19, 101, 193, 0.5) 25%, rgba(94, 193, 255, 0.4) 53%, rgba(63, 175, 241, 0.6) 70%, rgba(88, 92, 252, 1) 95%, rgba(108, 92, 251, 1) 100%), url({% static 'img/skin_background.jpg' %}) 50% 50% no-repeat;
+            background-size: cover;
+            background-color: #0E77CC;
+            background-attachment: fixed; }
     </style>
 {% endblock css %}
 
@@ -46,12 +54,13 @@
                             <p class="change_link">Not a member?
                                 <a href="#signup" class="to_register"> Join now </a>
                             </p>
-                            <p class="change_link"><a href="{% url 'authentication:password_reset' %}">Forgot your password?</a></p>
-                            <div class="clearfix"></div>
+                            <p class="change_link">
+                                <a href="{% url 'authentication:password_reset' %}">Forgot your password?</a>
+                            </p>
                             <br/>
                             <div>
-                                <h1>KnobLinx</h1>
-                                <p>
+                                <h1 class="login_title">KnobLinx</h1>
+                                <p class="login_copyright">
                                     ©2016 All Rights Reserved. 
                                     <a href="{% url 'privacy_policy' %}">Privacy</a> and 
                                     <a href="{% url 'terms_of_use' %}">Terms</a>
@@ -97,15 +106,13 @@
                         <p class="change_link">Already on KnobLinx?
                             <a href="#signin" class="to_register"> Log in </a>
                         </p>
-
-                        <div class="clearfix"></div>
                         <br/>
-
                         <div>
-                            <h1>KnobLinx</h1>
-                            <p>
+                            <h1 class="login_title">KnobLinx</h1>
+                            <p class="login_copyright">
                                 ©2016 All Rights Reserved. 
-                                <a href="{% url 'privacy_policy' %}">Privacy</a> and <a href="{% url 'terms_of_use' %}">Terms</a>
+                                <a href="{% url 'privacy_policy' %}">Privacy</a> and 
+                                <a href="{% url 'terms_of_use' %}">Terms</a>
                             </p>
                         </div>
                     </div>

@@ -18,6 +18,7 @@ def generate_data(request):
     from django.contrib import messages
     from django.shortcuts import redirect
     from accounts.models import MyUser, School
+    from activity.signals import activity_item
 
     # Create demo user
     if not MyUser.objects.filter(email='demo@demo.com').exists():
@@ -106,7 +107,7 @@ def generate_data(request):
     ]
     for job in jobs:
         if not Job.objects.filter(title=job[1]).exists():
-            Job.objects.create(
+            obj = Job.objects.create(
                 company=job[0],
                 title=job[1],
                 contact_email=contact_email,
@@ -114,6 +115,11 @@ def generate_data(request):
                 location=job[3],
                 list_date_start=job[4],
                 list_date_end=job[5]
+            )
+            activity_item.send(
+                job[0],
+                verb='Created a new job listing.',
+                target=obj,
             )
 
     messages.success(request, 'Data generated.')

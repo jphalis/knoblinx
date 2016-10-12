@@ -1,9 +1,12 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse, reverse_lazy
-from django.http import HttpResponseForbidden, HttpResponseRedirect
+from django.db.models import Q
+from django.http import (HttpResponseForbidden, HttpResponseRedirect,
+                         JsonResponse)
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import cache_page
+from django.views.decorators.http import require_http_methods
 from django.views.generic.edit import DeleteView
 
 from accounts.models import Company
@@ -13,6 +16,46 @@ from .forms import ApplicantApplyForm, JobCreateForm
 from .models import Applicant, Job
 
 # Create your views here.
+
+
+@login_required
+@require_http_methods(['GET'])
+def report_filter(request, job_pk, username):
+    user = request.user
+    gpa = request.GET.get('gpa', None)
+
+    if gpa:
+        pass
+        # do something
+
+    data = {}
+
+    try:
+        company = Company.objects.get(Q(user=user) | Q(collaborators=user))
+        data.update({
+            'company_name': company.name,
+            'company_username': company.username,
+        })
+    except:
+        company = None
+    return JsonResponse(data)
+
+
+@login_required
+@cache_page(60 * 3)
+def report(request, job_pk, username):
+    user = request.user
+    job = get_object_or_404(Job, pk=job_pk)
+    _is_company_collab = job.company.collaborators.filter(pk=user.pk).exists()
+
+    if job.company.user == user or _is_company_collab:
+
+        context = {
+            'applicants': job.applicants.all(),
+            'job': job,
+        }
+        return render(request, 'jobs/report.html', context)
+    return HttpResponseForbidden()
 
 
 @login_required

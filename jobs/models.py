@@ -20,7 +20,7 @@ def get_resume_path(instance, filename):
     """
     Stores the resume in /applicant_resumes/username/filename.
     """
-    return "/".join(['applicant_resumes', instance.username, filename])
+    return "/".join(['applicant_resumes', instance.user.username, filename])
 
 
 @python_2_unicode_compatible
@@ -92,6 +92,14 @@ class Job(TimeStampedModel):
         Returns the delete url for the job.
         """
         return reverse('jobs:delete', kwargs={"job_pk": self.pk})
+
+    def get_report_url(self):
+        """
+        Returns the report url for the job.
+        """
+        return reverse('jobs:report',
+                       kwargs={"username": self.company.username,
+                               "job_pk": self.pk})
 
     @cached_property
     def get_applicants_info(self):

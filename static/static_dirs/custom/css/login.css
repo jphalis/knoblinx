@@ -1,4 +1,19 @@
 /** login **/
+.change_link {
+  color: #fff;
+}
+.change_link a {
+  color: #fff;
+}
+.login_title {
+  color: #fff;
+}
+.login_copyright {
+  color: #cecece;
+}
+.login_copyright a {
+  color: #fff;
+}
 .legend {
   position: relative;
   width: 100%;

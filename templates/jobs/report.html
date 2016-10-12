@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}KnobLinx / Job Report{% endblock title %}
+
+{% block stylesheets %}
+  <link href="{% static 'vendors/datatables.net-bs/css/dataTables.bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'vendors/slider/slider.css' %}" rel="stylesheet" >
+{% endblock stylesheets %}
+
+{% block css %}
+  <style>
+    .slider-handle {
+      background: #2a3f54; } 
+    .slider-selection {
+      background: #2a3f54; }
+  </style>
+{% endblock css %}
+
+{% block content %}
+  <div class="right_col" role="main">
+    <div class="">
+      <div class="page-title">
+        <div class="title_left"><h3>{{ job.title }} <small>Report</small></h3></div>
+      </div>
+  
+      <div class="clearfix"></div>
+
+      <!-- applicants -->
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="x_panel">
+            <div class="x_title">
+              <h2>Applicants</h2>
+              <!-- <ul class="nav navbar-right panel_toolbox">
+                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+              </ul> -->
+              <div class="clearfix"></div>
+            </div>
+            <div class="clearfix"></div>
+            <p>
+              <span style="margin-right:1.2em;">Minimum GPA: </span>
+              <input id="gpa-slider" class="slider form-control" data-slider-id='gpa-slider' type="text" />
+            </p>
+            <div class="clearfix"></div>
+            <div class="x_content">
+              <table id="datatable-buttons" class="table table-striped jambo_table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>University</th>
+                    <th>GPA</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                 {% for obj in applicants %}
+                    <tr>
+                      <td><a href="{{ obj.user.get_absolute_url }}">{{ obj.name }}</a></td>
+                      <td><a href="mailto:{{ obj.email }}">{{ obj.email }}</a></td>
+                      <td>{{ obj.university }}</td>
+                      <td>{{ obj.user.gpa }}</td>
+                    </tr>
+                  {% endfor %}
+                  <tr>
+                    <td>Bob Smith</td>
+                    <td>email@email.com</td>
+                    <td>Boston College</td>
+                    <td>4.0</td>
+                  </tr>
+                  <tr>
+                    <td>Jane Doe</td>
+                    <td>email@email.com</td>
+                    <td>Harvard College</td>
+                    <td>3.72</td>
+                  </tr>
+                  <tr>
+                    <td>Jessica Stiles</td>
+                    <td>email@email.com</td>
+                    <td>OK College</td>
+                    <td>2.6</td>
+                  </tr>
+                  <tr>
+                    <td>Christian Smith</td>
+                    <td>email@email.com</td>
+                    <td>Bill Nye College</td>
+                    <td>3.21</td>
+                  </tr>
+                  <tr>
+                    <td>Maggie Essner</td>
+                    <td>email@email.com</td>
+                    <td>Penn State College</td>
+                    <td>3.63</td>
+                  </tr>
+                  <tr>
+                    <td>Miranda Cosgrove</td>
+                    <td>email@email.com</td>
+                    <td>Kentucky College</td>
+                    <td>3.33</td>
+                  </tr>
+                  <tr>
+                    <td>Lauren Gregory</td>
+                    <td>email@email.com</td>
+                    <td>Fordham College</td>
+                    <td>3.92</td>
+                  </tr>
+                  <tr>
+                    <td>Krissy Gregory</td>
+                    <td>email@email.com</td>
+                    <td>Fordham College</td>
+                    <td>3.91</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /applicants -->
+      <br>
+      <br>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block js %}
+  <script src="{% static 'vendors/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'vendors/datatables.net-bs/js/dataTables.bootstrap.min.js' %}"></script>
+  <script src="{% static 'vendors/datatables.net-buttons/js/dataTables.buttons.min.js' %}"></script>
+  <script src="{% static 'vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js' %}"></script>
+  <script src="{% static 'vendors/datatables.net-buttons/js/buttons.flash.min.js' %}"></script>
+  <script src="{% static 'vendors/datatables.net-buttons/js/buttons.html5.min.js' %}"></script>
+  <script src="{% static 'vendors/datatables.net-buttons/js/buttons.print.min.js' %}"></script>
+  <script src="{% static 'vendors/jszip/jszip.min.js' %}"></script>
+  <script src="{% static 'vendors/pdfmake/pdfmake.min.js' %}"></script>
+  <script src="{% static 'vendors/pdfmake/vfs_fonts.js' %}"></script>
+  <script src="{% static 'vendors/slider/bootstrap-slider.js' %}"></script>
+{% endblock js %}
+
+{% block scripts %}
+  <script>
+    $(document).ready(function($) {
+      var handleDataTableButtons = function() {
+        if ($("#datatable-buttons").length) {
+          $("#datatable-buttons").DataTable({
+            dom: "Bfrtip",
+            buttons: [
+              {
+                extend: "copy",
+                className: "btn-sm"
+              },
+              {
+                extend: "csv",
+                className: "btn-sm"
+              },
+              {
+                extend: "excel",
+                className: "btn-sm"
+              },
+              {
+                extend: "pdfHtml5",
+                className: "btn-sm"
+              },
+              {
+                extend: "print",
+                className: "btn-sm"
+              },
+            ],
+            responsive: true
+          });
+        }
+      };
+
+      TableManageButtons = function() {
+        "use strict";
+        return {
+          init: function() {
+            handleDataTableButtons();
+          }
+        };
+      }();
+
+      TableManageButtons.init();
+
+      $("#gpa-slider").slider({
+          step: 0.01,
+          value: 0,
+          min: 0,
+          max: 4,
+      });
+
+      // $.ajax({
+      //   url: "/api/apartment/search",
+      //   type: "GET",
+      //   data: {property: ..., rooms: ..., price: ...},
+      //   success: function(response) {
+      //     //Do Something
+      //   },
+      //   error: function(xhr) {
+      //     //Do Something to handle error
+      //   }
+      // });
+    });
+  </script>
+{% endblock scripts %}
