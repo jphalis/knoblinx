@@ -42,6 +42,7 @@
             <p>
               <span style="margin-right:1.2em;">Minimum GPA: </span>
               <input id="gpa-slider" class="slider form-control" data-slider-id='gpa-slider' type="text" />
+              <span id="gpa-value" style="margin-left:1em;">0.00</span>
             </p>
             <div class="clearfix"></div>
             <div class="x_content">
@@ -64,54 +65,6 @@
                       <td>{{ obj.user.gpa }}</td>
                     </tr>
                   {% endfor %}
-                  <tr>
-                    <td>Bob Smith</td>
-                    <td>email@email.com</td>
-                    <td>Boston College</td>
-                    <td>4.0</td>
-                  </tr>
-                  <tr>
-                    <td>Jane Doe</td>
-                    <td>email@email.com</td>
-                    <td>Harvard College</td>
-                    <td>3.72</td>
-                  </tr>
-                  <tr>
-                    <td>Jessica Stiles</td>
-                    <td>email@email.com</td>
-                    <td>OK College</td>
-                    <td>2.6</td>
-                  </tr>
-                  <tr>
-                    <td>Christian Smith</td>
-                    <td>email@email.com</td>
-                    <td>Bill Nye College</td>
-                    <td>3.21</td>
-                  </tr>
-                  <tr>
-                    <td>Maggie Essner</td>
-                    <td>email@email.com</td>
-                    <td>Penn State College</td>
-                    <td>3.63</td>
-                  </tr>
-                  <tr>
-                    <td>Miranda Cosgrove</td>
-                    <td>email@email.com</td>
-                    <td>Kentucky College</td>
-                    <td>3.33</td>
-                  </tr>
-                  <tr>
-                    <td>Lauren Gregory</td>
-                    <td>email@email.com</td>
-                    <td>Fordham College</td>
-                    <td>3.92</td>
-                  </tr>
-                  <tr>
-                    <td>Krissy Gregory</td>
-                    <td>email@email.com</td>
-                    <td>Fordham College</td>
-                    <td>3.91</td>
-                  </tr>
                 </tbody>
               </table>
             </div>
@@ -142,6 +95,7 @@
 {% block scripts %}
   <script>
     $(document).ready(function($) {
+      // DataTable buttons
       var handleDataTableButtons = function() {
         if ($("#datatable-buttons").length) {
           $("#datatable-buttons").DataTable({
@@ -184,6 +138,7 @@
 
       TableManageButtons.init();
 
+      // Slider functions
       $("#gpa-slider").slider({
           step: 0.01,
           value: 0,
@@ -191,17 +146,26 @@
           max: 4,
       });
 
-      // $.ajax({
-      //   url: "/api/apartment/search",
-      //   type: "GET",
-      //   data: {property: ..., rooms: ..., price: ...},
-      //   success: function(response) {
-      //     //Do Something
-      //   },
-      //   error: function(xhr) {
-      //     //Do Something to handle error
-      //   }
-      // });
+      var mySlider = $("input.slider").slider();
+
+      $.fn.dataTable.ext.search.push(
+          function (settings, data, dataIndex) {
+              var min = parseFloat( mySlider.slider('getValue'), 0 );
+              var gpa = parseFloat( data[3] ) || 0; // use data for the gpa column
+       
+              if (min <= gpa) { 
+                return true; 
+              }
+              return false;
+          }
+      );
+
+      mySlider.on('slide', function() {
+        var value = mySlider.slider('getValue');
+        $('#gpa-value').html(value);
+        $("#datatable-buttons").DataTable().draw();
+      });
+
     });
   </script>
 {% endblock scripts %}
