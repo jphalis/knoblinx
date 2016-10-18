@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=120)),
                 ('email', models.EmailField(max_length=120)),
                 ('university', models.CharField(max_length=200)),
-                ('cover_letter', models.TextField(blank=True, max_length=1000)),
+                ('cover_letter', models.TextField(blank=True, max_length=5000)),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
             options={

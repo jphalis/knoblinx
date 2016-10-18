@@ -27,7 +27,7 @@ class ApplicantApplyForm(forms.ModelForm):
                    'class': 'textarea editor-cls form-control',
                    'name': 'cover_letter',
                    'placeholder': 'Leave a message for the employer'}),
-        max_length=1000,
+        max_length=5000,
         required=False
     )
 

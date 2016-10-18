@@ -56,7 +56,7 @@ class Job(TimeStampedModel):
     title = models.CharField(max_length=120)
     location = models.CharField(max_length=120)
     contact_email = models.EmailField(max_length=120, null=True)
-    description = models.TextField(max_length=1000)
+    description = models.TextField(max_length=5000)
 
     list_date_start = models.DateTimeField(_('Listing Start Date'), null=True)
     list_date_end = models.DateTimeField(_('Listing Expiration'), null=True)
