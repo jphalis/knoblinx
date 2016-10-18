@@ -53,6 +53,8 @@
                     <th>Email</th>
                     <th>University</th>
                     <th>GPA</th>
+                    <th>Resume</th>
+                    <th>Cover Letter</th>
                   </tr>
                 </thead>
 
@@ -63,6 +65,32 @@
                       <td><a href="mailto:{{ obj.email }}">{{ obj.email }}</a></td>
                       <td>{{ obj.university }}</td>
                       <td>{{ obj.user.gpa }}</td>
+                      <td><a href="{{ obj.resume.url }}" download>Download</a></td>
+                      <td>
+                        {% if obj.cover_letter %}
+                          <a href="#" data-toggle="modal" data-target="#coverLetterModal">View</a>
+                          <!-- cover letter modal -->
+                          <div class="modal fade" id="coverLetterModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal-dialog" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                  <h4 class="modal-title" id="myModalLabel">{{ obj.name }} Cover Letter</h4>
+                                </div>
+                                <div class="modal-body">
+                                  {{ obj.cover_letter }}
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- /cover letter modal -->
+                        {% else %}
+                          None
+                        {% endif %}
+                      </td>
                     </tr>
                   {% endfor %}
                 </tbody>
@@ -103,23 +131,38 @@
             buttons: [
               {
                 extend: "copy",
-                className: "btn-sm"
+                className: "btn-sm",
+                exportOptions: {
+                  columns: [0,1,2,3]
+                }
               },
               {
                 extend: "csv",
-                className: "btn-sm"
+                className: "btn-sm",
+                exportOptions: {
+                  columns: [0,1,2,3]
+                }
               },
               {
                 extend: "excel",
-                className: "btn-sm"
+                className: "btn-sm",
+                exportOptions: {
+                  columns: [0,1,2,3]
+                }
               },
               {
                 extend: "pdfHtml5",
-                className: "btn-sm"
+                className: "btn-sm",
+                exportOptions: {
+                  columns: [0,1,2,3]
+                }
               },
               {
                 extend: "print",
-                className: "btn-sm"
+                className: "btn-sm",
+                exportOptions: {
+                  columns: [0,1,2,3]
+                }
               },
             ],
             responsive: true
