@@ -9,7 +9,6 @@
  * http://www.codrops.com
  */
 ;( function( window ) {
-	
 	'use strict';
 
 	var support = { animations : Modernizr.cssanimations },
