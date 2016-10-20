@@ -6,13 +6,14 @@ from django.db import models
 from django.db.models import Count, Q
 from django.utils import timezone
 
+from accounts.models import School
 from activity.signals import activity_item
 
 # Create your managers here.
 
 
 class ApplicantManager(models.Manager):
-    def create(self, user, resume, name, email, university, cover_letter=None,
+    def create(self, user, resume, name, email, university, cover_letter='',
                **extra_fields):
         """
         Creates an applicant.
@@ -95,8 +96,9 @@ class JobManager(models.Manager):
             .order_by('-applicants__created')
 
     def create(self, company, title, contact_email, location,
-               list_date_start, list_date_end, description='',
-               min_gpa=0.00, universities='', **extra_fields):
+               description, list_date_start, list_date_end,
+               min_gpa=0.00, universities=School.objects.active(),
+               **extra_fields):
         """
         Creates a job posting with a default list date of now
         and removal date of 21 days later.
@@ -119,13 +121,14 @@ class JobManager(models.Manager):
         job = self.model(company=company,
                          title=title,
                          contact_email=contact_email,
-                         min_gpa=min_gpa,
-                         universities=universities,
                          location=location,
+                         description=description,
                          list_date_start=start_date,
                          list_date_end=end_date,
-                         description=description,
+                         min_gpa=min_gpa,
                          **extra_fields)
+        job.save(using=self._db)
+        job.universities = universities
         job.save(using=self._db)
         activity_item.send(
             company,

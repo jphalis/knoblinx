@@ -14,13 +14,35 @@ from jobs.models import Job
 # Create views here.
 
 
+
+
+
+
 # REMOVE WHEN IN PRODUCTION ! ! !
 def generate_data(request):
+    from random import randint
     from datetime import datetime, timedelta
+    from django.conf import settings
     from django.contrib import messages
     from django.shortcuts import redirect
     from accounts.models import MyUser, School
-    from activity.signals import activity_item
+    from jobs.models import Applicant
+
+    # Create schools
+    schools = [
+        ['Brown University', 'Providence, Rhode Island', 'brown.edu'],
+        ['Columbia University', 'New York, New York', 'columbia.edu'],
+        ['Cornell University', 'Ithaca, New York', 'cornell.edu'],
+        ['Dartmouth College', 'Hanover, New Hampshire', 'dartmouth.edu'],
+        ['Harvard University', 'Cambridge, Massachusetts', 'harvard.edu'],
+        ['Princeton University', 'Princeton, New Jersey', 'princeton.edu'],
+        ['University of Pennsylvania', 'Philadelphia, Pennsylvania', 'upenn.edu'],
+        ['Yale University', 'New Haven, Connecticut', 'yale.edu']
+    ]
+    for school in schools:
+        if not School.objects.filter(name=school[0]).exists():
+            School.objects.create(
+                name=school[0], location=school[1], email=school[2])
 
     # Create demo user
     if not MyUser.objects.filter(email='demo@demo.com').exists():
@@ -28,37 +50,69 @@ def generate_data(request):
             email='demo@demo.com',
             first_name='Sample',
             last_name='User',
-            password='demo'
+            password='demo',
+            profile_pic=settings.STATIC_URL + 'img/default-profile-pic.jpg',
+            resume=settings.STATIC_URL + 'img/default-profile-pic.jpg',
+            gpa=3.45,
+            university=School.objects.get(name='Brown University'),
+            degree='Business'
         )
         demo_user.is_confirmed = True
         demo_user.video = 'https://www.youtube.com/embed/_OBlgSz8sSM'
         demo_user.skills = 'Python,Marketing,Public Speaking,Microsoft Office'
-        demo_user.degree = 'Business Administration'
         demo_user.save()
-
-    # Create schools
-    schools = [
-        ['Brown University', 'Providence, Rhode Island'],
-        ['Columbia University', 'New York, New York'],
-        ['Cornell University', 'Ithaca, New York'],
-        ['Dartmouth College', 'Hanover, New Hampshire'],
-        ['Harvard University', 'Cambridge, Massachusetts'],
-        ['Princeton University', 'Princeton, New Jersey'],
-        ['University of Pennsylvania', 'Philadelphia, Pennsylvania'],
-        ['Yale University', 'New Haven, Connecticut']
-    ]
-    for school in schools:
-        if not School.objects.filter(name=school[0]).exists():
-            School.objects.create(name=school[0], location=school[1])
 
     # Create users
     users = [
         ['John', 'Doe'],
         ['Bill', 'Clarkson'],
         ['Jessica', 'Hall'],
+        ['Franklin', 'Rose'],
+        ['Bobby', 'Collins'],
+        ['Fred', 'Flinstone'],
+        ['Blake', 'Casper'],
+        ['Marissa', 'Smiles'],
+        ['Tyler', 'Simm'],
+        ['Gina', 'Zentenial'],
+        ['Michelle', 'Gregs'],
+        ['Oscar', 'Behaves'],
+        ['Heather', 'Hoolihan'],
+        ['Scott', 'Dragonile'],
+        ['Charlie', 'Bitfinger'],
+        ['Pryia', 'Havalopolous'],
+        ['Chris', 'Wildwood'],
+        ['Jonathan', 'Newguinea'],
+        ['Anne', 'Hathaway'],
+        ['Brooke', 'Orchard']
     ]
-    for user in users:
-        if not MyUser.objects.filter(first_name=user[0]).exists():
+    if not MyUser.objects.filter(first_name=users[0][0]).exists():
+        for user in users:
+            user = MyUser.objects.create_user(
+                email='{}.{}@{}'.format(
+                    user[0],
+                    user[1],
+                    School.objects.all().order_by('?').first().email).lower(),
+                first_name=user[0],
+                last_name=user[1],
+                password='demo',
+                profile_pic=settings.STATIC_URL + 'img/default-profile-pic.jpg',
+                resume=settings.STATIC_URL + 'img/default-profile-pic.jpg',
+                gpa=randint(int(2), int(100 * 4)) / 100.0,
+                university=School.objects.all().order_by('?').first(),
+                degree='Business'
+            )
+            user.is_confirmed = True
+            user.save()
+
+    # Create companies
+    company_owners = [
+        ['Jeff', 'Bezos'],
+        ['Pablo', 'Padre'],
+        ['Jaime', 'Windell'],
+        ['Naome', 'Watts']
+    ]
+    if not MyUser.objects.filter(first_name=company_owners[0][0]).exists():
+        for user in company_owners:
             user = MyUser.objects.create_user(
                 email='{}.{}@demo.com'.format(user[0], user[1]).lower(),
                 first_name=user[0],
@@ -68,14 +122,14 @@ def generate_data(request):
             user.is_confirmed = True
             user.save()
 
-    # Create companies
     companies = [
-        ['Goldman Sachs', MyUser.objects.get(first_name='John')],
-        ['JPMorgan Chase', MyUser.objects.get(first_name='Bill')],
-        ['Morgan Stanley', MyUser.objects.get(first_name='Jessica')]
+        ['Goldman Sachs', MyUser.objects.get(first_name='Jeff')],
+        ['JPMorgan Chase', MyUser.objects.get(first_name='Pablo')],
+        ['Morgan Stanley', MyUser.objects.get(first_name='Jaime')],
+        ['American Express', MyUser.objects.get(first_name='Naome')]
     ]
-    for company in companies:
-        if not Company.objects.filter(name=company[0]).exists():
+    if not Company.objects.filter(name=companies[0][0]).exists():
+        for company in companies:
             Company.objects.create(user=company[1], name=company[0])
 
     # Create jobs
@@ -92,39 +146,65 @@ def generate_data(request):
     end = start + timedelta(days=21)
     contact_email = 'demo@demo.com'
     jobs = [
-        [Company.objects.order_by('?').first(), 'Sales Associate',
-         description, 'New York, NY', start, end],
-        [Company.objects.order_by('?').first(), 'IT Consultant',
-         description, 'Hoboken, NJ', start, end],
-        [Company.objects.order_by('?').first(), 'Event Manager',
-         description, 'Los Angeles, CA', start, end],
-        [Company.objects.order_by('?').first(), 'Senior Director',
-         description, 'New York, NY', start, end],
-        [Company.objects.order_by('?').first(), 'EVP',
-         description, 'Boston, MA', start, end],
-        [Company.objects.order_by('?').first(), 'Software Developer',
-         description, 'Menlo Park, CA', start, end],
-        [Company.objects.order_by('?').first(), 'Marketing Associate',
-         description, 'La Jolla, CA', start, end]
+        ['Sales Associate', 'New York, NY'],
+        ['IT Consultant', 'Hoboken, NJ'],
+        ['Event Manager', 'Los Angeles, CA'],
+        ['Senior Director', 'New York, NY'],
+        ['EVP', 'Boston, MA'],
+        ['Software Developer', 'Menlo Park, CA'],
+        ['Marketing Associate', 'La Jolla, CA']
     ]
-    for job in jobs:
-        if not Job.objects.filter(title=job[1]).exists():
-            obj = Job.objects.create(
-                company=job[0],
-                title=job[1],
+    if not Job.objects.filter(title=jobs[0][0]).exists():
+        for job in jobs:
+            Job.objects.create(
+                company=Company.objects.order_by('?').first(),
+                title=job[0],
                 contact_email=contact_email,
-                min_gpa=0.00,
-                universities='',
-                description=job[2],
-                location=job[3],
-                list_date_start=job[4],
-                list_date_end=job[5]
+                description=description,
+                location=job[1],
+                list_date_start=start,
+                list_date_end=end,
             )
-            activity_item.send(
-                job[0],
-                verb='Created a new job listing.',
-                target=obj,
+
+    # Create applicants
+    applicants = [
+        ['John', 'Doe'],
+        ['Bill', 'Clarkson'],
+        ['Jessica', 'Hall'],
+        ['Franklin', 'Rose'],
+        ['Bobby', 'Collins'],
+        ['Fred', 'Flinstone'],
+        ['Blake', 'Casper'],
+        ['Marissa', 'Smiles'],
+        ['Tyler', 'Simm'],
+        ['Gina', 'Zentenial'],
+        ['Michelle', 'Gregs'],
+        ['Oscar', 'Behaves'],
+        ['Heather', 'Hoolihan'],
+        ['Scott', 'Dragonile'],
+        ['Charlie', 'Bitfinger'],
+        ['Pryia', 'Havalopolous'],
+        ['Chris', 'Wildwood'],
+        ['Jonathan', 'Newguinea'],
+        ['Anne', 'Hathaway'],
+        ['Brooke', 'Orchard']
+    ]
+    if not Applicant.objects.filter(name='{0} {1}'.format(applicants[0][0], applicants[0][1])).exists():
+        for applicant in applicants:
+            _user = MyUser.objects.get(first_name=applicant[0])
+            Applicant.objects.create(
+                user=_user,
+                resume=settings.STATIC_URL + 'img/default-profile-pic.jpg',
+                name='{0} {1}'.format(_user.first_name, _user.last_name),
+                email=_user.email,
+                university='{} ({})'.format(_user.university, _user.degree)
             )
+
+    # Add applicants to jobs
+    created_applicants = Applicant.objects.all()
+    for applicant in created_applicants:
+        job = Job.objects.all().order_by('?').first()
+        job.applicants.add(applicant)
 
     messages.success(request, 'Data generated.')
     return redirect('home')
@@ -158,7 +238,6 @@ def home(request):
     user = request.user
 
     if user.account_type == MyUser.STUDENT:
-        # print user.university.id
         jobs = Job.objects.qualified(user=user)
         all_post_count = Job.objects.all().count()
         recent_posts = Job.objects.recent()[:7]
@@ -169,10 +248,10 @@ def home(request):
         try:
             jobs = paginator.page(page)
         except PageNotAnInteger:
-            # If page is not an integer, deliver first page.
+            # If page is not an integer, deliver first page
             jobs = paginator.page(1)
         except EmptyPage:
-            # If page is out of range (e.g. 9999), deliver last page of results.
+            # If page is out of range, deliver last page of results
             jobs = paginator.page(paginator.num_pages)
 
         context = {

@@ -34,6 +34,7 @@ def get_resume_path(instance, filename):
 class School(models.Model):
     name = models.CharField(max_length=120)
     location = models.CharField(max_length=120, blank=True)
+    email = models.CharField(max_length=100)
 
     is_active = models.BooleanField(default=True)
 

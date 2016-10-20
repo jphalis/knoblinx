@@ -31,6 +31,7 @@
 
         <div class="login_wrapper">
             <div class="animate form login_form">
+                <img src="{% static 'img/knoblinx_logo.png' %}" style="width: 100%;">
                 <section class="login_content">
                     <form class="login" method="POST" action=".">
                         {% csrf_token %}
@@ -59,7 +60,7 @@
                             </p>
                             <br/>
                             <div>
-                                <h1 class="login_title">KnobLinx</h1>
+                                <!-- <h1 class="login_title">KnobLinx</h1> -->
                                 <p class="login_copyright">
                                     ©2016 All Rights Reserved. 
                                     <a href="{% url 'privacy_policy' %}">Privacy</a> and 
@@ -71,6 +72,7 @@
             </div>
 
             <div id="register" class="animate form registration_form">
+                <img src="{% static 'img/knoblinx_logo.png' %}" style="width: 100%;">
                 <section class="login_content">
                     <form class="login" method="POST" action=".">
                         {% csrf_token %}
@@ -84,6 +86,7 @@
                                 <input type="last_name" placeholder="Last name" name="last_name" required />
                                 <span><i class="fa fa-user" aria-hidden="true"></i></span>
                             </div>
+                            <small>If you are a student, please use your school email.</small>
                             <div class="input">
                                 <input type="email" placeholder="Email" name="email" required />
                                 <span><i class="fa fa-envelope-o" aria-hidden="true"></i></span>
@@ -106,9 +109,8 @@
                         <p class="change_link">Already on KnobLinx?
                             <a href="#signin" class="to_register"> Log in </a>
                         </p>
-                        <br/>
                         <div>
-                            <h1 class="login_title">KnobLinx</h1>
+                            <!-- <h1 class="login_title">KnobLinx</h1> -->
                             <p class="login_copyright">
                                 ©2016 All Rights Reserved. 
                                 <a href="{% url 'privacy_policy' %}">Privacy</a> and 

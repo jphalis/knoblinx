@@ -128,11 +128,11 @@ class ExperienceAdmin(admin.ModelAdmin):
 
 
 class SchoolAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'location')
+    list_display = ('id', 'name', 'location', 'email',)
     list_display_links = ('id', 'name',)
     fieldsets = (
         (None,
-            {'fields': ('name', 'location',)}),
+            {'fields': ('name', 'location', 'email',)}),
         (_('Permissions'),
             {'fields': ('is_active',)}),
     )
