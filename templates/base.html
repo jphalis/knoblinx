@@ -93,13 +93,16 @@
             success: function(data){
               var companyUsername = data.company_username
               if (companyUsername) {
-                $("#company-register").hide();
                 // $("#company-logo").attr("src", data.company_logo);
                 $(".company-name").text(data.company_name);
+                $("a.company-dash").attr("href", "{% url 'home' %}");
                 $("a.company-url").attr("href", "{% url 'profile' 333 %}".replace(333, companyUsername));
-                $("a.company-dash").attr("href", "{% url 'company_dash' 333 %}".replace(333, companyUsername));
+                $("a.company-settings").attr("href", "{% url 'accounts:company_settings' 333 %}".replace(333, companyUsername));
                 $(".company-url").show();
                 $("#company-sidebar").show();
+              }
+              else {
+                $("#user-sidebar").show();
               }
             },
             error: function(rs, e){ }

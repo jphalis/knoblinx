@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}KnobLinx{% endblock title %}
+
+{% block css %}
+  <style>
+    .header {
+      margin: 80px auto 50px; }
+    .header h2 {
+     font-size: 2.1em; }
+    .btn {
+      font-size: 2em; }
+    .btn-lg {
+      margin-top: 50px; }
+  </style>
+{% endblock css%}
+
+{% block content %}
+  <div class="right_col" role="main">
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12" style="text-align:center;">
+        <div class="x_content">
+          {% if request.user.is_confirmed %}
+            <div class="header">
+              <h2>How will you be registering?</h2>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+              <a href="{% url 'authentication:student_register' %}" class="btn btn-block btn-info">
+                Student
+              </a>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+              <a href="{% url 'authentication:company_register' %}" class="btn btn-block btn-primary">
+                Employer
+              </a>
+            </div>
+          {% else %}
+            <div class="header">
+              <h2>Please confirm your account before continuing.</h2>
+              <a href="{% url 'authentication:send_confirmation' %}" class="btn btn-lg btn-primary active">
+                Resend confirmation
+              </a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}

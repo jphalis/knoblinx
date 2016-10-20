@@ -34,6 +34,18 @@ class ApplicantManager(models.Manager):
 
 
 class JobManager(models.Manager):
+    def qualified(self, user):
+        """
+        Returns all jobs the user is qualified for.
+        """
+        return super(JobManager, self).get_queryset() \
+            .filter(Q(list_date_start__lte=timezone.now()) &
+                    Q(list_date_end__gt=timezone.now()) &
+                    Q(min_gpa__lte=user.gpa) &
+                    Q(universities=user.university)) \
+            .exclude(applicants__user=user) \
+            .select_related('company')
+
     def active(self):
         """
         Returns all active jobs.
@@ -83,7 +95,8 @@ class JobManager(models.Manager):
             .order_by('-applicants__created')
 
     def create(self, company, title, contact_email, location,
-               list_date_start, list_date_end, description='', **extra_fields):
+               list_date_start, list_date_end, description='',
+               min_gpa=0.00, universities='', **extra_fields):
         """
         Creates a job posting with a default list date of now
         and removal date of 21 days later.
@@ -106,6 +119,8 @@ class JobManager(models.Manager):
         job = self.model(company=company,
                          title=title,
                          contact_email=contact_email,
+                         min_gpa=min_gpa,
+                         universities=universities,
                          location=location,
                          list_date_start=start_date,
                          list_date_end=end_date,

@@ -14,8 +14,9 @@ class JobAdmin(admin.ModelAdmin):
     raw_id_fields = ['company', 'applicants']
     fieldsets = (
         (None,
-            {'fields': ('company', 'applicants', 'title', 'description',
-                        'location', 'list_date_start', 'list_date_end',)}),
+            {'fields': ('company', 'applicants', 'title', 'min_gpa',
+                        'universities', 'description', 'location',
+                        'list_date_start', 'list_date_end',)}),
         (_('Dates'),
             {'fields': ('created', 'modified',)}),
     )

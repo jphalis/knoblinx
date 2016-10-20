@@ -23,66 +23,68 @@
                 <div class="col-md-12 col-sm-12 col-xs-12">
                     <div class="x_panel">
                         {% if request.user == user %}
-                            <!-- add experience modal -->
-                            <a class="btn btn-info active pull-right" style="margin-left:6px;" data-toggle="modal" href="#addModal"><i class="fa fa-plus"></i></a>
-                            <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-hidden="false" style="display:none;">
-                                <div class="modal-dialog modal-lg">
-                                    <form action="." method="POST" role="form">
-                                        {% csrf_token %}
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                                <h4 class="modal-title">Add Experience</h4>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div class="row">
+                            {% if not is_employer %}
+                                <!-- add experience modal -->
+                                <a class="btn btn-info active pull-right" style="margin-left:6px;" data-toggle="modal" href="#addModal"><i class="fa fa-plus"></i></a>
+                                <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-hidden="false" style="display:none;">
+                                    <div class="modal-dialog modal-lg">
+                                        <form action="." method="POST" role="form">
+                                            {% csrf_token %}
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                    <h4 class="modal-title">Add Experience</h4>
+                                                </div>
+                                                <div class="modal-body">
                                                     <div class="row">
-                                                        <div class="col-lg-5 col-md-5 col-sm-5">
-                                                            <div class="form-group">
-                                                                <label>Date start</label>
-                                                                <div class="input-group">
-                                                                    <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-                                                                    <input name="date_start" type="text" class="form-control datemask" data-inputmask="'alias': 'mm/yyyy'" data-mask />
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-5 col-md-5 col-sm-5">
-                                                            <div class="form-group">
-                                                                <label>Date end</label>
-                                                                <div class="input-group">
-                                                                    <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-                                                                    <input name="date_end" type="text" class="form-control datemask" data-inputmask="'alias': 'mm/yyyy'" data-mask />
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-lg-10 col-md-10 col-sm-10 col-xs-12">
-                                                            <label>Title</label>
-                                                            <p><input name="title" type="text" placeholder="Position" class="form-control"></p>
-                                                            <label>Company</label>
-                                                            <p><input name="company" type="text" placeholder="Company name" class="form-control"></p>
-                                                            <p>
-                                                                <div class="panel panel-danger">
-                                                                    <div class="panel-heading"><label class="panel-title">Description</label></div>
-                                                                    <div class="panel-body">
-                                                                        <textarea class="textarea editor-cls form-control" name="description" placeholder="Say something about the position"></textarea>
+                                                        <div class="row">
+                                                            <div class="col-lg-5 col-md-5 col-sm-5">
+                                                                <div class="form-group">
+                                                                    <label>Date start</label>
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                                                                        <input name="date_start" type="text" class="form-control datemask" data-inputmask="'alias': 'mm/yyyy'" data-mask />
                                                                     </div>
                                                                 </div>
-                                                            </p>
+                                                            </div>
+                                                            <div class="col-lg-5 col-md-5 col-sm-5">
+                                                                <div class="form-group">
+                                                                    <label>Date end</label>
+                                                                    <div class="input-group">
+                                                                        <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                                                                        <input name="date_end" type="text" class="form-control datemask" data-inputmask="'alias': 'mm/yyyy'" data-mask />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-lg-10 col-md-10 col-sm-10 col-xs-12">
+                                                                <label>Title</label>
+                                                                <p><input name="title" type="text" placeholder="Position" class="form-control"></p>
+                                                                <label>Company</label>
+                                                                <p><input name="company" type="text" placeholder="Company name" class="form-control"></p>
+                                                                <p>
+                                                                    <div class="panel panel-danger">
+                                                                        <div class="panel-heading"><label class="panel-title">Description</label></div>
+                                                                        <div class="panel-body">
+                                                                            <textarea class="textarea editor-cls form-control" name="description" placeholder="Say something about the position"></textarea>
+                                                                        </div>
+                                                                    </div>
+                                                                </p>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="modal-footer">
+                                                    <button data-dismiss="modal" class="btn btn-default">Close</button>
+                                                    <button id="submitButton" class="btn btn-primary active" type="submit">Create</button>
+                                                </div>
                                             </div>
-                                            <div class="modal-footer">
-                                                <button data-dismiss="modal" class="btn btn-default">Close</button>
-                                                <button id="submitButton" class="btn btn-primary active" type="submit">Create</button>
-                                            </div>
-                                        </div>
-                                    </form>
+                                        </form>
+                                    </div>
                                 </div>
-                            </div>
-                            <!-- /add experience modal -->
+                                <!-- /add experience modal -->
+                            {% endif %}
                             <a class="btn btn-info active pull-right" href="{% url 'accounts:account_settings' %}"><i class="fa fa-pencil"></i></a>
                         {% endif %}
                         <div class="x_content">

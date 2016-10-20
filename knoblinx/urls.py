@@ -21,13 +21,12 @@ from django.conf.urls.static import static
 from django.contrib import admin
 
 from accounts import views as account_views
-# from search import views as search_views
 from search.views import SearchListView
 from . import views
 
 
-admin.site.site_header = "KnobLinx Administration"
-
+admin.site.site_header = admin.site.site_title = "KnobLinx Administration"
+admin.site.index_title = "KnobLinx"
 
 urlpatterns = [
 
@@ -49,9 +48,6 @@ urlpatterns = [
         include('jobs.urls', namespace='jobs')),
     url(r'^search/$',
         SearchListView.as_view(), name='search'),
-    # url(r'^notifications/',
-    #     include('notifications.urls',
-    #     namespace='notifications')),
     url(r'^contact/',
         include('contact.urls', namespace='contact')),
     url(r'^terms/$',
@@ -62,9 +58,6 @@ urlpatterns = [
     # ACCOUNTS
     url(r'^(?P<username>[\w.@+-]+)/$',
         account_views.profile, name='profile'),
-    url(r"^(?P<username>[\w-]+)/dashboard/$",
-        account_views.company_dash,
-        name="company_dash"),
     url(r'^accounts/',
         include('accounts.urls', namespace='accounts')),
 

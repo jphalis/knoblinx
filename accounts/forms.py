@@ -3,6 +3,7 @@ Glossary of accounts/forms.py:
 
 - Add experience form
 - Account settings form
+- Account employer settings form
 - Add collaborator form
 - Company settings form
 - MyUser change form (admin only)
@@ -104,52 +105,48 @@ class AccountSettingsForm(forms.ModelForm):
     """
     first_name = forms.CharField(
         label=_('First Name*'),
-        widget=forms.TextInput(),
+        widget=forms.TextInput(
+            attrs={'class': 'form-control'}),
         max_length=50
     )
     last_name = forms.CharField(
         label=_('Last Name*'),
-        widget=forms.TextInput(),
+        widget=forms.TextInput(
+            attrs={'class': 'form-control'}),
         max_length=50
     )
     email = forms.EmailField(
         label=_('Email*'),
-        widget=forms.EmailInput(),
+        widget=forms.EmailInput(
+            attrs={'class': 'form-control'}),
         max_length=120
     )
     username = forms.SlugField(
         label=_('Username*'),
-        widget=forms.TextInput(),
+        widget=forms.TextInput(
+            attrs={'class': 'form-control'}),
         max_length=120
     )
     profile_picture = forms.ImageField(
-        label=_('Profile Picture'),
-        widget=ClearableFileInput(),
-        required=False
+        label=_('Profile Picture*'),
+        widget=ClearableFileInput(
+            attrs={'class': 'form-control'})
     )
     video = forms.CharField(
         label=_('Profile Video'),
-        widget=forms.TextInput(),
+        widget=forms.TextInput(
+            attrs={'class': 'form-control'}),
         max_length=250,
         required=False,
         help_text='Upload your video to <a href="https://www.youtube.com/upload">YouTube</a> first'
     )
     resume = forms.FileField(
-        widget=ClearableFileInput(),
-        required=False
+        label=_('Resume*'),
+        widget=ClearableFileInput(
+            attrs={'class': 'form-control'})
     )
     gender = forms.ChoiceField(
         choices=MyUser.GENDER_CHOICES
-    )
-    university = forms.TypedChoiceField(
-        choices=[],
-        empty_value='',
-        required=False
-    )
-    degree = forms.CharField(
-        widget=forms.TextInput(),
-        max_length=120,
-        required=False
     )
     gpa = forms.DecimalField(
         label=_('GPA*'),
@@ -161,6 +158,15 @@ class AccountSettingsForm(forms.ModelForm):
         max_value=4,
         max_digits=3,
         decimal_places=2
+    )
+    university = forms.ModelChoiceField(
+        label=_('University*'),
+        queryset=[],
+    )
+    degree = forms.CharField(
+        label=_('Degree*'),
+        widget=forms.TextInput(),
+        max_length=120
     )
     skills = forms.CharField(
         widget=forms.TextInput(),
@@ -187,9 +193,7 @@ class AccountSettingsForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         super(AccountSettingsForm, self).__init__(*args, **kwargs)
-        _schools = School.objects.active().values_list('name', flat=True)
-        _choices = [('', '-- N/A --')] + [(x, x) for x in _schools]
-        self.fields['university'].choices = _choices
+        self.fields['university'].queryset = School.objects.active()
 
     def clean_email(self):
         """
@@ -218,9 +222,6 @@ class AccountSettingsForm(forms.ModelForm):
                   'Please try a different one.'))
         return value
 
-    def clean_skills(self):
-        return self.cleaned_data['skills']
-
     def clean_video(self):
         """
         Convert the YouTube url into embed format if it's not already.
@@ -229,6 +230,93 @@ class AccountSettingsForm(forms.ModelForm):
         if 'embed/' not in url and 'watch?v=' in url:
             url = url.replace("watch?v=", "embed/")
         return url
+
+    def clean_password_new_confirm(self):
+        if not self.cleaned_data['password_new_confirm'] == '':
+            clean_passwords(data=self.cleaned_data,
+                            password1="password_new",
+                            password2="password_new_confirm")
+        return self.cleaned_data['password_new_confirm']
+
+
+class AccountEmployerSettingsForm(forms.ModelForm):
+    """
+    A form used for employers to update their account
+    information.
+    """
+    first_name = forms.CharField(
+        label=_('First Name*'),
+        widget=forms.TextInput(
+            attrs={'class': 'form-control'}),
+        max_length=50
+    )
+    last_name = forms.CharField(
+        label=_('Last Name*'),
+        widget=forms.TextInput(
+            attrs={'class': 'form-control'}),
+        max_length=50
+    )
+    email = forms.EmailField(
+        label=_('Email*'),
+        widget=forms.EmailInput(
+            attrs={'class': 'form-control'}),
+        max_length=120
+    )
+    username = forms.SlugField(
+        label=_('Username*'),
+        widget=forms.TextInput(
+            attrs={'class': 'form-control'}),
+        max_length=120
+    )
+    gender = forms.ChoiceField(
+        choices=MyUser.GENDER_CHOICES
+    )
+    password_new = forms.CharField(
+        label=_("New Password"),
+        widget=forms.PasswordInput(render_value=False),
+        required=False
+    )
+    password_new_confirm = forms.CharField(
+        label=_("Confirm New Password"),
+        widget=forms.PasswordInput(render_value=False),
+        required=False
+    )
+
+    class Meta:
+        model = MyUser
+        fields = ('first_name', 'last_name', 'email', 'username', 'gender',
+                  'password_new', 'password_new_confirm',)
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
+        super(AccountEmployerSettingsForm, self).__init__(*args, **kwargs)
+
+    def clean_email(self):
+        """
+        Verify that the new email is not already taken.
+        """
+        value = self.cleaned_data['email'].lower()
+        if self.initial.get('email') == value:
+            return value
+        if MyUser.objects.filter(
+                Q(email__iexact=value) & ~Q(pk=self.user.pk)).exists():
+            raise forms.ValidationError(
+                _('This email is already taken. Please try a different one.'))
+        return value
+
+    def clean_username(self):
+        """
+        Verify that the new username is not already taken.
+        """
+        value = self.cleaned_data['username'].lower()
+        if self.initial.get('username') == value:
+            return value
+        if MyUser.objects.filter(
+                Q(username__iexact=value) & ~Q(id=self.user.id)).exists():
+            raise forms.ValidationError(
+                _('This username is already taken. '
+                  'Please try a different one.'))
+        return value
 
     def clean_password_new_confirm(self):
         if not self.cleaned_data['password_new_confirm'] == '':
@@ -330,7 +418,7 @@ class MyUserChangeForm(UserChangeForm):
         """
         Verify that the new email is not already taken.
         """
-        value = self.cleaned_data['email'].lower()
+        value = self.cleaned_data['email']
         if self.initial.get('email') == value:
             return value
         if MyUser.objects.filter(email__iexact=value).exists():

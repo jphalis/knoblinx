@@ -26,6 +26,12 @@ urlpatterns = [
     url(r"^company/register/$",
         views.company_register,
         name="company_register"),
+    url(r"^student/register/$",
+        views.student_register,
+        name="student_register"),
+    url(r"^send_confirmation/$",
+        views.send_confirmation,
+        name="send_confirmation"),
     url(r"^confirm_account/"
         r"(?P<uidb64>[0-9A-Za-z_\-]+)/"
         r"(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$",

@@ -41,18 +41,18 @@ def create(request, company_pk):
         form = JobCreateForm(request.POST or None)
 
         if form.is_valid():
-            # Create the new job.
             new_job = Job.objects.create(
                 company=Company.objects.get(pk=company_pk),
                 title=form.cleaned_data['title'],
                 location=form.cleaned_data['location'],
                 contact_email=form.cleaned_data['contact_email'],
+                min_gpa=form.cleaned_data['min_gpa'],
+                universities=form.cleaned_data['universities'],
                 list_date_start=form.cleaned_data['list_date_start'],
                 list_date_end=form.cleaned_data['list_date_end'],
                 description=form.cleaned_data['description']
             )
             new_job.save()
-
             messages.success(request, 'Your job has been created!')
             return HttpResponseRedirect(reverse(
                 'jobs:detail',
@@ -123,6 +123,7 @@ def detail(request, job_pk, username):
     job = get_object_or_404(Job, pk=job_pk)
     viewer_has_applied = job.applicants.filter(user=request.user).exists()
     viewer_can_delete = False
+    all_post_count = Job.objects.all().count()
     recent_posts = Job.objects.recent()[:7]
     _is_company_collab = job.company.collaborators.filter(pk=user.pk).exists()
 
@@ -130,10 +131,11 @@ def detail(request, job_pk, username):
         viewer_can_delete = True
 
     context = {
-        'viewer_can_delete': viewer_can_delete,
-        'viewer_has_applied': viewer_has_applied,
+        'all_post_count': all_post_count,
         'job': job,
         'recent_posts': recent_posts,
+        'viewer_can_delete': viewer_can_delete,
+        'viewer_has_applied': viewer_has_applied
     }
     return render(request, 'jobs/detail.html', context)
 

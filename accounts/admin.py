@@ -18,15 +18,16 @@ class MyUserAdmin(UserAdmin):
                     'is_confirmed',)
     list_display_links = ('id', '__str__',)
     list_filter = ('is_active', 'is_staff', 'is_superuser', 'is_confirmed',
-                   'university', 'gender', 'date_joined', 'modified',)
+                   'account_type', 'university', 'gender',
+                   'date_joined', 'modified',)
     prepopulated_fields = {'username': ["first_name", "last_name"], }
     fieldsets = (
         (None,
             {'fields': ('email', 'password',)}),
         ('Basic information',
-            {'fields': ('first_name', 'last_name', 'username', 'gender',
-                        'profile_pic', 'video', 'resume', 'university',
-                        'degree', 'gpa', 'skills',)}),
+            {'fields': ('account_type', 'first_name', 'last_name', 'username',
+                        'gender', 'profile_pic', 'video', 'resume',
+                        'university', 'degree', 'gpa', 'skills',)}),
         ('Permissions',
             {'fields': ('is_active', 'is_confirmed', 'is_staff',
                         'is_superuser', 'user_permissions')}),

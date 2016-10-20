@@ -31,6 +31,24 @@ def get_resume_path(instance, filename):
 
 
 @python_2_unicode_compatible
+class School(models.Model):
+    name = models.CharField(max_length=120)
+    location = models.CharField(max_length=120, blank=True)
+
+    is_active = models.BooleanField(default=True)
+
+    objects = SchoolManager()
+
+    class Meta:
+        app_label = 'accounts'
+        verbose_name = _('school')
+        verbose_name_plural = _('schools')
+
+    def __str__(self):
+        return self.name
+
+
+@python_2_unicode_compatible
 class MyUser(AbstractBaseUser, PermissionsMixin, TagMixin):
     MALE = 0
     FEMALE = 1
@@ -40,7 +58,15 @@ class MyUser(AbstractBaseUser, PermissionsMixin, TagMixin):
         (FEMALE, _('Female')),
         (NO_ANSWER, _('Prefer not to answer')),
     )
+    STUDENT = 3
+    EMPLOYER = 4
+    ACCOUNT_TYPES = (
+        (STUDENT, _('Student')),
+        (EMPLOYER, _('Employer')),
+    )
     gender = models.IntegerField(choices=GENDER_CHOICES, default=NO_ANSWER)
+    account_type = models.IntegerField(choices=ACCOUNT_TYPES,
+                                       blank=True, null=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     username = models.SlugField(max_length=120, unique=True)
@@ -51,7 +77,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin, TagMixin):
     video = models.CharField(_('profile video'), max_length=250, blank=True,
                              help_text='Preferably embed from YouTube')
     resume = models.FileField(upload_to=get_resume_path, null=True, blank=True)
-    university = models.CharField(max_length=180, blank=True)
+    university = models.ForeignKey(School, null=True, blank=True)
     degree = models.CharField(max_length=120, blank=True)
     gpa = models.DecimalField(_('GPA'), max_digits=3, decimal_places=2,
                               null=True, blank=True)
@@ -259,21 +285,3 @@ class Experience(models.Model):
         if not self.date_end:
             return "present"
         return self.date_end.strftime("%m/%Y")
-
-
-@python_2_unicode_compatible
-class School(models.Model):
-    name = models.CharField(max_length=120)
-    location = models.CharField(max_length=120, blank=True)
-
-    is_active = models.BooleanField(default=True)
-
-    objects = SchoolManager()
-
-    class Meta:
-        app_label = 'accounts'
-        verbose_name = _('school')
-        verbose_name_plural = _('schools')
-
-    def __str__(self):
-        return self.name

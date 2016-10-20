@@ -9,8 +9,6 @@ from django.template import loader
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
-from accounts.models import MyUser
-
 # Create your managers here.
 
 
@@ -25,10 +23,14 @@ class EmailConfirmationManager(models.Manager):
             from_email=settings.DEFAULT_FROM_EMAIL,
             html_email_template_name='auth/account_confirm_email.html'):
 
-        _user = MyUser.objects.get(pk=user.user.pk)
-
         obj, created = self.model.objects.using('default').get_or_create(
-            user=_user, key=token_generator.make_token(user=_user))
+            user=user, key=token_generator.make_token(user=user))
+
+        emails = self.model.objects.filter(
+            user=user).values_list("pk", flat=True).order_by('sent_date')
+
+        if emails.count() > 1:
+            self.model.objects.exclude(pk__in=list(emails[:1])).delete()
 
         context = {
             'email': obj.user.email,

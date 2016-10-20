@@ -4,19 +4,28 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import default_token_generator
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.http import HttpResponseForbidden
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.views.decorators.cache import never_cache
 from django.views.decorators.debug import sensitive_post_parameters
 
+from accounts.forms import AccountSettingsForm
 from accounts.models import Company, MyUser
 from .forms import (CompanySignupForm, LoginForm, SignupForm,
                     PasswordResetForm, PasswordResetTokenForm)
 from .models import EmailConfirmation
 
 # Create your views here.
+
+
+def send_confirmation(request):
+    EmailConfirmation.objects.send_confirmation(user=request.user,
+                                                request=request)
+    messages.success(request, 'The confirmation email has been sent.')
+    return redirect('home')
 
 
 def auth_logout(request):
@@ -99,9 +108,41 @@ def company_register(request):
             bio=form.cleaned_data['bio'],
         )
         new_company.save()
+        user.account_type = MyUser.EMPLOYER
+        user.save(update_fields=['account_type'])
         return redirect(reverse(
             'profile', kwargs={"username": new_company.username}))
     return render(request, 'auth/company_register.html', {'form': form})
+
+
+@login_required
+def student_register(request):
+    user = get_object_or_404(MyUser, Q(is_active=True), pk=request.user.pk)
+    form = AccountSettingsForm(request.POST or None,
+                               request.FILES or None,
+                               instance=user, user=user)
+
+    if request.method == 'POST':
+
+        if form.is_valid():
+            form.resume = form.cleaned_data['resume']
+            form.gpa = form.cleaned_data['gpa']
+            form.profile_picture = form.cleaned_data['profile_picture']
+            form.video = form.cleaned_data['video']
+            form.skills = form.cleaned_data['skills']
+            form.save()
+            user.account_type = MyUser.STUDENT
+            user.save(update_fields=['account_type'])
+            return redirect(reverse(
+                'profile', kwargs={"username": user.username}))
+        else:
+            messages.error(request, "There was an error.")
+
+    context = {
+        'form': form,
+        'user': user,
+    }
+    return render(request, 'auth/student_register.html', context)
 
 
 @sensitive_post_parameters()

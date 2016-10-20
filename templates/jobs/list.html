@@ -76,7 +76,9 @@
         <!-- sidebar -->
         <div class="col-md-4">
             <div class="the-box">
-                <h4 class="small-heading more-margin-bottom">RECENT LISTINGS</h4>
+                <h4 class="small-heading more-margin-bottom">
+                    RECENT LISTINGS <small>({{ all_post_count }} jobs created)</small>
+                </h4>
                 <hr>
                 <ul class="media-list media-xs media-dotted">
                     {% for post in recent_posts %}

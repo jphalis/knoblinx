@@ -25,6 +25,7 @@
                 <div class="title_left">
                     {% if user_can_edit %}
                         <a class="btn btn-default" href="{{ company.get_edit_url }}">Edit Profile</a>
+                        <a class="btn btn-default" href="{% url 'home' %}">View Dashboard</a>
                     {% else %}
                         &nbsp;
                     {% endif %}

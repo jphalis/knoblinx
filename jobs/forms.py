@@ -4,6 +4,7 @@ from django import forms
 from django.forms.widgets import ClearableFileInput
 from django.utils.translation import ugettext_lazy as _
 
+from accounts.models import School
 from .models import Applicant, Job
 
 
@@ -71,6 +72,28 @@ class JobCreateForm(forms.ModelForm):
                    'name': 'title'}),
         max_length=120
     )
+    min_gpa = forms.DecimalField(
+        label=_('Minimum GPA'),
+        widget=forms.NumberInput(
+            attrs={'class': 'form-control',
+                   'name': 'min_gpa',
+                   'min': 0,
+                   'max': 4,
+                   'step': 0.01}),
+        initial=0.00,
+        min_value=0,
+        max_value=4,
+        max_digits=3,
+        decimal_places=2
+    )
+    universities = forms.ModelChoiceField(
+        widget=forms.CheckboxSelectMultiple(
+            attrs={'class': 'form-control',
+                   'name': 'universities'}),
+        queryset=[],
+        empty_label=None,
+        required=False
+    )
     list_date_start = forms.DateTimeField(
         input_formats=['%m/%d/%Y %I:%M %p'],
         widget=forms.DateTimeInput(
@@ -100,13 +123,21 @@ class JobCreateForm(forms.ModelForm):
     class Meta:
         model = Job
         fields = ('contact_email', 'title', 'description', 'location',
-                  'list_date_start', 'list_date_end',)
+                  'min_gpa', 'list_date_start', 'list_date_end',)
 
     def __init__(self, *args, **kwargs):
         super(JobCreateForm, self).__init__(*args, **kwargs)
+        self.fields['universities'].queryset = School.objects.active()
 
     def clean_contact_email(self):
         """
         Return the lowercase value of the email.
         """
         return self.cleaned_data['contact_email'].lower()
+
+    # def clean_universities(self):
+    #     """
+    #     Return a list of selected university pks.
+    #     """
+    #     _uni_ids = [str(uni) for uni in self.cleaned_data['universities']]
+    #     return ','.join(_uni_ids)

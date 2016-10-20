@@ -18,7 +18,9 @@
                 <div class="" role="tabpanel" data-example-id="togglable-tabs">
                     <ul id="myTab" class="nav nav-tabs bar_tabs" style="margin-bottom:0px;" role="tablist">
                         <li role="presentation" class="active"><a href="#tab_content1" role="tab" id="tab-1" data-toggle="tab" aria-expanded="true">Account Basics</a></li>
-                        <li role="presentation" class=""><a href="#tab_content2" role="tab" id="tab-2" data-toggle="tab" aria-expanded="false">Profile</a></li>
+                        {% if not is_employer %}
+                            <li role="presentation" class=""><a href="#tab_content2" role="tab" id="tab-2" data-toggle="tab" aria-expanded="false">Profile</a></li>
+                        {% endif %}
                     </ul>
                     <form action="." method="POST" enctype="multipart/form-data" role="form">
                         {% csrf_token %}
@@ -106,7 +108,7 @@
                                         <br/>
                                         <div class="col-md-4 col-sm-4 text-center">
                                             <div class="row">
-                                                <img class="img-circle" src="{{ user.user_profile_pic }}">
+                                                <img class="img-circle" src="{{ user.user_profile_pic }}" style="width:100%;">
                                             </div>
                                             <br>
                                             {% if user.video %}

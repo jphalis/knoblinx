@@ -9,7 +9,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 
-from accounts.models import Company
+from accounts.models import Company, School
 from core.models import TimeStampedModel
 from .managers import ApplicantManager, JobManager
 
@@ -56,6 +56,9 @@ class Job(TimeStampedModel):
     title = models.CharField(max_length=120)
     location = models.CharField(max_length=120)
     contact_email = models.EmailField(max_length=120, null=True)
+    min_gpa = models.DecimalField(_('Miniumum GPA'), max_digits=3,
+                                  decimal_places=2, default=0.00)
+    universities = models.ManyToManyField(School, blank=True)
     description = models.TextField(max_length=5000)
 
     list_date_start = models.DateTimeField(_('Listing Start Date'), null=True)

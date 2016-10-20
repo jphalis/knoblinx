@@ -6,6 +6,7 @@
 {% block stylesheets %}
     <link href="{% static 'vendors/bootstrap-daterangepicker/datetimepicker.min.css' %}" rel="stylesheet">
     <link href="{% static 'vendors/bootstrap-wysiwyg/css/core-b3.css' %}" rel="stylesheet" />
+    <link href="{% static 'vendors/iCheck/skins/flat/green.css' %}" rel="stylesheet">
 {% endblock stylesheets %}
 
 {% block content %}
@@ -44,6 +45,27 @@
                                     <div class="col-md-9 col-sm-9 col-xs-12">
                                         {{ form.contact_email }}
                                         {{ form.contact_email.errors }}
+                                    </div>
+                                </div>
+                                <div class="item form-group {% if form.min_gpa.errors %}has-error{% endif %}">
+                                    <label class="control-label col-md-2 col-sm-2 col-xs-12" for="{{ form.min_gpa.auto_id }}">
+                                        {{ form.min_gpa.label }}
+                                    </label>
+                                    <div class="col-md-9 col-sm-9 col-xs-12">
+                                        {{ form.min_gpa }}
+                                        {{ form.min_gpa.errors }}
+                                    </div>
+                                </div>
+                                <div class="item form-group {% if form.universities.errors %}has-error{% endif %}">
+                                    <label class="control-label col-md-2 col-sm-2 col-xs-12" for="{{ form.universities.auto_id }}">
+                                        {{ form.universities.label }}
+                                    </label>
+                                    <div class="col-md-9 col-sm-9 col-xs-12" style="height:150px; overflow:auto;">
+                                        {% for choice in form.universities.field.choices %}
+                                            <input type="checkbox" name="universities" value="{{ choice.0 }}" class="flat" checked/> {{ choice.1 }}
+                                            <br />
+                                        {% endfor %}
+                                        {{ form.universities.errors }}
                                     </div>
                                 </div>
                                 <div class="item form-group {% if form.list_date_start.errors %}has-error{% endif %}">
@@ -99,6 +121,7 @@
 {% endblock content %}
 
 {% block js %}
+    <script src="{% static 'vendors/iCheck/icheck.min.js' %}"></script>
     <script src="{% static 'custom/js/moment.min.js' %}"></script>
     <script src="{% static 'vendors/bootstrap-daterangepicker/datetimepicker.min.js' %}"></script>
     <script src="{% static 'vendors/bootstrap-wysiwyg/js/wysihtml5.js' %}" type="text/javascript"></script>

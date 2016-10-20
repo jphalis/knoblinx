@@ -21,11 +21,11 @@ import dj_database_url
 # HOSTING + AUTHENTICATION #
 ############################
 ADMINS = (
-    # Uncomment lines below if you want email about server errors.
+    # Uncomment lines below if you want emails about server errors.
     # ("Kirk Sanderson", "kirksanderson1@gmail.com"),
 )
 MANAGERS = ADMINS
-FULL_DOMAIN = ''
+FULL_DOMAIN = 'knoblinx.herokuapp.com'
 ALLOWED_HOSTS = [
     '127.0.0.1',
     '*{}'.format(FULL_DOMAIN),

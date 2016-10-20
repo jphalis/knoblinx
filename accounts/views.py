@@ -12,12 +12,11 @@ from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.http import require_http_methods
 from django.views.generic.edit import DeleteView
 
-from activity.models import Activity
 from activity.signals import activity_item
 from core.mixins import LoginRequiredMixin
 from jobs.models import Job
-from .forms import (AccountSettingsForm, AddCollaboratorForm,
-                    CompanySettingsForm, ExperienceForm)
+from .forms import (AccountEmployerSettingsForm, AccountSettingsForm,
+                    AddCollaboratorForm, CompanySettingsForm, ExperienceForm)
 from .models import Company, Experience, MyUser
 
 # Create your views here.
@@ -112,6 +111,7 @@ def profile(request, username):
         context = {
             'experiences': experiences,
             'form': form,
+            'is_employer': user.account_type == MyUser.EMPLOYER,
             'user': user
         }
         template = 'accounts/profile.html'
@@ -147,71 +147,59 @@ def profile(request, username):
 
 
 @login_required
-@cache_page(60)
-def company_dash(request, username):
-    user = request.user
-    company = get_object_or_404(
-        Company, Q(is_active=True), username=username)
-    _is_company_collab = company.collaborators.filter(pk=user.pk).exists()
-
-    if company.user == user or _is_company_collab:
-        jobs = Job.objects.own(company=company)
-        active_job_count = jobs.filter(
-            Q(list_date_start__lte=timezone.now()) &
-            Q(list_date_end__gt=timezone.now())
-        ).count()
-
-        context = {
-            'company': company,
-            'jobs': jobs,
-            'jobs_count': jobs.count,
-            'active_job_count': active_job_count,
-            'collaborator_count': company.collaborators.count() + 1,
-            'collaborators': company.get_collaborators_info,
-        }
-
-        try:
-            activity = Activity.objects.own(company=company)[:12]
-        except:
-            activity = None
-
-        if activity:
-            context.update({'activity': activity})
-
-        return render(request, 'accounts/company_dash.html', context)
-    return HttpResponseForbidden()
-
-
-@login_required
 @never_cache
 @sensitive_post_parameters()
 def account_settings(request):
     user = get_object_or_404(MyUser, Q(is_active=True), pk=request.user.pk)
-    form = AccountSettingsForm(request.POST or None,
-                               request.FILES or None,
-                               instance=user, user=user)
 
-    if request.method == 'POST':
+    if user.account_type == MyUser.STUDENT:
+        form = AccountSettingsForm(request.POST or None,
+                                   request.FILES or None,
+                                   instance=user, user=user)
 
-        if form.is_valid():
-            form.email = form.cleaned_data['email']
-            form.username = form.cleaned_data['username']
-            form.video = form.cleaned_data['video']
-            form.skills = form.cleaned_data['skills']
-            password = form.cleaned_data['password_new_confirm']
+        if request.method == 'POST':
 
-            if password:
-                current_user = form.user
-                current_user.set_password(password)
-                current_user.save()
-                update_session_auth_hash(request, current_user)
-            form.save()
-            messages.success(request,
-                             "You have successfully updated your profile.")
-        else:
-            messages.error(request, "There was an error.")
+            if form.is_valid():
+                form.email = form.cleaned_data['email']
+                form.username = form.cleaned_data['username']
+                form.profile_picture = form.cleaned_data['profile_picture']
+                form.video = form.cleaned_data['video']
+                password = form.cleaned_data['password_new_confirm']
+
+                if password:
+                    current_user = form.user
+                    current_user.set_password(password)
+                    current_user.save()
+                    update_session_auth_hash(request, current_user)
+                form.save()
+                messages.success(request,
+                                 "You have successfully updated your profile.")
+            else:
+                messages.error(request, "There was an error.")
+    else:
+        form = AccountEmployerSettingsForm(request.POST or None,
+                                           instance=user, user=user)
+
+        if request.method == 'POST':
+
+            if form.is_valid():
+                form.email = form.cleaned_data['email']
+                form.username = form.cleaned_data['username']
+                password = form.cleaned_data['password_new_confirm']
+
+                if password:
+                    current_user = form.user
+                    current_user.set_password(password)
+                    current_user.save()
+                    update_session_auth_hash(request, current_user)
+                form.save()
+                messages.success(request,
+                                 "You have successfully updated your profile.")
+            else:
+                messages.error(request, "There was an error.")
     context = {
         'form': form,
+        'is_employer': user.account_type == MyUser.EMPLOYER,
         'user': user,
     }
     return render(request, 'accounts/settings.html', context)
@@ -225,6 +213,8 @@ def remove_collab(request):
     try:
         user = company.collaborators.get(pk=request.POST.get('user_pk'))
         company.collaborators.remove(user)
+        user.account_type = None
+        user.save(update_fields=['account_type'])
         activity_item.send(
             company,
             verb='Removed a collaborator.',
@@ -242,7 +232,9 @@ def company_settings(request, username):
     company = get_object_or_404(Company, Q(is_active=True), username=username)
     _is_company_collab = company.collaborators.filter(pk=user.pk).exists()
 
-    if company.user == user or _is_company_collab:
+    if (company.user == user or _is_company_collab and
+            user.account_type == MyUser.EMPLOYER):
+
         form = CompanySettingsForm(request.POST or None,
                                    request.FILES or None,
                                    instance=company, company=company)
@@ -266,6 +258,8 @@ def company_settings(request, username):
 
                         if new_collab:
                             company.collaborators.add(new_collab[0])
+                            new_collab[0].account_type = MyUser.EMPLOYER
+                            new_collab[0].save(update_fields=['account_type'])
                             activity_item.send(
                                 company,
                                 verb='Added a collaborator.',
