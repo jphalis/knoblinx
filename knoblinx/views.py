@@ -25,24 +25,21 @@ def generate_data(request):
     from random import randint
     from datetime import datetime, timedelta
     from django.conf import settings
-    from accounts.models import MyUser, School
+    from accounts.models import Degree, MyUser, School
     from jobs.models import Applicant
+    from .degrees import degrees
+    from .schools import schools
 
     # Create schools
-    schools = [
-        ['Brown University', 'Providence, Rhode Island', 'brown.edu'],
-        ['Columbia University', 'New York, New York', 'columbia.edu'],
-        ['Cornell University', 'Ithaca, New York', 'cornell.edu'],
-        ['Dartmouth College', 'Hanover, New Hampshire', 'dartmouth.edu'],
-        ['Harvard University', 'Cambridge, Massachusetts', 'harvard.edu'],
-        ['Princeton University', 'Princeton, New Jersey', 'princeton.edu'],
-        ['University of Pennsylvania', 'Philadelphia, Pennsylvania', 'upenn.edu'],
-        ['Yale University', 'New Haven, Connecticut', 'yale.edu']
-    ]
     for school in schools:
         if not School.objects.filter(name=school[0]).exists():
             School.objects.create(
                 name=school[0], location=school[1], email=school[2])
+
+    # Create degrees
+    for degree in degrees:
+        if not Degree.objects.filter(name=degree).exists():
+            Degree.objects.create(name=degree)
 
     # Create demo user
     if not MyUser.objects.filter(email='demo@demo.com').exists():
@@ -55,7 +52,7 @@ def generate_data(request):
             resume=settings.STATIC_URL + 'img/default-profile-pic.jpg',
             gpa=3.45,
             university=School.objects.get(name='Brown University'),
-            degree='Business'
+            degree=Degree.objects.get(name='Business and Technology'),
         )
         demo_user.is_confirmed = True
         demo_user.video = 'https://www.youtube.com/embed/_OBlgSz8sSM'
@@ -99,7 +96,7 @@ def generate_data(request):
                 resume=settings.STATIC_URL + 'img/default-profile-pic.jpg',
                 gpa=randint(int(2), int(100 * 4)) / 100.0,
                 university=School.objects.all().order_by('?').first(),
-                degree='Business'
+                degree=Degree.objects.all().order_by('?').first()
             )
             user.is_confirmed = True
             user.save()

@@ -120,3 +120,12 @@ class SchoolManager(models.Manager):
         """
         return super(SchoolManager, self).get_queryset().filter(
             is_active=True)
+
+
+class DegreeManager(models.Manager):
+    def active(self):
+        """
+        Returns all active degrees.
+        """
+        return super(DegreeManager, self).get_queryset().filter(
+            is_active=True)

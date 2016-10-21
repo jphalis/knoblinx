@@ -5,7 +5,7 @@ from django.utils.translation import ugettext as _
 
 from authentication.forms import CompanyCreationForm, MyUserCreationForm
 from .forms import CompanyChangeForm, MyUserChangeForm
-from .models import Company, Experience, MyUser, School
+from .models import Company, Degree, Experience, MyUser, School
 
 # Register your models here.
 
@@ -21,6 +21,7 @@ class MyUserAdmin(UserAdmin):
                    'account_type', 'university', 'gender',
                    'date_joined', 'modified',)
     prepopulated_fields = {'username': ["first_name", "last_name"], }
+    raw_id_fields = ['university', 'degree']
     fieldsets = (
         (None,
             {'fields': ('email', 'password',)}),
@@ -142,8 +143,24 @@ class SchoolAdmin(admin.ModelAdmin):
         model = School
 
 
+class DegreeAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name',)
+    list_display_links = ('id', 'name',)
+    fieldsets = (
+        (None,
+            {'fields': ('name',)}),
+        (_('Permissions'),
+            {'fields': ('is_active',)}),
+    )
+    search_fields = ('name',)
+
+    class Meta:
+        model = Degree
+
+
 admin.site.unregister(Group)
 admin.site.register(MyUser, MyUserAdmin)
 admin.site.register(Company, CompanyAdmin)
 admin.site.register(Experience, ExperienceAdmin)
 admin.site.register(School, SchoolAdmin)
+admin.site.register(Degree, DegreeAdmin)

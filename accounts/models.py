@@ -10,8 +10,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from core.models import TimeStampedModel
 from tags.models import TagMixin
-from .managers import (CompanyManager, ExperienceManager, MyUserManager,
-                       SchoolManager)
+from .managers import (CompanyManager, DegreeManager, ExperienceManager,
+                       MyUserManager, SchoolManager)
 
 # Create your models here.
 
@@ -44,6 +44,25 @@ class School(models.Model):
         app_label = 'accounts'
         verbose_name = _('school')
         verbose_name_plural = _('schools')
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+
+@python_2_unicode_compatible
+class Degree(models.Model):
+    name = models.CharField(max_length=120)
+
+    is_active = models.BooleanField(default=True)
+
+    objects = DegreeManager()
+
+    class Meta:
+        app_label = 'accounts'
+        verbose_name = _('degree')
+        verbose_name_plural = _('degrees')
+        ordering = ['name']
 
     def __str__(self):
         return self.name
@@ -79,7 +98,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin, TagMixin):
                              help_text='Preferably embed from YouTube')
     resume = models.FileField(upload_to=get_resume_path, null=True, blank=True)
     university = models.ForeignKey(School, null=True, blank=True)
-    degree = models.CharField(max_length=120, blank=True)
+    degree = models.ForeignKey(Degree, null=True, blank=True)
     gpa = models.DecimalField(_('GPA'), max_digits=3, decimal_places=2,
                               null=True, blank=True)
     hobbies = models.CharField(max_length=250, blank=True)

@@ -26,12 +26,12 @@
               <h2>How will you be registering?</h2>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-              <a href="{% url 'authentication:student_register' %}" class="btn btn-block btn-info {% if not registered_uni %}disabled{% endif %}">
+              <a href="{% url 'authentication:student_register' %}" class="btn btn-block btn-student {% if not registered_uni %}disabled{% endif %}">
                 Student
               </a>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-              <a href="{% url 'authentication:company_register' %}" class="btn btn-block btn-primary {% if registered_uni %}disabled{% endif %}">
+              <a href="{% url 'authentication:company_register' %}" class="btn btn-block btn-employer {% if registered_uni %}disabled{% endif %}">
                 Employer
               </a>
             </div>

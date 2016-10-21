@@ -26,7 +26,7 @@ from django.forms.widgets import ClearableFileInput
 from django.utils.translation import ugettext_lazy as _
 
 from core.utils import clean_passwords
-from .models import Company, Experience, MyUser, School
+from .models import Company, Degree, Experience, MyUser, School
 
 # Create your forms here.
 
@@ -163,10 +163,9 @@ class AccountSettingsForm(forms.ModelForm):
         label=_('University*'),
         queryset=[],
     )
-    degree = forms.CharField(
+    degree = forms.ModelChoiceField(
         label=_('Degree*'),
-        widget=forms.TextInput(),
-        max_length=120
+        queryset=[],
     )
     hobbies = forms.CharField(
         label=_("Hobbies and Interests"),
@@ -195,6 +194,7 @@ class AccountSettingsForm(forms.ModelForm):
         self.user = kwargs.pop('user')
         super(AccountSettingsForm, self).__init__(*args, **kwargs)
         self.fields['university'].queryset = School.objects.active()
+        self.fields['degree'].queryset = Degree.objects.active()
 
     def clean_email(self):
         """
