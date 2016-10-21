@@ -1,13 +1,15 @@
+from django.contrib import messages
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.http import HttpResponseForbidden, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_http_methods
 
-from accounts.models import Company, MyUser
+from accounts.models import Company, MyUser, School
 from activity.models import Activity
 from jobs.models import Job
 
@@ -23,8 +25,6 @@ def generate_data(request):
     from random import randint
     from datetime import datetime, timedelta
     from django.conf import settings
-    from django.contrib import messages
-    from django.shortcuts import redirect
     from accounts.models import MyUser, School
     from jobs.models import Applicant
 
@@ -59,7 +59,7 @@ def generate_data(request):
         )
         demo_user.is_confirmed = True
         demo_user.video = 'https://www.youtube.com/embed/_OBlgSz8sSM'
-        demo_user.skills = 'Python,Marketing,Public Speaking,Microsoft Office'
+        demo_user.hobbies = 'Python,Marketing,Public Speaking,Microsoft Office'
         demo_user.save()
 
     # Create users
@@ -293,7 +293,17 @@ def home(request):
             return render(request, 'accounts/company_dash.html', context)
         return HttpResponseForbidden()
     else:
-        return render(request, 'auth/selection.html', {})
+        uni_emails = School.objects.active().values_list('email', flat=True)
+        username, domain = user.email.split('@')
+        registered_uni = False
+
+        if domain.endswith(tuple(uni_emails)):
+            registered_uni = True
+
+        context = {
+            'registered_uni': registered_uni
+        }
+    return render(request, 'auth/selection.html', context)
 
 
 @cache_page(60 * 60 * 24 * 60)

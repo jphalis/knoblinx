@@ -32,6 +32,8 @@ class EmailConfirmationManager(models.Manager):
         if emails.count() > 1:
             self.model.objects.exclude(pk__in=list(emails[:1])).delete()
 
+        print obj.user.email
+
         context = {
             'email': obj.user.email,
             'domain': request.get_host(),

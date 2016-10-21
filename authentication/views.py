@@ -13,7 +13,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.debug import sensitive_post_parameters
 
 from accounts.forms import AccountSettingsForm
-from accounts.models import Company, MyUser
+from accounts.models import Company, MyUser, School
 from .forms import (CompanySignupForm, LoginForm, SignupForm,
                     PasswordResetForm, PasswordResetTokenForm)
 from .models import EmailConfirmation
@@ -72,13 +72,21 @@ def auth_login_register(request):
         if user is not None:
             login(request, user)
 
-            # Send confirmation email
+            # Confirmation email
             EmailConfirmation.objects.send_confirmation(user=user,
                                                         request=request)
             messages.success(request,
                              'Thank you for registering! '
                              'Please check your email to confirm '
                              'your account.')
+
+            uni_emails = School.objects.active().values_list('email',
+                                                             flat=True)
+            username, domain = email.split('@')
+
+            if not domain.endswith(tuple(uni_emails)):
+                messages.error(request,
+                               'Sorry, that school is not registered with us.')
             return redirect(request.POST.get('next', 'home'))
 
     context = {
@@ -92,6 +100,9 @@ def auth_login_register(request):
 @login_required
 def company_register(request):
     user = request.user
+
+    if not user.is_confirmed:
+        return HttpResponseForbidden()
 
     if Company.objects.filter(user=user).exists():
         return HttpResponseForbidden()
@@ -118,6 +129,10 @@ def company_register(request):
 @login_required
 def student_register(request):
     user = get_object_or_404(MyUser, Q(is_active=True), pk=request.user.pk)
+
+    if not user.is_confirmed:
+        return HttpResponseForbidden()
+
     form = AccountSettingsForm(request.POST or None,
                                request.FILES or None,
                                instance=user, user=user)
@@ -129,7 +144,7 @@ def student_register(request):
             form.gpa = form.cleaned_data['gpa']
             form.profile_picture = form.cleaned_data['profile_picture']
             form.video = form.cleaned_data['video']
-            form.skills = form.cleaned_data['skills']
+            form.hobbies = form.cleaned_data['hobbies']
             form.save()
             user.account_type = MyUser.STUDENT
             user.save(update_fields=['account_type'])
@@ -167,7 +182,7 @@ def account_confirm(request, uidb64=None, token=None,
             messages.success(request, "Thank you for confirming your account!")
             return redirect('home')
     messages.error(request, "Account confirmation unsuccessful")
-    return render(request, 'home.html', {'validlink': validlink})
+    return render(request, 'auth/selection.html', {'validlink': validlink})
 
 
 def password_reset(request, from_email=settings.DEFAULT_FROM_EMAIL,

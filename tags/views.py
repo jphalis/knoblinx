@@ -8,5 +8,5 @@ from accounts.models import MyUser
 
 @cache_page(60 * 3)
 def tagged_list(request, tag):
-    users = MyUser.objects.filter(skills__icontains='{}'.format(tag))[:50]
+    users = MyUser.objects.filter(hobbies__icontains='{}'.format(tag))[:50]
     return render(request, 'tags/tagged_list.html', {'users': users})

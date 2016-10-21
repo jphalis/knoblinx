@@ -27,7 +27,7 @@ class MyUserAdmin(UserAdmin):
         ('Basic information',
             {'fields': ('account_type', 'first_name', 'last_name', 'username',
                         'gender', 'profile_pic', 'video', 'resume',
-                        'university', 'degree', 'gpa', 'skills',)}),
+                        'university', 'degree', 'gpa', 'hobbies',)}),
         ('Permissions',
             {'fields': ('is_active', 'is_confirmed', 'is_staff',
                         'is_superuser', 'user_permissions')}),
@@ -41,7 +41,7 @@ class MyUserAdmin(UserAdmin):
                         'password1', 'password2',)}),
     )
     readonly_fields = ('date_joined', 'last_login', 'modified',)
-    search_fields = ('id', 'email', 'username', 'skills',)
+    search_fields = ('id', 'email', 'username', 'hobbies',)
     ordering = ('id',)
     filter_horizontal = ('user_permissions',)
     actions = ('enable', 'disable', 'confirm',)

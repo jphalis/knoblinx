@@ -168,7 +168,8 @@ class AccountSettingsForm(forms.ModelForm):
         widget=forms.TextInput(),
         max_length=120
     )
-    skills = forms.CharField(
+    hobbies = forms.CharField(
+        label=_("Hobbies and Interests"),
         widget=forms.TextInput(),
         max_length=250,
         required=False
@@ -188,7 +189,7 @@ class AccountSettingsForm(forms.ModelForm):
         model = MyUser
         fields = ('first_name', 'last_name', 'email', 'username', 'gpa',
                   'profile_picture', 'video', 'resume', 'gender', 'university',
-                  'degree', 'skills', 'password_new', 'password_new_confirm',)
+                  'degree', 'hobbies', 'password_new', 'password_new_confirm',)
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')

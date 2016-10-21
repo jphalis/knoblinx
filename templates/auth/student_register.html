@@ -77,11 +77,11 @@
                                     </div>
                                     <div class="row">
                                         <div class="control-group col-md-11 col-sm-11 col-xs-12">
-                                            <label for="{{ form.skills.auto_id }}" class="control-label">
-                                                {{ form.skills.label }}
+                                            <label for="{{ form.hobbies.auto_id }}" class="control-label">
+                                                {{ form.hobbies.label }}
                                             </label>
                                             <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left:0px;">
-                                                <input id="tags" type="text" class="tags form-control" name="skills" />
+                                                <input id="tags" type="text" class="tags form-control" name="hobbies" />
                                                 <br>
                                             </div>
                                         </div>
@@ -141,7 +141,7 @@
             $('#tags').tagsInput({
                 width: 'auto',
                 // 'autocomplete_url': url_to_autocomplete,
-                'defaultText': 'add a skill',
+                'defaultText': 'add a hobby',
                 // 'onAddTag': onAddTag,
                 // 'onRemoveTag': onRemoveTag,
                 // 'onChange': onChangeTag,
@@ -151,7 +151,7 @@
                 // 'maxChars' : 0, // if not provided there is no limit
                 'placeholderColor': '#808282'
             });
-            $('#tags').importTags('{% for skill in user.skills.split %}{{ skill }},{% endfor %}');
+            $('#tags').importTags('{% for hobby in user.hobbies.split %}{{ hobby }},{% endfor %}');
         });
     </script>
 {% endblock scripts %}

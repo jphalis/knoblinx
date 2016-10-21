@@ -82,7 +82,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin, TagMixin):
     degree = models.CharField(max_length=120, blank=True)
     gpa = models.DecimalField(_('GPA'), max_digits=3, decimal_places=2,
                               null=True, blank=True)
-    skills = models.CharField(max_length=250, blank=True)
+    hobbies = models.CharField(max_length=250, blank=True)
 
     date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
     modified = models.DateTimeField(_('last modified'), auto_now=True)
@@ -91,7 +91,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin, TagMixin):
     is_confirmed = models.BooleanField(_('confirmed'), default=False)
     is_staff = models.BooleanField(_('staff'), default=False)
 
-    tag_text_field = 'skills'
+    tag_text_field = 'hobbies'
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
@@ -144,18 +144,11 @@ class MyUser(AbstractBaseUser, PermissionsMixin, TagMixin):
         return settings.STATIC_URL + 'img/default-profile-pic.jpg'
 
     @cached_property
-    def skills_split(self):
+    def hobbies_split(self):
         """
-        Returns a comma-separated list of the user's skills.
+        Returns a comma-separated list of the user's hobbies.
         """
-        return self.skills.split(',')
-
-    @cached_property
-    def skills_count(self):
-        """
-        Returns the number of skills the user has.
-        """
-        return self.skills_split.count()
+        return self.hobbies.split(',')
 
     def has_module_perms(self, app_label):
         """
