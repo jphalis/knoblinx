@@ -46,8 +46,8 @@
                             <img class="img-circle" src="{{ obj.user_profile_pic }}" alt="User Avatar">
                           </div>
                           <h3 class="widget-user-username">{{ obj.get_full_name }}</h3>
-                          {% if obj.university %}
-                            <h5 class="widget-user-desc">{{ obj.university }}</h5>
+                          {% if obj.undergrad_uni %}
+                            <h5 class="widget-user-desc">{{ obj.undergrad_uni }}</h5>
                           {% else %}
                             <h5 class="widget-user-desc">&nbsp;</h5>
                           {% endif %}

@@ -1,5 +1,4 @@
 from django.contrib import messages
-from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
@@ -25,10 +24,10 @@ def generate_data(request):
     from random import randint
     from datetime import datetime, timedelta
     from django.conf import settings
+    from accounts.degrees import degrees
     from accounts.models import Degree, MyUser, School
+    from accounts.schools import schools
     from jobs.models import Applicant
-    from .degrees import degrees
-    from .schools import schools
 
     # Create schools
     for school in schools:
@@ -51,8 +50,9 @@ def generate_data(request):
             profile_pic=settings.STATIC_URL + 'img/default-profile-pic.jpg',
             resume=settings.STATIC_URL + 'img/default-profile-pic.jpg',
             gpa=3.45,
-            university=School.objects.get(name='Brown University'),
-            degree=Degree.objects.get(name='Business and Technology'),
+            undergrad_uni=School.objects.get(name='Brown University'),
+            undergrad_degree=Degree.objects.get(name='Business and Technology'),
+            degree_earned=MyUser.BACHELORS
         )
         demo_user.is_confirmed = True
         demo_user.video = 'https://www.youtube.com/embed/_OBlgSz8sSM'
@@ -95,8 +95,9 @@ def generate_data(request):
                 profile_pic=settings.STATIC_URL + 'img/default-profile-pic.jpg',
                 resume=settings.STATIC_URL + 'img/default-profile-pic.jpg',
                 gpa=randint(int(2), int(100 * 4)) / 100.0,
-                university=School.objects.all().order_by('?').first(),
-                degree=Degree.objects.all().order_by('?').first()
+                undergrad_uni=School.objects.all().order_by('?').first(),
+                undergrad_degree=Degree.objects.all().order_by('?').first(),
+                degree_earned=MyUser.BACHELORS
             )
             user.is_confirmed = True
             user.save()
@@ -194,7 +195,8 @@ def generate_data(request):
                 resume=settings.STATIC_URL + 'img/default-profile-pic.jpg',
                 name='{0} {1}'.format(_user.first_name, _user.last_name),
                 email=_user.email,
-                university='{} ({})'.format(_user.university, _user.degree)
+                university='{} ({})'.format(_user.undergrad_uni,
+                                            _user.undergrad_degree)
             )
 
     # Add applicants to jobs

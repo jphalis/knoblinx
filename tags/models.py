@@ -13,7 +13,7 @@ class Tag(models.Model):
         app_label = 'tags'
 
     def __unicode__(self):
-        return self.tag
+        return str(self.tag)
 
     def get_absolute_url(self):
         return reverse('tags:detail', kwargs={'tag': str(self.tag)})

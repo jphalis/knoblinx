@@ -159,13 +159,19 @@ class AccountSettingsForm(forms.ModelForm):
         max_digits=3,
         decimal_places=2
     )
-    university = forms.ModelChoiceField(
-        label=_('University*'),
+    undergrad_uni = forms.ModelChoiceField(
+        label=_('Undergraduate University*'),
         queryset=[],
     )
-    degree = forms.ModelChoiceField(
-        label=_('Degree*'),
+    undergrad_degree = forms.ModelChoiceField(
+        label=_('Undergraduate Degree*'),
         queryset=[],
+    )
+    degree_earned = forms.ChoiceField(
+        label=_('Degree(s) Earned'),
+        # attrs={'class': 'form-control'},
+        choices=MyUser.DEGREE_TYPES,
+        required=False
     )
     hobbies = forms.CharField(
         label=_("Hobbies and Interests"),
@@ -187,14 +193,15 @@ class AccountSettingsForm(forms.ModelForm):
     class Meta:
         model = MyUser
         fields = ('first_name', 'last_name', 'email', 'username', 'gpa',
-                  'profile_picture', 'video', 'resume', 'gender', 'university',
-                  'degree', 'hobbies', 'password_new', 'password_new_confirm',)
+                  'profile_picture', 'video', 'resume', 'gender',
+                  'undergrad_uni', 'undergrad_degree', 'degree_earned',
+                  'hobbies', 'password_new', 'password_new_confirm',)
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         super(AccountSettingsForm, self).__init__(*args, **kwargs)
-        self.fields['university'].queryset = School.objects.active()
-        self.fields['degree'].queryset = Degree.objects.active()
+        self.fields['undergrad_uni'].queryset = School.objects.active()
+        self.fields['undergrad_degree'].queryset = Degree.objects.active()
 
     def clean_email(self):
         """

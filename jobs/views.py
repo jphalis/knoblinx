@@ -74,7 +74,7 @@ def apply(request, job_pk):
     if not user.gpa:
         messages.error(request, 'Please add your GPA first.')
         return redirect('accounts:account_settings')
-    elif not user.university:
+    elif not user.undergrad_uni:
         messages.error(request, 'Please add your university first.')
         return redirect('accounts:account_settings')
     elif not user.is_confirmed:
@@ -89,13 +89,15 @@ def apply(request, job_pk):
                                   instance=user, user=user)
 
         if form.is_valid():
-            _user_degree = '({})'.format(user.degree) if user.degree else ''
+            _user_undergrad_degree = '({})'.format(
+                user.undergrad_degree) if user.undergrad_degree else ''
             applicant = Applicant.objects.create(
                 user=user,
                 resume=form.cleaned_data['resume'],
                 name='{0} {1}'.format(user.first_name, user.last_name),
                 email=form.cleaned_data['email'],
-                university='{} {}'.format(user.university, _user_degree),
+                university='{0} {1}'.format(user.undergrad_uni,
+                                          _user_undergrad_degree),
                 cover_letter=form.cleaned_data['cover_letter']
             )
             job.applicants.add(applicant)

@@ -16,20 +16,6 @@ from .managers import (CompanyManager, DegreeManager, ExperienceManager,
 # Create your models here.
 
 
-def get_profile_pic_path(instance, filename):
-    """
-    Stores the profile picture in /profile_pictures/username/filename.
-    """
-    return "/".join(['profile_pictures', instance.username, filename])
-
-
-def get_resume_path(instance, filename):
-    """
-    Stores the resume in /applicant_resumes/username/filename.
-    """
-    return "/".join(['resumes', instance.username, filename])
-
-
 @python_2_unicode_compatible
 class School(models.Model):
     name = models.CharField(max_length=120)
@@ -47,11 +33,23 @@ class School(models.Model):
         ordering = ['name']
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
 
 @python_2_unicode_compatible
 class Degree(models.Model):
+    ASSOCIATES = 0
+    BACHELORS = 1
+    MASTERS = 2
+    OTHER = 3
+    DEGREE_TYPES = (
+        (ASSOCIATES, _('Associates')),
+        (BACHELORS, _('Bachelors')),
+        (MASTERS, _('Masters')),
+        (OTHER, _('Other')),
+    )
+    degree_type = models.IntegerField(choices=DEGREE_TYPES,
+                                      blank=True, null=True)
     name = models.CharField(max_length=120)
 
     is_active = models.BooleanField(default=True)
@@ -65,28 +63,54 @@ class Degree(models.Model):
         ordering = ['name']
 
     def __str__(self):
-        return self.name
+        return str(self.name)
+
+
+def get_profile_pic_path(instance, filename):
+    """
+    Stores the profile picture in /profile_pictures/username/filename.
+    """
+    return "/".join(['profile_pictures', instance.username, filename])
+
+
+def get_resume_path(instance, filename):
+    """
+    Stores the resume in /applicant_resumes/username/filename.
+    """
+    return "/".join(['resumes', instance.username, filename])
 
 
 @python_2_unicode_compatible
 class MyUser(AbstractBaseUser, PermissionsMixin, TagMixin):
-    MALE = 0
-    FEMALE = 1
-    NO_ANSWER = 2
+    STUDENT = 0
+    EMPLOYER = 1
+    ACCOUNT_TYPES = (
+        (STUDENT, _('Student')),
+        (EMPLOYER, _('Employer')),
+    )
+    MALE = 2
+    FEMALE = 3
+    NO_ANSWER = 4
     GENDER_CHOICES = (
         (MALE, _('Male')),
         (FEMALE, _('Female')),
         (NO_ANSWER, _('Prefer not to answer')),
     )
-    STUDENT = 3
-    EMPLOYER = 4
-    ACCOUNT_TYPES = (
-        (STUDENT, _('Student')),
-        (EMPLOYER, _('Employer')),
+    ASSOCIATES = 5
+    BACHELORS = 6
+    MASTERS = 7
+    OTHER = 8
+    DEGREE_TYPES = (
+        (ASSOCIATES, _('Associates')),
+        (BACHELORS, _('Bachelors')),
+        (MASTERS, _('Masters')),
+        (OTHER, _('Other')),
     )
     gender = models.IntegerField(choices=GENDER_CHOICES, default=NO_ANSWER)
     account_type = models.IntegerField(choices=ACCOUNT_TYPES,
                                        blank=True, null=True)
+    degree_earned = models.IntegerField(choices=DEGREE_TYPES,
+                                        blank=True, null=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     username = models.SlugField(max_length=120, unique=True)
@@ -97,8 +121,8 @@ class MyUser(AbstractBaseUser, PermissionsMixin, TagMixin):
     video = models.CharField(_('profile video'), max_length=250, blank=True,
                              help_text='Preferably embed from YouTube')
     resume = models.FileField(upload_to=get_resume_path, null=True, blank=True)
-    university = models.ForeignKey(School, null=True, blank=True)
-    degree = models.ForeignKey(Degree, null=True, blank=True)
+    undergrad_uni = models.ForeignKey(School, null=True, blank=True)
+    undergrad_degree = models.ForeignKey(Degree, null=True, blank=True)
     gpa = models.DecimalField(_('GPA'), max_digits=3, decimal_places=2,
                               null=True, blank=True)
     hobbies = models.CharField(max_length=250, blank=True)
@@ -143,7 +167,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin, TagMixin):
         """
         Returns the first name for the user.
         """
-        return self.first_name
+        return str(self.first_name)
 
     @cached_property
     def gender_verbose(self):
@@ -215,7 +239,7 @@ class Company(TimeStampedModel):
         verbose_name_plural = _('companies')
 
     def __str__(self):
-        return u'{0}'.format(self.name)
+        return str(self.name)
 
     def get_absolute_url(self):
         """
@@ -275,7 +299,7 @@ class Experience(models.Model):
         ordering = ['-date_end']
 
     def __str__(self):
-        return self.title
+        return str(self.title)
 
     def get_absolute_url(self):
         """

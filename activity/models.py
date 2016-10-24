@@ -60,7 +60,7 @@ class Activity(TimeStampedModel):
             "target": self.target_object,
             "verb": self.verb,
         }
-        return "%(verb)s" % context
+        return '{}'.format(context['verb'])
 
     @property
     def time_since(self):

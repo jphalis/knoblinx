@@ -1,6 +1,8 @@
 # http://www.matchcollege.com/top-majors
 
 degrees = [
+    'Other',
+    'Business and Technology',
     'Business Administration',
     'Liberal Arts',
     'Nursing',
@@ -64,7 +66,6 @@ degrees = [
     'Information Systems',
     'Sports Management',
     'Guidance Counselor',
-    'Business and Technology',
     'Public Health',
     'Graphic Design',
     'Secondary Education',

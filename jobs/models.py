@@ -40,7 +40,7 @@ class Applicant(TimeStampedModel):
         verbose_name_plural = _('applicants')
 
     def __str__(self):
-        return u'{0}'.format(self.user.get_full_name)
+        return str(self.user.get_full_name)
 
     def job_title(self):
         _job = Job.objects.get(applicants__pk=self.pk)
@@ -73,7 +73,7 @@ class Job(TimeStampedModel):
         verbose_name_plural = _('jobs')
 
     def __str__(self):
-        return u'{0}'.format(self.title)
+        return str(self.title)
 
     def get_absolute_url(self):
         """

@@ -53,13 +53,13 @@
                                 <a href="{% url 'accounts:account_settings' %}" class="btn btn-info btn-block">
                                     Add your GPA first <i class="fa fa-arrow-right" aria-hidden="true"></i>
                                 </a>
-                            {% elif not user.university %}
+                            {% elif not user.undergrad_uni %}
                                 <a href="{% url 'accounts:account_settings' %}" class="btn btn-info btn-block">
                                     Add your university first <i class="fa fa-arrow-right" aria-hidden="true"></i>
                                 </a>
-                            {% elif not user.university %}
+                            {% elif not user.undergrad_degree %}
                                 <a href="{% url 'accounts:account_settings' %}" class="btn btn-info btn-block">
-                                    Confirm your account first <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                                    Add your degree first <i class="fa fa-arrow-right" aria-hidden="true"></i>
                                 </a>
                             {% elif not user.is_confirmed %}
                                 <button type="button" class="btn btn-block btn-warning" disabled="disabled">

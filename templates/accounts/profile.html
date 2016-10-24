@@ -157,7 +157,7 @@
                                 {% endif %}
                                 <!-- /experience -->
                                 <!-- education -->
-                                {% if user.university %}
+                                {% if user.undergrad_uni %}
                                     <div class="row">
                                         <h6 class="headline">
                                             <span class="icon"><i class="fa fa-graduation-cap" aria-hidden="true"></i></span>
@@ -166,8 +166,8 @@
                                         <div class="experience-item">
                                             <span class="date">Undergraduate</span>
                                             <div class="role">
-                                                <div class="title">{{ user.university }}</div>
-                                                <div class="company">{{ user.degree }}</div>
+                                                <div class="title">{{ user.undergrad_uni }}</div>
+                                                <div class="company">{{ user.undergrad_degree }}</div>
                                             </div>
                                         </div>
                                     </div>

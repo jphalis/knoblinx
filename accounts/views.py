@@ -152,6 +152,9 @@ def profile(request, username):
 def account_settings(request):
     user = get_object_or_404(MyUser, Q(is_active=True), pk=request.user.pk)
 
+    if user.account_type is None:
+        return HttpResponseForbidden()
+
     if user.account_type == MyUser.STUDENT:
         form = AccountSettingsForm(request.POST or None,
                                    request.FILES or None,

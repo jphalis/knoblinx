@@ -43,7 +43,7 @@ class JobManager(models.Manager):
             .filter(Q(list_date_start__lte=timezone.now()) &
                     Q(list_date_end__gt=timezone.now()) &
                     Q(min_gpa__lte=user.gpa) &
-                    Q(universities=user.university)) \
+                    Q(universities=user.undergrad_uni)) \
             .exclude(applicants__user=user) \
             .select_related('company')
 

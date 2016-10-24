@@ -4,6 +4,10 @@
 
 {% block title %}{{ user.get_full_name }} / Settings{% endblock title %}
 
+{% block stylesheets %}
+    <link href="{% static 'vendors/iCheck/skins/flat/green.css' %}" rel="stylesheet">
+{% endblock stylesheets %}
+
 {% block content %}
     <div class="right_col" role="main">
         <div class="">
@@ -157,21 +161,35 @@
                                                     </div>
                                                 </div>
                                                 <div class="row">
-                                                    <div class="form-group col-md-11 col-sm-11 col-xs-12 {% if form.university.errors %}has-error{% endif %}">
-                                                        <label for="{{ form.university.auto_id }}" class="control-label">
-                                                            {{ form.university.label }}
+                                                    <div class="form-group col-md-11 col-sm-11 col-xs-12 {% if form.degree_earned.errors %}has-error{% endif %}">
+                                                        <label for="{{ form.degree_earned.auto_id }}" class="control-label">
+                                                            {{ form.degree_earned.label }}
                                                         </label>
-                                                        {{ form.university|add_class:"form-control" }}
-                                                        {{ form.university.errors }}
+                                                        <div>
+                                                            {% for choice in form.degree_earned.field.choices %}
+                                                                <input type="checkbox" name="degree_earned" value="{{ choice.0 }}" class="flat"/> {{ choice.1 }}
+                                                                <br />
+                                                            {% endfor %}
+                                                            {{ form.degree_earned.errors }}
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="row">
-                                                    <div class="form-group col-md-11 col-sm-11 col-xs-12 {% if form.degree.errors %}has-error{% endif %}">
-                                                        <label for="{{ form.degree.auto_id }}" class="control-label">
-                                                            {{ form.degree.label }}
+                                                    <div class="form-group col-md-11 col-sm-11 col-xs-12 {% if form.undergrad_uni.errors %}has-error{% endif %}">
+                                                        <label for="{{ form.undergrad_uni.auto_id }}" class="control-label">
+                                                            {{ form.undergrad_uni.label }}
                                                         </label>
-                                                        {{ form.degree|add_class:"form-control" }}
-                                                        {{ form.degree.errors }}
+                                                        {{ form.undergrad_uni|add_class:"form-control" }}
+                                                        {{ form.undergrad_uni.errors }}
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group col-md-11 col-sm-11 col-xs-12 {% if form.undergrad_degree.errors %}has-error{% endif %}">
+                                                        <label for="{{ form.undergrad_degree.auto_id }}" class="control-label">
+                                                            {{ form.undergrad_degree.label }}
+                                                        </label>
+                                                        {{ form.undergrad_degree|add_class:"form-control" }}
+                                                        {{ form.undergrad_degree.errors }}
                                                     </div>
                                                 </div>
                                                 <div class="row">
@@ -207,6 +225,8 @@
 {% endblock content %}
 
 {% block js %}
+    <!-- checkboxes -->
+    <script src="{% static 'vendors/iCheck/icheck.min.js' %}"></script>
     <!-- jquery tags -->
     <script src="{% static 'vendors/jquery.tagsinput/src/jquery.tagsinput.js' %}"></script>
 {% endblock js %}
@@ -236,7 +256,27 @@
         function onChangeTag(tag) {
             // alert("Changed tag: " + tag);
         }
+
         $(document).ready(function() {
+            // $("input[name=degree_earned]").on("ifChecked", function(){
+            //     var checkboxes = $("input[name=degree_earned]");
+            //     if (checkboxes.filter(":checked").length > 1) { 
+            //          checkboxes.not(":checked").iCheck('disable'); 
+            //     } else {
+            //          checkboxes.not(":checked").iCheck('enable'); 
+            //     }
+            // });
+            // $("input[name=degree_earned]").on("ifChecked",function(e){
+            //     var checkboxes = $("input[name=degree_earned]");
+            //     var $this = $(this);
+            //     if (checkboxes.filter(":checked").length > 2) { 
+            //         alert('You may only choose 3 degrees');
+            //         setTimeout(function(){
+            //             $this.iCheck('uncheck');
+            //         },1);
+            //     }
+            // });
+
             $('#tags').tagsInput({
                 width: 'auto',
                 // 'autocomplete_url': url_to_autocomplete,

@@ -27,8 +27,7 @@ class EmailConfirmation(models.Model):
         verbose_name_plural = _("email confirmations")
 
     def __str__(self):
-        return "Confirmation for {0}".format(
-            self.user.get_full_name)
+        return 'Confirmation for {}'.format(self.user.get_full_name)
 
     def key_valid(self):
         expiration_date = self.sent_date + datetime.timedelta(days=7)

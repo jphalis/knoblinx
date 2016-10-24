@@ -134,10 +134,3 @@ class JobCreateForm(forms.ModelForm):
         Return the lowercase value of the email.
         """
         return self.cleaned_data['contact_email'].lower()
-
-    # def clean_universities(self):
-    #     """
-    #     Return a list of selected university pks.
-    #     """
-    #     _uni_ids = [str(uni) for uni in self.cleaned_data['universities']]
-    #     return ','.join(_uni_ids)
