@@ -101,7 +101,7 @@ def auth_login_register(request):
 def company_register(request):
     user = request.user
 
-    if not user.is_confirmed:
+    if not user.is_confirmed or user.account_type is not None:
         return HttpResponseForbidden()
 
     if Company.objects.filter(user=user).exists():
@@ -130,7 +130,7 @@ def company_register(request):
 def student_register(request):
     user = get_object_or_404(MyUser, Q(is_active=True), pk=request.user.pk)
 
-    if not user.is_confirmed:
+    if not user.is_confirmed or user.account_type is not None:
         return HttpResponseForbidden()
 
     form = AccountSettingsForm(request.POST or None,

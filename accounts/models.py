@@ -121,8 +121,15 @@ class MyUser(AbstractBaseUser, PermissionsMixin, TagMixin):
     video = models.CharField(_('profile video'), max_length=250, blank=True,
                              help_text='Preferably embed from YouTube')
     resume = models.FileField(upload_to=get_resume_path, null=True, blank=True)
-    undergrad_uni = models.ForeignKey(School, null=True, blank=True)
-    undergrad_degree = models.ForeignKey(Degree, null=True, blank=True)
+    undergrad_uni = models.ForeignKey(School,
+                                      related_name='undergrad_university',
+                                      null=True, blank=True)
+    undergrad_degree = models.ManyToManyField(Degree, blank=True,
+                                              related_name='undergrad_degree')
+    grad_uni = models.ForeignKey(School, related_name='grad_university',
+                                 null=True, blank=True)
+    grad_degree = models.ManyToManyField(Degree, blank=True,
+                                         related_name='grad_degree')
     gpa = models.DecimalField(_('GPA'), max_digits=3, decimal_places=2,
                               null=True, blank=True)
     hobbies = models.CharField(max_length=250, blank=True)

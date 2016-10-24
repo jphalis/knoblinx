@@ -188,8 +188,36 @@
                                                         <label for="{{ form.undergrad_degree.auto_id }}" class="control-label">
                                                             {{ form.undergrad_degree.label }}
                                                         </label>
-                                                        {{ form.undergrad_degree|add_class:"form-control" }}
-                                                        {{ form.undergrad_degree.errors }}
+                                                        <div class="col-md-9 col-sm-9 col-xs-12 form-control" style="height:150px; overflow:auto;">
+                                                            {% for choice in form.undergrad_degree.field.choices %}
+                                                                <input type="checkbox" name="undergrad_degree" value="{{ choice.0 }}" class="flat"/> {{ choice.1 }}
+                                                                <br />
+                                                            {% endfor %}
+                                                            {{ form.undergrad_degree.errors }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group col-md-11 col-sm-11 col-xs-12 {% if form.grad_uni.errors %}has-error{% endif %}">
+                                                        <label for="{{ form.grad_uni.auto_id }}" class="control-label">
+                                                            {{ form.grad_uni.label }}
+                                                        </label>
+                                                        {{ form.grad_uni|add_class:"form-control" }}
+                                                        {{ form.grad_uni.errors }}
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group col-md-11 col-sm-11 col-xs-12 {% if form.grad_degree.errors %}has-error{% endif %}">
+                                                        <label for="{{ form.grad_degree.auto_id }}" class="control-label">
+                                                            {{ form.grad_degree.label }}
+                                                        </label>
+                                                        <div class="col-md-9 col-sm-9 col-xs-12 form-control" style="height:150px; overflow:auto;">
+                                                            {% for choice in form.grad_degree.field.choices %}
+                                                                <input type="checkbox" name="grad_degree" value="{{ choice.0 }}" class="flat"/> {{ choice.1 }}
+                                                                <br />
+                                                            {% endfor %}
+                                                            {{ form.grad_degree.errors }}
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="row">

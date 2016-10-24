@@ -18,18 +18,19 @@ class MyUserAdmin(UserAdmin):
                     'is_confirmed',)
     list_display_links = ('id', '__str__',)
     list_filter = ('is_active', 'is_staff', 'is_superuser', 'is_confirmed',
-                   'account_type', 'undergrad_uni', 'gender',
+                   'account_type', 'undergrad_uni', 'grad_uni', 'gender',
                    'date_joined', 'modified',)
     prepopulated_fields = {'username': ["first_name", "last_name"], }
-    raw_id_fields = ['undergrad_uni', 'undergrad_degree']
+    raw_id_fields = ['undergrad_uni', 'undergrad_degree',
+                     'grad_uni', 'grad_degree']
     fieldsets = (
-        (None,
-            {'fields': ('email', 'password',)}),
         ('Basic information',
-            {'fields': ('account_type', 'first_name', 'last_name', 'username',
-                        'gender', 'profile_pic', 'video', 'resume',
-                        'undergrad_uni', 'undergrad_degree', 'degree_earned',
-                        'gpa', 'hobbies',)}),
+            {'fields': ('account_type', 'email', 'password', 'first_name',
+                        'last_name', 'username', 'gender', 'profile_pic',
+                        'video', 'resume', 'hobbies',)}),
+        ('Education',
+            {'fields': ('undergrad_uni', 'undergrad_degree', 'grad_uni',
+                        'grad_degree', 'degree_earned', 'gpa',)}),
         ('Permissions',
             {'fields': ('is_active', 'is_confirmed', 'is_staff',
                         'is_superuser', 'user_permissions')}),

@@ -127,6 +127,16 @@ class AccountSettingsForm(forms.ModelForm):
             attrs={'class': 'form-control'}),
         max_length=120
     )
+    password_new = forms.CharField(
+        label=_("New Password"),
+        widget=forms.PasswordInput(render_value=False),
+        required=False
+    )
+    password_new_confirm = forms.CharField(
+        label=_("Confirm New Password"),
+        widget=forms.PasswordInput(render_value=False),
+        required=False
+    )
     profile_picture = forms.ImageField(
         label=_('Profile Picture*'),
         widget=ClearableFileInput(
@@ -161,15 +171,26 @@ class AccountSettingsForm(forms.ModelForm):
     )
     undergrad_uni = forms.ModelChoiceField(
         label=_('Undergraduate University*'),
-        queryset=[],
+        queryset=[]
     )
     undergrad_degree = forms.ModelChoiceField(
-        label=_('Undergraduate Degree*'),
+        label=_('Undergraduate Degree(s)*'),
         queryset=[],
+        empty_label=None
+    )
+    grad_uni = forms.ModelChoiceField(
+        label=_('Graduate University'),
+        queryset=[],
+        required=False
+    )
+    grad_degree = forms.ModelChoiceField(
+        label=_('Graduate Degree(s)'),
+        queryset=[],
+        empty_label=None,
+        required=False
     )
     degree_earned = forms.ChoiceField(
         label=_('Degree(s) Earned'),
-        # attrs={'class': 'form-control'},
         choices=MyUser.DEGREE_TYPES,
         required=False
     )
@@ -179,29 +200,24 @@ class AccountSettingsForm(forms.ModelForm):
         max_length=250,
         required=False
     )
-    password_new = forms.CharField(
-        label=_("New Password"),
-        widget=forms.PasswordInput(render_value=False),
-        required=False
-    )
-    password_new_confirm = forms.CharField(
-        label=_("Confirm New Password"),
-        widget=forms.PasswordInput(render_value=False),
-        required=False
-    )
 
     class Meta:
         model = MyUser
         fields = ('first_name', 'last_name', 'email', 'username', 'gpa',
                   'profile_picture', 'video', 'resume', 'gender',
-                  'undergrad_uni', 'undergrad_degree', 'degree_earned',
-                  'hobbies', 'password_new', 'password_new_confirm',)
+                  'undergrad_uni', 'undergrad_degree', 'grad_uni',
+                  'grad_degree', 'degree_earned', 'hobbies',
+                  'password_new', 'password_new_confirm',)
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         super(AccountSettingsForm, self).__init__(*args, **kwargs)
-        self.fields['undergrad_uni'].queryset = School.objects.active()
-        self.fields['undergrad_degree'].queryset = Degree.objects.active()
+        _schools = School.objects.active()
+        _degrees = Degree.objects.active()
+        self.fields['undergrad_uni'].queryset = _schools
+        self.fields['undergrad_degree'].queryset = _degrees
+        self.fields['grad_uni'].queryset = _schools
+        self.fields['grad_degree'].queryset = _degrees
 
     def clean_email(self):
         """
@@ -238,6 +254,20 @@ class AccountSettingsForm(forms.ModelForm):
         if 'embed/' not in url and 'watch?v=' in url:
             url = url.replace("watch?v=", "embed/")
         return url
+
+    def clean_undergrad_degree(self):
+        _degrees = self.cleaned_data['undergrad_degree']
+        if _degrees.count() > 2:
+            raise forms.ValidationError(
+                _('You may only select up to 2 degrees.'))
+        return _degrees
+
+    def clean_grad_degree(self):
+        _degrees = self.cleaned_data['grad_degree']
+        if _degrees.count() > 2:
+            raise forms.ValidationError(
+                _('You may only select up to 2 degrees.'))
+        return _degrees
 
     def clean_password_new_confirm(self):
         if not self.cleaned_data['password_new_confirm'] == '':
