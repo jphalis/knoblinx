@@ -8,7 +8,7 @@ degrees = [
     'Astronomy',
     'Biochemistry',
     'Biology',
-    'Business (Business Scholars Program)',
+    'Business',
     'Chemistry',
     'Classical Studies',
     'Communication',

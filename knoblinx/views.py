@@ -21,23 +21,38 @@ from jobs.models import Job
 
 # REMOVE WHEN IN PRODUCTION ! ! !
 def generate_data(request):
+    import random
     from random import randint
     from datetime import datetime, timedelta
     from django.conf import settings
     from accounts.degrees import degrees
-    from accounts.models import Degree, MyUser, School
+    from accounts.hobbies import hobbies
+    from accounts.models import Degree, Hobby, MyUser, School
     from accounts.schools import schools
     from jobs.models import Applicant
 
+    # Create hobbies
+    if not Hobby.objects.filter(name=hobbies[0]).exists():
+        for hobby in hobbies:
+            Hobby.objects.create(name=hobby)
+
+    demo_hobbies = [
+        Hobby.objects.all().order_by('?').first(),
+        Hobby.objects.all().order_by('?').first(),
+        Hobby.objects.all().order_by('?').first(),
+        Hobby.objects.all().order_by('?').first(),
+        Hobby.objects.all().order_by('?').first(),
+    ]
+
     # Create schools
-    for school in schools:
-        if not School.objects.filter(name=school[0]).exists():
+    if not School.objects.filter(name=schools[0][0]).exists():
+        for school in schools:
             School.objects.create(
                 name=school[0], location=school[1], email=school[2])
 
     # Create degrees
-    for degree in degrees:
-        if not Degree.objects.filter(name=degree).exists():
+    if not Degree.objects.filter(name=degrees[0]).exists():
+        for degree in degrees:
             Degree.objects.create(name=degree)
 
     # Create demo user
@@ -50,14 +65,17 @@ def generate_data(request):
             profile_pic=settings.STATIC_URL + 'img/default-profile-pic.jpg',
             resume=settings.STATIC_URL + 'img/default-profile-pic.jpg',
             gpa=3.45,
-            undergrad_uni=School.objects.get(name='Brown University'),
-            undergrad_degree=Degree.objects.get(name='Business and Technology'),
-            degree_earned=MyUser.BACHELORS
+            degree_earned=MyUser.BACHELOR,
+            year=MyUser.SENIOR,
+            opp_sought=MyUser.FULL_TIME,
         )
         demo_user.is_confirmed = True
         demo_user.video = 'https://www.youtube.com/embed/_OBlgSz8sSM'
-        demo_user.hobbies = 'Python,Marketing,Public Speaking,Microsoft Office'
+        demo_user.undergrad_uni = School.objects.get(name='Brown University')
+        demo_user.undergrad_degree.add(Degree.objects.get(name='Business'))
         demo_user.save()
+        for hobby in demo_hobbies:
+            demo_user.hobbies.add(hobby)
 
     # Create users
     users = [
@@ -95,12 +113,16 @@ def generate_data(request):
                 profile_pic=settings.STATIC_URL + 'img/default-profile-pic.jpg',
                 resume=settings.STATIC_URL + 'img/default-profile-pic.jpg',
                 gpa=randint(int(2), int(100 * 4)) / 100.0,
-                undergrad_uni=School.objects.all().order_by('?').first(),
-                undergrad_degree=Degree.objects.all().order_by('?').first(),
-                degree_earned=MyUser.BACHELORS
+                degree_earned=random.choice([x[0] for x in MyUser.DEGREE_TYPES]),
+                year=random.choice([x[0] for x in MyUser.YEAR_TYPES]),
+                opp_sought=random.choice([x[0] for x in MyUser.OPPORTUNITY_TYPES])
             )
             user.is_confirmed = True
+            user.undergrad_uni = School.objects.all().order_by('?').first()
+            user.undergrad_degree.add(Degree.objects.all().order_by('?').first())
             user.save()
+            for hobby in demo_hobbies:
+                user.hobbies.add(hobby)
 
     # Create companies
     company_owners = [
@@ -165,30 +187,8 @@ def generate_data(request):
             )
 
     # Create applicants
-    applicants = [
-        ['John', 'Doe'],
-        ['Bill', 'Clarkson'],
-        ['Jessica', 'Hall'],
-        ['Franklin', 'Rose'],
-        ['Bobby', 'Collins'],
-        ['Fred', 'Flinstone'],
-        ['Blake', 'Casper'],
-        ['Marissa', 'Smiles'],
-        ['Tyler', 'Simm'],
-        ['Gina', 'Zentenial'],
-        ['Michelle', 'Gregs'],
-        ['Oscar', 'Behaves'],
-        ['Heather', 'Hoolihan'],
-        ['Scott', 'Dragonile'],
-        ['Charlie', 'Bitfinger'],
-        ['Pryia', 'Havalopolous'],
-        ['Chris', 'Wildwood'],
-        ['Jonathan', 'Newguinea'],
-        ['Anne', 'Hathaway'],
-        ['Brooke', 'Orchard']
-    ]
-    if not Applicant.objects.filter(name='{0} {1}'.format(applicants[0][0], applicants[0][1])).exists():
-        for applicant in applicants:
+    if not Applicant.objects.filter(name='{0} {1}'.format(users[0][0], users[0][1])).exists():
+        for applicant in users:
             _user = MyUser.objects.get(first_name=applicant[0])
             Applicant.objects.create(
                 user=_user,

@@ -9,11 +9,29 @@ from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 
 from core.models import TimeStampedModel
-from tags.models import TagMixin
+# from tags.models import TagMixin
 from .managers import (CompanyManager, DegreeManager, ExperienceManager,
-                       MyUserManager, SchoolManager)
+                       HobbyManager, MyUserManager, SchoolManager)
 
 # Create your models here.
+
+
+@python_2_unicode_compatible
+class Hobby(models.Model):
+    name = models.CharField(max_length=120)
+
+    is_active = models.BooleanField(default=True)
+
+    objects = HobbyManager()
+
+    class Meta:
+        app_label = 'accounts'
+        verbose_name = _('hobby')
+        verbose_name_plural = _('hobbies')
+        ordering = ['name']
+
+    def __str__(self):
+        return str(self.name)
 
 
 @python_2_unicode_compatible
@@ -81,7 +99,7 @@ def get_resume_path(instance, filename):
 
 
 @python_2_unicode_compatible
-class MyUser(AbstractBaseUser, PermissionsMixin, TagMixin):
+class MyUser(AbstractBaseUser, PermissionsMixin):  # TagMixin
     STUDENT = 0
     EMPLOYER = 1
     ACCOUNT_TYPES = (
@@ -96,21 +114,43 @@ class MyUser(AbstractBaseUser, PermissionsMixin, TagMixin):
         (FEMALE, _('Female')),
         (NO_ANSWER, _('Prefer not to answer')),
     )
-    ASSOCIATES = 5
-    BACHELORS = 6
-    MASTERS = 7
-    OTHER = 8
+    ASSOCIATE = 5
+    BACHELOR = 6
+    MASTER = 7
+    DOCTORATE = 8
+    OTHER = 9
     DEGREE_TYPES = (
-        (ASSOCIATES, _('Associates')),
-        (BACHELORS, _('Bachelors')),
-        (MASTERS, _('Masters')),
+        (ASSOCIATE, _('Associate')),
+        (BACHELOR, _('Bachelor')),
+        (MASTER, _('Master')),
+        (DOCTORATE, _('Doctorate')),
         (OTHER, _('Other')),
     )
-    gender = models.IntegerField(choices=GENDER_CHOICES, default=NO_ANSWER)
-    account_type = models.IntegerField(choices=ACCOUNT_TYPES,
-                                       blank=True, null=True)
-    degree_earned = models.IntegerField(choices=DEGREE_TYPES,
-                                        blank=True, null=True)
+    FRESHMAN = 10
+    SOPHOMORE = 11
+    JUNIOR = 12
+    SENIOR = 13
+    OTHER_YEAR = 14
+    YEAR_TYPES = (
+        (FRESHMAN, _('Freshman')),
+        (SOPHOMORE, _('Sophomore')),
+        (JUNIOR, _('Junior')),
+        (SENIOR, _('Senior')),
+        (OTHER_YEAR, _('Other')),
+    )
+    INTERNSHIP = 15
+    FULL_TIME = 16
+    PART_TIME = 17
+    CONSULTING = 18
+    OTHER_JOB = 19
+    OPPORTUNITY_TYPES = (
+        (INTERNSHIP, _('Internship')),
+        (FULL_TIME, _('Full-time')),
+        (PART_TIME, _('Part-time')),
+        (CONSULTING, _('Consulting')),
+        (OTHER_JOB, _('Other')),
+    )
+
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     username = models.SlugField(max_length=120, unique=True)
@@ -132,7 +172,17 @@ class MyUser(AbstractBaseUser, PermissionsMixin, TagMixin):
                                          related_name='grad_degree')
     gpa = models.DecimalField(_('GPA'), max_digits=3, decimal_places=2,
                               null=True, blank=True)
-    hobbies = models.CharField(max_length=250, blank=True)
+    hobbies = models.ManyToManyField(Hobby, related_name='hobbies', blank=True)
+    # hobbies = models.CharField(max_length=250, blank=True)
+
+    gender = models.IntegerField(choices=GENDER_CHOICES, default=NO_ANSWER)
+    account_type = models.IntegerField(choices=ACCOUNT_TYPES,
+                                       blank=True, null=True)
+    degree_earned = models.IntegerField(choices=DEGREE_TYPES,
+                                        blank=True, null=True)
+    year = models.IntegerField(choices=YEAR_TYPES, blank=True, null=True)
+    opp_sought = models.IntegerField(choices=OPPORTUNITY_TYPES,
+                                     blank=True, null=True)
 
     date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
     modified = models.DateTimeField(_('last modified'), auto_now=True)
@@ -141,7 +191,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin, TagMixin):
     is_confirmed = models.BooleanField(_('confirmed'), default=False)
     is_staff = models.BooleanField(_('staff'), default=False)
 
-    tag_text_field = 'hobbies'
+    # tag_text_field = 'hobbies'
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
@@ -183,6 +233,20 @@ class MyUser(AbstractBaseUser, PermissionsMixin, TagMixin):
         """
         return dict(MyUser.GENDER_CHOICES)[self.gender]
 
+    @cached_property
+    def opp_sought_verbose(self):
+        """
+        Returns the verbose of the user's opp_sought.
+        """
+        return dict(MyUser.OPPORTUNITY_TYPES)[self.opp_sought]
+
+    @cached_property
+    def year_verbose(self):
+        """
+        Returns the verbose of the user's year.
+        """
+        return dict(MyUser.YEAR_TYPES)[self.year]
+
     @property
     def user_profile_pic(self):
         """
@@ -194,11 +258,32 @@ class MyUser(AbstractBaseUser, PermissionsMixin, TagMixin):
         return settings.STATIC_URL + 'img/default-profile-pic.jpg'
 
     @cached_property
-    def hobbies_split(self):
+    def get_undergrad_degrees_pk(self):
         """
-        Returns a comma-separated list of the user's hobbies.
+        Returns a list of pks for the user's undergrad_degree.
         """
-        return self.hobbies.split(',')
+        return map(str, self.undergrad_degree.values_list('pk', flat=True))
+
+    @cached_property
+    def get_grad_degrees_pk(self):
+        """
+        Returns a list of pks for the user's grad_degree.
+        """
+        return map(str, self.grad_degree.values_list('pk', flat=True))
+
+    @cached_property
+    def get_hobbies_pk(self):
+        """
+        Returns a list of pks for the user's hobbies.
+        """
+        return map(str, self.hobbies.values_list('pk', flat=True))
+
+    # @cached_property
+    # def hobbies_split(self):
+    #     """
+    #     Returns a comma-separated list of the user's hobbies.
+    #     """
+    #     return self.hobbies.split(',')
 
     def has_module_perms(self, app_label):
         """

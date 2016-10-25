@@ -24,6 +24,7 @@
                         <li role="presentation" class="active"><a href="#tab_content1" role="tab" id="tab-1" data-toggle="tab" aria-expanded="true">Account Basics</a></li>
                         {% if not is_employer %}
                             <li role="presentation" class=""><a href="#tab_content2" role="tab" id="tab-2" data-toggle="tab" aria-expanded="false">Profile</a></li>
+                            <li role="presentation" class=""><a href="#tab_content3" role="tab" id="tab-3" data-toggle="tab" aria-expanded="false">Education</a></li>
                         {% endif %}
                     </ul>
                     <form action="." method="POST" enctype="multipart/form-data" role="form">
@@ -125,12 +126,12 @@
                                         <div class="col-md-8 col-sm-8">
                                             <fieldset>
                                                 <div class="row">
-                                                    <div class="form-group col-md-11 col-sm-11 col-xs-12 {% if form.profile_picture.errors %}has-error{% endif %}">
-                                                        <label for="{{ form.profile_picture.auto_id }}" class="control-label">
-                                                            {{ form.profile_picture.label }}
+                                                    <div class="form-group col-md-11 col-sm-11 col-xs-12 {% if form.profile_pic.errors %}has-error{% endif %}">
+                                                        <label for="{{ form.profile_pic.auto_id }}" class="control-label">
+                                                            {{ form.profile_pic.label }}
                                                         </label>
-                                                        {{ form.profile_picture|add_class:"form-control" }}
-                                                        {{ form.profile_picture.errors }}
+                                                        {{ form.profile_pic|add_class:"form-control" }}
+                                                        {{ form.profile_pic.errors }}
                                                     </div>
                                                 </div>
                                                 <div class="row">
@@ -152,6 +153,63 @@
                                                     </div>
                                                 </div>
                                                 <div class="row">
+                                                    <div class="form-group col-md-11 col-sm-11 col-xs-12 {% if form.opp_sought.errors %}has-error{% endif %}">
+                                                        <label for="{{ form.opp_sought.auto_id }}" class="control-label">
+                                                            {{ form.opp_sought.label }}
+                                                        </label>
+                                                        {{ form.opp_sought|add_class:"form-control" }}
+                                                        {{ form.opp_sought.errors }}
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group col-md-11 col-sm-11 col-xs-12 {% if form.hobbies.errors %}has-error{% endif %}">
+                                                        <label for="{{ form.hobbies.auto_id }}" class="control-label">
+                                                            {{ form.hobbies.label }}
+                                                        </label>
+                                                        <div class="col-md-9 col-sm-9 col-xs-12 form-control" style="height:150px; overflow:auto;">
+                                                            {% for choice in form.hobbies.field.choices %}
+                                                                <input type="checkbox" name="hobbies" value="{{ choice.0 }}" class="flat" {% if choice.0|stringformat:"i" in user.get_hobbies_pk %}checked{% endif %} />
+                                                                {{ choice.1 }}
+                                                                <br />
+                                                            {% endfor %}
+                                                        </div>
+                                                        {{ form.hobbies.errors }}
+                                                    </div>
+                                                </div>
+                                                <!-- <div class="row">
+                                                    <div class="control-group col-md-11 col-sm-11 col-xs-12">
+                                                        <label for="{{ form.hobbies.auto_id }}" class="control-label">
+                                                            {{ form.hobbies.label }}
+                                                        </label>
+                                                        <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left:0px;">
+                                                            <input id="tags" type="text" class="tags form-control" name="hobbies" />
+                                                            <br>
+                                                        </div>
+                                                    </div>
+                                                </div> -->
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /tab 2 -->
+                            <!-- tab 3 -->
+                            <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="tab-3">
+                                <div class="x_panel">
+                                    <div class="x_content">
+                                        <br/>
+                                        <div class="col-md-8 col-sm-8">
+                                            <fieldset>
+                                                <div class="row">
+                                                    <div class="form-group col-md-11 col-sm-11 col-xs-12 {% if form.year.errors %}has-error{% endif %}">
+                                                        <label for="{{ form.year.auto_id }}" class="control-label">
+                                                            {{ form.year.label }}
+                                                        </label>
+                                                        {{ form.year|add_class:"form-control" }}
+                                                        {{ form.year.errors }}
+                                                    </div>
+                                                </div>
+                                                <div class="row">
                                                     <div class="form-group col-md-11 col-sm-11 col-xs-12 {% if form.gpa.errors %}has-error{% endif %}">
                                                         <label for="{{ form.gpa.auto_id }}" class="control-label">
                                                             {{ form.gpa.label }}
@@ -165,9 +223,9 @@
                                                         <label for="{{ form.degree_earned.auto_id }}" class="control-label">
                                                             {{ form.degree_earned.label }}
                                                         </label>
-                                                        <div>
+                                                        <div style="color:#555;">
                                                             {% for choice in form.degree_earned.field.choices %}
-                                                                <input type="checkbox" name="degree_earned" value="{{ choice.0 }}" class="flat"/> {{ choice.1 }}
+                                                                <input type="checkbox" name="degree_earned" value="{{ choice.0 }}" class="flat" {% if choice.0 == user.degree_earned %}checked{% endif %} /> {{ choice.1 }}
                                                                 <br />
                                                             {% endfor %}
                                                             {{ form.degree_earned.errors }}
@@ -190,11 +248,12 @@
                                                         </label>
                                                         <div class="col-md-9 col-sm-9 col-xs-12 form-control" style="height:150px; overflow:auto;">
                                                             {% for choice in form.undergrad_degree.field.choices %}
-                                                                <input type="checkbox" name="undergrad_degree" value="{{ choice.0 }}" class="flat"/> {{ choice.1 }}
+                                                                <input type="checkbox" name="undergrad_degree" value="{{ choice.0 }}" class="flat" {% if choice.0|stringformat:"i" in user.get_undergrad_degrees_pk %}checked{% endif %} />
+                                                                {{ choice.1 }}
                                                                 <br />
                                                             {% endfor %}
-                                                            {{ form.undergrad_degree.errors }}
                                                         </div>
+                                                        {{ form.undergrad_degree.errors }}
                                                     </div>
                                                 </div>
                                                 <div class="row">
@@ -213,22 +272,12 @@
                                                         </label>
                                                         <div class="col-md-9 col-sm-9 col-xs-12 form-control" style="height:150px; overflow:auto;">
                                                             {% for choice in form.grad_degree.field.choices %}
-                                                                <input type="checkbox" name="grad_degree" value="{{ choice.0 }}" class="flat"/> {{ choice.1 }}
+                                                                <input type="checkbox" name="grad_degree" value="{{ choice.0 }}" class="flat" {% if choice.0|stringformat:"i" in user.get_grad_degrees_pk %}checked{% endif %} />
+                                                                {{ choice.1 }}
                                                                 <br />
                                                             {% endfor %}
-                                                            {{ form.grad_degree.errors }}
                                                         </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="control-group col-md-11 col-sm-11 col-xs-12">
-                                                        <label for="{{ form.hobbies.auto_id }}" class="control-label">
-                                                            {{ form.hobbies.label }}
-                                                        </label>
-                                                        <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left:0px;">
-                                                            <input id="tags" type="text" class="tags form-control" name="hobbies" />
-                                                            <br>
-                                                        </div>
+                                                        {{ form.grad_degree.errors }}
                                                     </div>
                                                 </div>
                                             </fieldset>
@@ -236,7 +285,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- /tab2 -->
+                            <!-- /tab 3 -->
                             <div class="row">
                                 <div class="ln_solid"></div>
                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-bottom:7em;">
@@ -256,7 +305,7 @@
     <!-- checkboxes -->
     <script src="{% static 'vendors/iCheck/icheck.min.js' %}"></script>
     <!-- jquery tags -->
-    <script src="{% static 'vendors/jquery.tagsinput/src/jquery.tagsinput.js' %}"></script>
+    <!-- <script src="{% static 'vendors/jquery.tagsinput/src/jquery.tagsinput.js' %}"></script> -->
 {% endblock js %}
 
 {% block scripts %}
@@ -270,11 +319,31 @@
                 submitButton.attr('disabled', 'disabled').addClass('btn-disabled');
                 submitButton.parents('form:first').submit();
             });
+
+            // Degree earned
+            $("input[name=degree_earned]").on("ifChecked",function(e){
+                var checkboxes = $("input[name=degree_earned]");
+                var $this = $(this);
+                if (checkboxes.filter(":checked").length > 1) { 
+                    alert('You may only choose one degree.');
+                    setTimeout(function(){
+                        $this.iCheck('uncheck');
+                    },1);
+                }
+            });
+            // $("input[name=degree_earned]").on("ifChecked", function(){
+            //     var checkboxes = $("input[name=degree_earned]");
+            //     if (checkboxes.filter(":checked").length > 1) { 
+            //          checkboxes.not(":checked").iCheck('disable'); 
+            //     } else {
+            //          checkboxes.not(":checked").iCheck('enable'); 
+            //     }
+            // });
         });
     </script>
 
     <!-- jQuery tags -->
-    <script type="text/javascript">
+    <!-- <script type="text/javascript">
         function onAddTag(tag) {
             // alert("Added a tag: " + tag);
         }
@@ -284,27 +353,7 @@
         function onChangeTag(tag) {
             // alert("Changed tag: " + tag);
         }
-
         $(document).ready(function() {
-            // $("input[name=degree_earned]").on("ifChecked", function(){
-            //     var checkboxes = $("input[name=degree_earned]");
-            //     if (checkboxes.filter(":checked").length > 1) { 
-            //          checkboxes.not(":checked").iCheck('disable'); 
-            //     } else {
-            //          checkboxes.not(":checked").iCheck('enable'); 
-            //     }
-            // });
-            // $("input[name=degree_earned]").on("ifChecked",function(e){
-            //     var checkboxes = $("input[name=degree_earned]");
-            //     var $this = $(this);
-            //     if (checkboxes.filter(":checked").length > 2) { 
-            //         alert('You may only choose 3 degrees');
-            //         setTimeout(function(){
-            //             $this.iCheck('uncheck');
-            //         },1);
-            //     }
-            // });
-
             $('#tags').tagsInput({
                 width: 'auto',
                 // 'autocomplete_url': url_to_autocomplete,
@@ -320,5 +369,5 @@
             });
             $('#tags').importTags('{% for hobby in user.hobbies.split %}{{ hobby }},{% endfor %}');
         });
-    </script>
+    </script> -->
 {% endblock scripts %}

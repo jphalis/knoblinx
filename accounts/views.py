@@ -165,8 +165,13 @@ def account_settings(request):
             if form.is_valid():
                 form.email = form.cleaned_data['email']
                 form.username = form.cleaned_data['username']
-                form.profile_picture = form.cleaned_data['profile_picture']
+                form.profile_pic = form.cleaned_data['profile_pic']
                 form.video = form.cleaned_data['video']
+                form.opp_sought = form.cleaned_data['opp_sought']
+                form.year = form.cleaned_data['year']
+                form.degree_earned = form.cleaned_data['degree_earned']
+                form.undergrad_degree = form.cleaned_data['undergrad_degree']
+                form.grad_degree = form.cleaned_data['grad_degree']
                 password = form.cleaned_data['password_new_confirm']
 
                 if password:

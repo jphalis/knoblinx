@@ -5,7 +5,7 @@ from django.utils.translation import ugettext as _
 
 from authentication.forms import CompanyCreationForm, MyUserCreationForm
 from .forms import CompanyChangeForm, MyUserChangeForm
-from .models import Company, Degree, Experience, MyUser, School
+from .models import Company, Degree, Experience, Hobby, MyUser, School
 
 # Register your models here.
 
@@ -18,19 +18,18 @@ class MyUserAdmin(UserAdmin):
                     'is_confirmed',)
     list_display_links = ('id', '__str__',)
     list_filter = ('is_active', 'is_staff', 'is_superuser', 'is_confirmed',
-                   'account_type', 'undergrad_uni', 'grad_uni', 'gender',
                    'date_joined', 'modified',)
     prepopulated_fields = {'username': ["first_name", "last_name"], }
     raw_id_fields = ['undergrad_uni', 'undergrad_degree',
-                     'grad_uni', 'grad_degree']
+                     'grad_uni', 'grad_degree', 'hobbies']
     fieldsets = (
         ('Basic information',
             {'fields': ('account_type', 'email', 'password', 'first_name',
                         'last_name', 'username', 'gender', 'profile_pic',
-                        'video', 'resume', 'hobbies',)}),
+                        'video', 'resume', 'opp_sought', 'hobbies',)}),
         ('Education',
-            {'fields': ('undergrad_uni', 'undergrad_degree', 'grad_uni',
-                        'grad_degree', 'degree_earned', 'gpa',)}),
+            {'fields': ('year', 'gpa', 'undergrad_uni', 'undergrad_degree',
+                        'grad_uni', 'grad_degree', 'degree_earned',)}),
         ('Permissions',
             {'fields': ('is_active', 'is_confirmed', 'is_staff',
                         'is_superuser', 'user_permissions')}),
@@ -44,7 +43,7 @@ class MyUserAdmin(UserAdmin):
                         'password1', 'password2',)}),
     )
     readonly_fields = ('date_joined', 'last_login', 'modified',)
-    search_fields = ('id', 'email', 'username', 'hobbies',)
+    search_fields = ('id', 'email', 'username',)
     ordering = ('id',)
     filter_horizontal = ('user_permissions',)
     actions = ('enable', 'disable', 'confirm',)
@@ -160,9 +159,25 @@ class DegreeAdmin(admin.ModelAdmin):
         model = Degree
 
 
+class HobbyAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name',)
+    list_display_links = ('id', 'name',)
+    fieldsets = (
+        (None,
+            {'fields': ('name',)}),
+        (_('Permissions'),
+            {'fields': ('is_active',)}),
+    )
+    search_fields = ('name',)
+
+    class Meta:
+        model = Hobby
+
+
 admin.site.unregister(Group)
 admin.site.register(MyUser, MyUserAdmin)
 admin.site.register(Company, CompanyAdmin)
 admin.site.register(Experience, ExperienceAdmin)
 admin.site.register(School, SchoolAdmin)
 admin.site.register(Degree, DegreeAdmin)
+admin.site.register(Hobby, HobbyAdmin)

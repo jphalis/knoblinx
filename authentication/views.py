@@ -142,8 +142,13 @@ def student_register(request):
         if form.is_valid():
             form.resume = form.cleaned_data['resume']
             form.gpa = form.cleaned_data['gpa']
-            form.profile_picture = form.cleaned_data['profile_picture']
+            form.profile_pic = form.cleaned_data['profile_pic']
             form.video = form.cleaned_data['video']
+            form.opp_sought = form.cleaned_data['opp_sought']
+            form.year = form.cleaned_data['year']
+            form.degree_earned = form.cleaned_data['degree_earned']
+            form.undergrad_degree = form.cleaned_data['undergrad_degree']
+            form.grad_degree = form.cleaned_data['grad_degree']
             form.hobbies = form.cleaned_data['hobbies']
             form.save()
             user.account_type = MyUser.STUDENT

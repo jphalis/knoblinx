@@ -129,3 +129,12 @@ class DegreeManager(models.Manager):
         """
         return super(DegreeManager, self).get_queryset().filter(
             is_active=True)
+
+
+class HobbyManager(models.Manager):
+    def active(self):
+        """
+        Returns all active hobbies.
+        """
+        return super(HobbyManager, self).get_queryset().filter(
+            is_active=True)

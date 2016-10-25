@@ -102,9 +102,9 @@
                                     <br>
                                 {% endif %}
                                 <!-- hobbies -->
-                                {% if user.hobbies %}
+                                {% if user.hobbies.exists %}
                                     <h4>Hobbies and Interests</h4>
-                                    {% for hobby in user.hobbies_split %}
+                                    {% for hobby in user.hobbies.all %}
                                         <span class="label label-{% cycle 'danger' 'success' 'info' 'warning' 'primary' %}" style="line-height:2.3;">
                                             {{ hobby }}
                                         </span>
@@ -127,6 +127,14 @@
                                         <span class="value">{{ user.email }}</span>
                                         <span class="key">Gender:</span>
                                         <span class="value">{{ user.gender_verbose }}</span>
+                                        {% if user.opp_sought %}
+                                            <span class="key">Opportunity Sought:</span>
+                                            <span class="value">{{ user.opp_sought_verbose }}</span>
+                                        {% endif %}
+                                        {% if user.year %}
+                                            <span class="key">Academic Year:</span>
+                                            <span class="value">{{ user.year_verbose }}</span>
+                                        {% endif %}
                                     </div>
                                 </div>
                                 <!-- /account info -->
@@ -157,19 +165,46 @@
                                 {% endif %}
                                 <!-- /experience -->
                                 <!-- education -->
-                                {% if user.undergrad_uni %}
+                                {% if user.undergrad_uni or user.grad_uni %}
                                     <div class="row">
                                         <h6 class="headline">
                                             <span class="icon"><i class="fa fa-graduation-cap" aria-hidden="true"></i></span>
                                             <span>Education</span>
                                         </h6>
-                                        <div class="experience-item">
-                                            <span class="date">Undergraduate</span>
-                                            <div class="role">
-                                                <div class="title">{{ user.undergrad_uni }}</div>
-                                                <div class="company">{{ user.undergrad_degree }}</div>
+                                        {% if user.undergrad_uni %}
+                                            <div class="experience-item">
+                                                <span class="date">Undergraduate</span>
+                                                <div class="role">
+                                                    <div class="title">{{ user.undergrad_uni }}</div>
+                                                    <div class="company">
+                                                        {% for degree in user.undergrad_degree.all %}
+                                                            {% if not forloop.last %}
+                                                                {{ degree }}, 
+                                                            {% else %}
+                                                                {{ degree }}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
+                                        {% endif %}
+                                        {% if user.grad_uni %}
+                                            <div class="experience-item">
+                                                <span class="date">Graduate</span>
+                                                <div class="role">
+                                                    <div class="title">{{ user.grad_uni }}</div>
+                                                    <div class="company">
+                                                        {% for degree in user.grad_degree.all %}
+                                                            {% if not forloop.last %}
+                                                                {{ degree }}, 
+                                                            {% else %}
+                                                                {{ degree }}
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
                                     </div>
                                 {% endif %}
                                 <!-- /education -->
