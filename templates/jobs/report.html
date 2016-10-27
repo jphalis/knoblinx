@@ -170,9 +170,11 @@
               },
             ],
             responsive: true,
-            "fnDrawCallback": function(oSettings){
-              $("#applicant-count").html("( " + this.fnSettings().fnRecordsDisplay() + " )");
-            },
+            "infoCallback": function(settings, start, end, max, total, pre){
+              $("#applicant-count").html("( " + total + " )");
+              return "Showing " + start + " to " + end + " of " + total + " entries"
+                 + ((total !== max) ? " (filtered from " + max + " total entries)" : "");
+             }   
           });
         }
       };
