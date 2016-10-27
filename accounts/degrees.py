@@ -25,6 +25,7 @@ degrees = [
     'Health and Biomedical Sciences Program',
     'Health and Movement Studies',
     'History',
+    'Information Systems',
     'International Studies',
     'Kinesiology and Integrative Physiology',
     'Mathematics',

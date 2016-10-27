@@ -7,7 +7,9 @@ from django.views.decorators.cache import cache_page
 from django.views.generic.edit import DeleteView
 
 from accounts.models import Company
+from activity.models import Activity
 from activity.signals import activity_item
+from core.decorators import user_is_company_collab
 from core.mixins import LoginRequiredMixin
 from .forms import ApplicantApplyForm, JobCreateForm
 from .models import Applicant, Job
@@ -16,54 +18,51 @@ from .models import Applicant, Job
 
 
 @login_required
+@user_is_company_collab
 @cache_page(60 * 3)
-def report(request, job_pk, username):
-    user = request.user
+def report(request, job_pk):
     job = get_object_or_404(Job, pk=job_pk)
-    _is_company_collab = job.company.collaborators.filter(pk=user.pk).exists()
 
-    if job.company.user == user or _is_company_collab:
-        context = {
-            'applicants': job.applicants.all(),
-            'job': job
-        }
-        return render(request, 'jobs/report.html', context)
-    return HttpResponseForbidden()
+    context = {
+        'applicants': job.applicants.all(),
+        'job': job
+    }
+    return render(request, 'jobs/report.html', context)
 
 
 @login_required
+@user_is_company_collab
 def create(request, company_pk):
     user = request.user
     company = Company.objects.get(pk=company_pk)
-    _is_company_collab = company.collaborators.filter(pk=user.pk).exists()
+    form = JobCreateForm(request.POST or None,
+                         initial={'contact_email': user.email})
 
-    if company.user == user or _is_company_collab:
-        form = JobCreateForm(request.POST or None)
+    if form.is_valid():
+        new_job = Job.objects.create(
+            user=user,
+            company=Company.objects.get(pk=company_pk),
+            title=form.cleaned_data['title'],
+            location=form.cleaned_data['location'],
+            contact_email=form.cleaned_data['contact_email'],
+            min_gpa=form.cleaned_data['min_gpa'],
+            universities=form.cleaned_data['universities'],
+            years=form.cleaned_data['years'],
+            degrees=form.cleaned_data['degrees'],
+            list_date_start=form.cleaned_data['list_date_start'],
+            list_date_end=form.cleaned_data['list_date_end'],
+            description=form.cleaned_data['description']
+        )
+        messages.success(request, 'Your job has been created!')
+        return HttpResponseRedirect(reverse(
+            'jobs:detail',
+            kwargs={'username': company.username, 'job_pk': new_job.pk}))
 
-        if form.is_valid():
-            new_job = Job.objects.create(
-                company=Company.objects.get(pk=company_pk),
-                title=form.cleaned_data['title'],
-                location=form.cleaned_data['location'],
-                contact_email=form.cleaned_data['contact_email'],
-                min_gpa=form.cleaned_data['min_gpa'],
-                universities=form.cleaned_data['universities'],
-                list_date_start=form.cleaned_data['list_date_start'],
-                list_date_end=form.cleaned_data['list_date_end'],
-                description=form.cleaned_data['description']
-            )
-            new_job.save()
-            messages.success(request, 'Your job has been created!')
-            return HttpResponseRedirect(reverse(
-                'jobs:detail',
-                kwargs={'username': company.username, 'job_pk': new_job.pk}))
-
-        context = {
-            'company': company,
-            'form': form
-        }
-        return render(request, 'jobs/create.html', context)
-    return HttpResponseForbidden()
+    context = {
+        'company': company,
+        'form': form
+    }
+    return render(request, 'jobs/create.html', context)
 
 
 @login_required
@@ -97,7 +96,7 @@ def apply(request, job_pk):
                 name='{0} {1}'.format(user.first_name, user.last_name),
                 email=form.cleaned_data['email'],
                 university='{0} {1}'.format(user.undergrad_uni,
-                                          _user_undergrad_degree),
+                                            _user_undergrad_degree),
                 cover_letter=form.cleaned_data['cover_letter']
             )
             job.applicants.add(applicant)
@@ -132,6 +131,8 @@ def detail(request, job_pk, username):
     if job.company.user == user or _is_company_collab:
         viewer_can_delete = True
 
+    print Job.objects.filter(degrees__pk__in=user.get_undergrad_degrees_pk)
+
     context = {
         'all_post_count': all_post_count,
         'job': job,
@@ -143,35 +144,31 @@ def detail(request, job_pk, username):
 
 
 @login_required
+@user_is_company_collab
 def edit(request, username, job_pk):
-    user = request.user
     job = Job.objects.get(pk=job_pk)
     form = JobCreateForm(request.POST or None,
                          instance=job)
-    company = Company.objects.get(username=username)
-    _is_company_collab = company.collaborators.filter(pk=user.pk).exists()
 
-    if company.user == user or _is_company_collab:
+    if form.is_valid():
+        form.save()
+        activity_item.send(
+            job.company,
+            verb='{0} edited the {1} job listing.'.format(
+                request.user.get_full_name, job.title),
+            target=job,
+        )
+        messages.success(request,
+                         'Your job listing has been updated!')
+        return HttpResponseRedirect(reverse(
+            'jobs:detail',
+            kwargs={'job_pk': job.pk, 'username': job.company.username}))
 
-        if form.is_valid():
-            form.save()
-            activity_item.send(
-                company,
-                verb='Edited a job listing.',
-                target=job,
-            )
-            messages.success(request,
-                             'Your job listing has been updated!')
-            return HttpResponseRedirect(reverse(
-                'jobs:detail',
-                kwargs={'job_pk': job.pk, 'username': company.username}))
-
-        context = {
-            'company': company,
-            'form': form
-        }
-        return render(request, 'jobs/edit.html', context)
-    return HttpResponseForbidden()
+    context = {
+        'form': form,
+        'job': job
+    }
+    return render(request, 'jobs/edit.html', context)
 
 
 class Delete(DeleteView, LoginRequiredMixin):
@@ -197,6 +194,12 @@ class Delete(DeleteView, LoginRequiredMixin):
         self.object.applicants.clear()
         self.object.applicants.all().delete()
 
+    def _delete_activity(self):
+        """
+        Remove any previously set activity for the instance.
+        """
+        Activity.objects.filter(target_object_id=self.get_object().id).delete()
+
     def delete(self, request, *args, **kwargs):
         """
         Calls the delete() method on the fetched object,
@@ -204,13 +207,13 @@ class Delete(DeleteView, LoginRequiredMixin):
         redirects to the success URL.
         """
         self.object = self.get_object()
-        success_url = self.get_success_url()
-        self._delete_applicants()
-        self.object.delete()
+        self._delete_applicants()  # Deletes applicants
+        self._delete_activity()  # Deletes activity
+        self.object.delete()  # Deletes the object
         activity_item.send(
             self.object.company,
-            verb='Deleted a job listing.',
-            target=self.object,
+            verb='{0} deleted the {1} job listing.'.format(
+                request.user.get_full_name, self.object.title)
         )
         messages.success(self.request, self.success_message)
-        return HttpResponseRedirect(success_url)
+        return HttpResponseRedirect(self.get_success_url())

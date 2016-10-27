@@ -11,13 +11,13 @@ class JobAdmin(admin.ModelAdmin):
                     'applicant_count', 'is_active_job',)
     list_display_links = ('id', 'title',)
     list_filter = ('company', 'created', 'modified',)
-    raw_id_fields = ['company', 'applicants', 'universities']
+    raw_id_fields = ['company', 'applicants', 'universities', 'degrees']
     fieldsets = (
         (None,
             {'fields': ('company', 'applicants', 'title', 'location',
                         'description', 'list_date_start', 'list_date_end',)}),
         (_('Filters'),
-            {'fields': ('min_gpa', 'universities',)}),
+            {'fields': ('min_gpa', 'universities', 'years', 'degrees',)}),
         (_('Dates'),
             {'fields': ('created', 'modified',)}),
     )
@@ -34,13 +34,12 @@ class ApplicantAdmin(admin.ModelAdmin):
     raw_id_fields = ['user']
     fieldsets = (
         (None,
-            {'fields': ('user', 'resume', 'name', 'email', 'university',
-                        'cover_letter',)}),
+            {'fields': ('user', 'resume', 'email', 'cover_letter',)}),
         (_('Dates'),
             {'fields': ('created', 'modified',)}),
     )
     readonly_fields = ('created', 'modified',)
-    search_fields = ('name', 'email',)
+    search_fields = ('user__first_name', 'user__last_name', 'email',)
 
     class Meta:
         model = Applicant

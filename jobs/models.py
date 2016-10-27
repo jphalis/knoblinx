@@ -9,7 +9,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 
-from accounts.models import Company, School
+from accounts.models import Company, Degree, School
 from core.models import TimeStampedModel
 from .managers import ApplicantManager, JobManager
 
@@ -27,9 +27,7 @@ def get_resume_path(instance, filename):
 class Applicant(TimeStampedModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     resume = models.FileField(upload_to=get_resume_path)
-    name = models.CharField(max_length=120)
     email = models.EmailField(max_length=120)
-    university = models.CharField(max_length=200)
     cover_letter = models.TextField(max_length=1000, blank=True)
 
     objects = ApplicantManager()
@@ -46,6 +44,21 @@ class Applicant(TimeStampedModel):
         _job = Job.objects.get(applicants__pk=self.pk)
         return '{0} ({1})'.format(_job.title, _job.company.name)
 
+    @cached_property
+    def get_undergrad_degrees_names(self):
+        """
+        Returns a list of names for the applicant's undergrad_degree.
+        """
+        return map(str, self.user.undergrad_degree.all().values_list('name', flat=True))
+
+    @cached_property
+    def get_grad_degrees_names(self):
+        """
+        Returns a list of names for the applicant's grad_degree.
+        """
+        _degrees = map(str, self.user.grad_degree.values_list('name', flat=True))
+        return _degrees if _degrees else None
+
 
 @python_2_unicode_compatible
 class Job(TimeStampedModel):
@@ -61,6 +74,9 @@ class Job(TimeStampedModel):
                                   decimal_places=2, default=0.00)
     universities = models.ManyToManyField(
         School, related_name='job_universities')
+    years = models.CharField(max_length=120)
+    degrees = models.ManyToManyField(
+        Degree, related_name='job_degrees')
 
     list_date_start = models.DateTimeField(_('Listing Start Date'), null=True)
     list_date_end = models.DateTimeField(_('Listing Expiration'), null=True)
@@ -101,9 +117,7 @@ class Job(TimeStampedModel):
         """
         Returns the report url for the job.
         """
-        return reverse('jobs:report',
-                       kwargs={"username": self.company.username,
-                               "job_pk": self.pk})
+        return reverse('jobs:report', kwargs={"job_pk": self.pk})
 
     @cached_property
     def get_applicants_info(self):
@@ -120,6 +134,20 @@ class Job(TimeStampedModel):
         Returns the number of applicants for the job.
         """
         return self.get_applicants_info.count()
+
+    @cached_property
+    def get_universities_pk(self):
+        """
+        Returns a list of pks for the job's accepted universities.
+        """
+        return map(str, self.universities.values_list('pk', flat=True))
+
+    @cached_property
+    def get_degrees_pk(self):
+        """
+        Returns a list of pks for the job's accepted degrees.
+        """
+        return map(str, self.degrees.values_list('pk', flat=True))
 
     @cached_property
     def listing_start_date(self):

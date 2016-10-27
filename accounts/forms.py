@@ -104,25 +104,25 @@ class AccountSettingsForm(forms.ModelForm):
     information.
     """
     first_name = forms.CharField(
-        label=_('First Name*'),
+        label=_('First Name *'),
         widget=forms.TextInput(
             attrs={'class': 'form-control'}),
         max_length=50
     )
     last_name = forms.CharField(
-        label=_('Last Name*'),
+        label=_('Last Name *'),
         widget=forms.TextInput(
             attrs={'class': 'form-control'}),
         max_length=50
     )
     email = forms.EmailField(
-        label=_('Email*'),
+        label=_('Email *'),
         widget=forms.EmailInput(
             attrs={'class': 'form-control'}),
         max_length=120
     )
     username = forms.SlugField(
-        label=_('Username*'),
+        label=_('Username *'),
         widget=forms.TextInput(
             attrs={'class': 'form-control'}),
         max_length=120
@@ -138,7 +138,7 @@ class AccountSettingsForm(forms.ModelForm):
         required=False
     )
     profile_pic = forms.ImageField(
-        label=_('Profile Picture*'),
+        label=_('Profile Picture *'),
         widget=ClearableFileInput(
             attrs={'class': 'form-control'})
     )
@@ -151,24 +151,24 @@ class AccountSettingsForm(forms.ModelForm):
         help_text='Upload your video to <a href="https://www.youtube.com/upload">YouTube</a> first'
     )
     resume = forms.FileField(
-        label=_('Resume*'),
+        label=_('Resume *'),
         widget=ClearableFileInput(
             attrs={'class': 'form-control'})
     )
     opp_sought = forms.ChoiceField(
-        label=_('Opportunity Sought*'),
+        label=_('Opportunity Sought *'),
         choices=(('', '---------'),) + MyUser.OPPORTUNITY_TYPES,
     )
     gender = forms.ChoiceField(
-        label=_('Gender*'),
+        label=_('Gender *'),
         choices=MyUser.GENDER_CHOICES
     )
     year = forms.ChoiceField(
-        label=_('Academic Year*'),
+        label=_('Academic Year *'),
         choices=(('', '---------'),) + MyUser.YEAR_TYPES,
     )
     gpa = forms.DecimalField(
-        label=_('GPA*'),
+        label=_('GPA *'),
         widget=forms.NumberInput(
             attrs={'min': 0,
                    'max': 4,
@@ -180,11 +180,11 @@ class AccountSettingsForm(forms.ModelForm):
         decimal_places=2
     )
     undergrad_uni = forms.ModelChoiceField(
-        label=_('Undergraduate University*'),
+        label=_('Undergraduate University *'),
         queryset=[]
     )
     undergrad_degree = forms.ModelMultipleChoiceField(
-        label=_('Undergraduate Degree(s)*'),
+        label=_('Undergraduate Degree(s) *'),
         widget=forms.CheckboxSelectMultiple(
             attrs={'class': 'form-control',
                    'name': 'undergrad_degree'}),
@@ -204,11 +204,11 @@ class AccountSettingsForm(forms.ModelForm):
         required=False
     )
     degree_earned = forms.ChoiceField(
-        label=_('Highest Degree Earned*'),
+        label=_('Highest Degree Earned *'),
         choices=MyUser.DEGREE_TYPES
     )
     hobbies = forms.ModelMultipleChoiceField(
-        label=_('Hobbies and Interests*'),
+        label=_('Hobbies and Interests *'),
         widget=forms.CheckboxSelectMultiple(
             attrs={'class': 'form-control',
                    'name': 'hobbies'}),
@@ -336,25 +336,25 @@ class AccountEmployerSettingsForm(forms.ModelForm):
     information.
     """
     first_name = forms.CharField(
-        label=_('First Name*'),
+        label=_('First Name *'),
         widget=forms.TextInput(
             attrs={'class': 'form-control'}),
         max_length=50
     )
     last_name = forms.CharField(
-        label=_('Last Name*'),
+        label=_('Last Name *'),
         widget=forms.TextInput(
             attrs={'class': 'form-control'}),
         max_length=50
     )
     email = forms.EmailField(
-        label=_('Email*'),
+        label=_('Email *'),
         widget=forms.EmailInput(
             attrs={'class': 'form-control'}),
         max_length=120
     )
     username = forms.SlugField(
-        label=_('Username*'),
+        label=_('Username *'),
         widget=forms.TextInput(
             attrs={'class': 'form-control'}),
         max_length=120
@@ -420,7 +420,7 @@ class AccountEmployerSettingsForm(forms.ModelForm):
 
 class AddCollaboratorForm(forms.Form):
     email = email = forms.EmailField(
-        label=_('Email*'),
+        label=_('Email *'),
         widget=forms.EmailInput(
             attrs={'class': 'form-control'}),
         max_length=120,
@@ -440,12 +440,12 @@ class CompanySettingsForm(forms.ModelForm):
     information.
     """
     name = forms.CharField(
-        label=_('Company Name*'),
+        label=_('Company Name *'),
         widget=forms.TextInput(),
         max_length=120
     )
     username = forms.SlugField(
-        label=_('Company Username*'),
+        label=_('Company Username *'),
         widget=forms.TextInput(),
         max_length=120
     )

@@ -56,18 +56,55 @@
                                         {{ form.min_gpa.errors }}
                                     </div>
                                 </div>
+                                <br>
                                 <div class="item form-group {% if form.universities.errors %}has-error{% endif %}">
                                     <label class="control-label col-md-2 col-sm-2 col-xs-12" for="{{ form.universities.auto_id }}">
                                         {{ form.universities.label }}
                                     </label>
-                                    <div class="col-md-9 col-sm-9 col-xs-12" style="height:150px; overflow:auto;">
+                                    <div class="col-md-10 col-sm-10 col-xs-12" style="height:150px; overflow:auto;">
                                         {% for choice in form.universities.field.choices %}
-                                            <input type="checkbox" name="universities" value="{{ choice.0 }}" class="flat" checked/> {{ choice.1 }}
-                                            <br />
+                                            <input type="checkbox" name="universities" value="{{ choice.0 }}" class="flat" checked/>
+                                            {{ choice.1 }}
+                                            <br>
                                         {% endfor %}
+                                    </div>
+                                    <div class="control-label col-md-2 col-sm-2 col-xs-12"></div>
+                                    <div class="col-md-10 col-sm-10 col-xs-12">
                                         {{ form.universities.errors }}
                                     </div>
                                 </div>
+                                <br>
+                                <div class="item form-group {% if form.years.errors %}has-error{% endif %}">
+                                    <label class="control-label col-md-2 col-sm-2 col-xs-12" for="{{ form.years.auto_id }}">
+                                        {{ form.years.label }}
+                                    </label>
+                                    <div class="col-md-10 col-sm-10 col-xs-12" style="overflow:auto;">
+                                        {% for choice in form.years.field.choices %}
+                                            <input type="checkbox" name="years" value="{{ choice.0 }}" class="flat" />
+                                            {{ choice.1 }}
+                                            <br>
+                                        {% endfor %}
+                                        {{ form.years.errors }}
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="item form-group {% if form.degrees.errors %}has-error{% endif %}">
+                                    <label class="control-label col-md-2 col-sm-2 col-xs-12" for="{{ form.degrees.auto_id }}">
+                                        {{ form.degrees.label }}
+                                    </label>
+                                    <div class="col-md-10 col-sm-10 col-xs-12" style="height:150px; overflow:auto;">
+                                        {% for choice in form.degrees.field.choices %}
+                                            <input type="checkbox" name="degrees" value="{{ choice.0 }}" class="flat" />
+                                            {{ choice.1 }}
+                                            <br>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="control-label col-md-2 col-sm-2 col-xs-12"></div>
+                                    <div class="col-md-10 col-sm-10 col-xs-12">
+                                        {{ form.degrees.errors }}
+                                    </div>
+                                </div>
+                                <br>
                                 <div class="item form-group {% if form.list_date_start.errors %}has-error{% endif %}">
                                     <label class="control-label col-md-2 col-sm-2 col-xs-12" for="{{ form.list_date_start.auto_id }}">
                                         {{ form.list_date_start.label }}

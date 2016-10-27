@@ -4,12 +4,13 @@ from django import forms
 from django.forms.widgets import ClearableFileInput
 from django.utils.translation import ugettext_lazy as _
 
-from accounts.models import School
+from accounts.models import Degree, MyUser, School
 from .models import Applicant, Job
 
 
 class ApplicantApplyForm(forms.ModelForm):
     resume = forms.FileField(
+        label=_('Resume *'),
         widget=ClearableFileInput(
             attrs={'class': 'form-control',
                    'name': 'resume'})
@@ -73,9 +74,10 @@ class JobCreateForm(forms.ModelForm):
         max_length=120
     )
     min_gpa = forms.DecimalField(
-        label=_('Minimum GPA'),
+        label=_('Minimum GPA *'),
         widget=forms.NumberInput(
-            attrs={'class': 'form-control',
+            attrs={'placeholder': 'x.xx',
+                   'class': 'form-control',
                    'name': 'min_gpa',
                    'min': 0,
                    'max': 4,
@@ -86,15 +88,29 @@ class JobCreateForm(forms.ModelForm):
         max_digits=3,
         decimal_places=2
     )
-    universities = forms.ModelChoiceField(
+    universities = forms.ModelMultipleChoiceField(
+        label=_('Universities *'),
         widget=forms.CheckboxSelectMultiple(
             attrs={'class': 'form-control',
                    'name': 'universities'}),
-        queryset=[],
-        empty_label=None,
-        required=False
+        queryset=[]
+    )
+    years = forms.MultipleChoiceField(
+        label=_('Academic Years *'),
+        widget=forms.CheckboxSelectMultiple(
+            attrs={'class': 'form-control',
+                   'name': 'years'}),
+        choices=MyUser.YEAR_TYPES
+    )
+    degrees = forms.ModelMultipleChoiceField(
+        label=_('Majors *'),
+        widget=forms.CheckboxSelectMultiple(
+            attrs={'class': 'form-control',
+                   'name': 'degrees'}),
+        queryset=[]
     )
     list_date_start = forms.DateTimeField(
+        label=_('Listing Start Date *'),
         input_formats=['%m/%d/%Y %I:%M %p'],
         widget=forms.DateTimeInput(
             format='%m/%d/%Y %I:%M %p',
@@ -103,6 +119,7 @@ class JobCreateForm(forms.ModelForm):
                    'type': 'text'})
     )
     list_date_end = forms.DateTimeField(
+        label=_('Listing End Date *'),
         input_formats=['%m/%d/%Y %I:%M %p'],
         widget=forms.DateTimeInput(
             format='%m/%d/%Y %I:%M %p',
@@ -123,14 +140,22 @@ class JobCreateForm(forms.ModelForm):
     class Meta:
         model = Job
         fields = ('contact_email', 'title', 'description', 'location',
-                  'min_gpa', 'list_date_start', 'list_date_end',)
+                  'min_gpa', 'universities', 'years', 'degrees',
+                  'list_date_start', 'list_date_end',)
 
     def __init__(self, *args, **kwargs):
         super(JobCreateForm, self).__init__(*args, **kwargs)
         self.fields['universities'].queryset = School.objects.active()
+        self.fields['degrees'].queryset = Degree.objects.active()
 
     def clean_contact_email(self):
         """
         Return the lowercase value of the email.
         """
         return self.cleaned_data['contact_email'].lower()
+
+    def clean_years(self):
+        """
+        Returns a list of the academic years allowed.
+        """
+        return ",".join(str(year) for year in self.cleaned_data['years'])

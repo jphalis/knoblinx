@@ -6,7 +6,7 @@ from django.db import models
 from django.db.models import Count, Q
 from django.utils import timezone
 
-from accounts.models import School
+from accounts.models import Degree, MyUser, School
 from activity.signals import activity_item
 
 # Create your managers here.
@@ -40,10 +40,16 @@ class JobManager(models.Manager):
         Returns all jobs the user is qualified for.
         """
         return super(JobManager, self).get_queryset() \
-            .filter(Q(list_date_start__lte=timezone.now()) &
-                    Q(list_date_end__gt=timezone.now()) &
-                    Q(min_gpa__lte=user.gpa) &
-                    Q(universities=user.undergrad_uni)) \
+            .filter(
+                Q(universities=user.undergrad_uni) |
+                Q(universities=user.grad_uni),
+                Q(degrees__pk__in=user.get_undergrad_degrees_pk) |
+                Q(degrees__pk__in=user.get_grad_degrees_pk),
+                list_date_start__lte=timezone.now(),
+                list_date_end__gt=timezone.now(),
+                min_gpa__lte=user.gpa,
+                years__contains=user.year) \
+            .distinct() \
             .exclude(applicants__user=user) \
             .select_related('company')
 
@@ -95,9 +101,11 @@ class JobManager(models.Manager):
             .prefetch_related('applicants') \
             .order_by('-applicants__created')
 
-    def create(self, company, title, contact_email, location,
+    def create(self, user, company, title, contact_email, location,
                description, list_date_start, list_date_end,
                min_gpa=0.00, universities=School.objects.active(),
+               years=",".join(str(year) for year in MyUser.YEAR_TYPES[0]),
+               degrees=Degree.objects.active(),
                **extra_fields):
         """
         Creates a job posting with a default list date of now
@@ -126,13 +134,15 @@ class JobManager(models.Manager):
                          list_date_start=start_date,
                          list_date_end=end_date,
                          min_gpa=min_gpa,
+                         years=years,
                          **extra_fields)
         job.save(using=self._db)
         job.universities = universities
+        job.degrees = degrees
         job.save(using=self._db)
         activity_item.send(
             company,
-            verb='Created a new job listing.',
+            verb='{} created a new job listing.'.format(user.get_full_name),
             target=job,
         )
         return job

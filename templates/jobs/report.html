@@ -32,7 +32,7 @@
         <div class="col-md-12 col-sm-12 col-xs-12">
           <div class="x_panel">
             <div class="x_title">
-              <h2>Applicants</h2>
+              <h2>Applicants <span id="applicant-count"></span></h2>
               <!-- <ul class="nav navbar-right panel_toolbox">
                 <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
               </ul> -->
@@ -51,7 +51,10 @@
                   <tr>
                     <th>Name</th>
                     <th>Email</th>
-                    <th>University</th>
+                    <th>Undergrad University</th>
+                    <th>Undergrad Degree(s)</th>
+                    <th>Graduate University</th>
+                    <th>Graduate Degree(s)</th>
                     <th>GPA</th>
                     <th>Resume</th>
                     <th>Cover Letter</th>
@@ -61,9 +64,20 @@
                 <tbody>
                  {% for obj in applicants %}
                     <tr>
-                      <td><a href="{{ obj.user.get_absolute_url }}">{{ obj.name }}</a></td>
+                      <td><a href="{{ obj.user.get_absolute_url }}">{{ obj.user.get_full_name }}</a></td>
                       <td><a href="mailto:{{ obj.email }}">{{ obj.email }}</a></td>
-                      <td>{{ obj.university }}</td>
+                      <td>{{ obj.user.undergrad_uni }}</td>
+                      <td>
+                        {% for degree in obj.get_undergrad_degrees_names %}
+                          {% if not forloop.last %}
+                            {{ degree }}, 
+                          {% else %}
+                            {{ degree }}
+                          {% endif %}
+                        {% endfor %}
+                      </td>
+                      <td>{{ obj.user.grad_uni }}</td>
+                      <td>{{ obj.get_grad_degrees_names }}</td>
                       <td>{{ obj.user.gpa }}</td>
                       <td><a href="{{ obj.resume.url }}" download>Download</a></td>
                       <td>
@@ -132,51 +146,40 @@
               {
                 extend: "copy",
                 className: "btn-sm",
-                exportOptions: {
-                  columns: [0,1,2,3]
-                }
+                exportOptions: { columns: [0,1,2,3] }
               },
               {
                 extend: "csv",
                 className: "btn-sm",
-                exportOptions: {
-                  columns: [0,1,2,3]
-                }
+                exportOptions: { columns: [0,1,2,3] }
               },
               {
                 extend: "excel",
                 className: "btn-sm",
-                exportOptions: {
-                  columns: [0,1,2,3]
-                }
+                exportOptions: { columns: [0,1,2,3] }
               },
               {
                 extend: "pdfHtml5",
                 className: "btn-sm",
-                exportOptions: {
-                  columns: [0,1,2,3]
-                }
+                exportOptions: { columns: [0,1,2,3] }
               },
               {
                 extend: "print",
                 className: "btn-sm",
-                exportOptions: {
-                  columns: [0,1,2,3]
-                }
+                exportOptions: { columns: [0,1,2,3] }
               },
             ],
-            responsive: true
+            responsive: true,
+            "fnDrawCallback": function(oSettings){
+              $("#applicant-count").html("( " + this.fnSettings().fnRecordsDisplay() + " )");
+            },
           });
         }
       };
 
       TableManageButtons = function() {
         "use strict";
-        return {
-          init: function() {
-            handleDataTableButtons();
-          }
-        };
+        return { init: function() { handleDataTableButtons(); } };
       }();
 
       TableManageButtons.init();
@@ -192,15 +195,14 @@
       var mySlider = $("input.slider").slider();
 
       $.fn.dataTable.ext.search.push(
-          function (settings, data, dataIndex) {
-              var min = parseFloat( mySlider.slider('getValue'), 0 );
-              var gpa = parseFloat( data[3] ) || 0; // use data for the gpa column
-       
-              if (min <= gpa) { 
-                return true; 
-              }
-              return false;
+        function (settings, data, dataIndex) {
+          var min = parseFloat( mySlider.slider('getValue'), 0 );
+          var gpa = parseFloat( data[6] ) || 0; // use data for the gpa column
+          if (min <= gpa) { 
+            return true; 
           }
+          return false;
+        }
       );
 
       mySlider.on('slide', function() {

@@ -176,8 +176,10 @@ def generate_data(request):
     ]
     if not Job.objects.filter(title=jobs[0][0]).exists():
         for job in jobs:
+            company = Company.objects.order_by('?').first()
             Job.objects.create(
-                company=Company.objects.order_by('?').first(),
+                user=company.user,
+                company=company,
                 title=job[0],
                 contact_email=contact_email,
                 description=description,
@@ -187,16 +189,13 @@ def generate_data(request):
             )
 
     # Create applicants
-    if not Applicant.objects.filter(name='{0} {1}'.format(users[0][0], users[0][1])).exists():
+    if not Applicant.objects.filter(user=MyUser.objects.get(first_name=users[0][0])).exists():
         for applicant in users:
             _user = MyUser.objects.get(first_name=applicant[0])
             Applicant.objects.create(
                 user=_user,
                 resume=settings.STATIC_URL + 'img/default-profile-pic.jpg',
-                name='{0} {1}'.format(_user.first_name, _user.last_name),
-                email=_user.email,
-                university='{} ({})'.format(_user.undergrad_uni,
-                                            _user.undergrad_degree)
+                email=_user.email
             )
 
     # Add applicants to jobs
