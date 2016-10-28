@@ -84,7 +84,6 @@ def profile(request, username):
         if not user.is_active:
             return HttpResponseForbidden()
 
-        experiences = Experience.objects.own(user=user)
         form = ExperienceForm(request.POST or None,
                               instance=user, user=user)
 
@@ -107,7 +106,7 @@ def profile(request, username):
                                "There was an issue adding your experience.")
 
         context = {
-            'experiences': experiences,
+            'experiences': Experience.objects.own(user=user),
             'form': form,
             'is_employer': user.account_type == MyUser.EMPLOYER,
             'user': user

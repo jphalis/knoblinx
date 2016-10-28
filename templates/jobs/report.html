@@ -120,6 +120,9 @@
                     <th>Academic Year</th>
                     <th>Opportunity Sought</th>
                     <th>Highest Degree Earned</th>
+                    <th>User_Url</th>
+                    <th>User_Video</th>
+                    <th>User_Resume_Url</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -183,6 +186,9 @@
                       <td>{{ obj.user.year_verbose }}</td>
                       <td>{{ obj.user.opp_sought_verbose }}</td>
                       <td>{{ obj.user.degree_earned_verbose }}</td>
+                      <td>{{ protocol }}://{{ domain }}{{ obj.user.get_absolute_url }}</td>
+                      <td>{{ obj.user.video }}</td>
+                      <td>{{ protocol }}://{{ domain }}{{ obj.user.resume.url }}</td>
                     </tr>
                   {% endfor %}
                 </tbody>
@@ -216,63 +222,71 @@
 
 {% block scripts %}
   <script>
+    function containsAny(haystack, needles) {
+        for (var i = 0; i < needles.length; i++) {
+            if (haystack.indexOf(needles[i]) !== -1) { return true; }
+        }
+        return false;
+    }
+
     $(document).ready(function($) {
         // DataTable buttons
         var handleDataTableButtons = function() {
             if ($("#datatable").length) {
                 $("#datatable").DataTable({
                     dom: "Bfrtip",
+                    responsive: true,
                     buttons: [
                         {
                             extend: "copy",
                             className: "btn-sm",
-                            exportOptions: { columns: [0,1,2,3] }
+                            exportOptions: { columns: [0, 1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14] }
                         },
                         {
                             extend: "csv",
                             className: "btn-sm",
-                            exportOptions: { columns: [0,1,2,3] }
+                            exportOptions: { columns: [0, 1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14] }
                         },
                         {
                             extend: "excel",
                             className: "btn-sm",
-                            exportOptions: { columns: [0,1,2,3] }
+                            exportOptions: { columns: [0, 1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14] }
                         },
                         {
                             extend: "pdfHtml5",
                             className: "btn-sm",
-                            exportOptions: { columns: [0,1,2,3] }
+                            exportOptions: { columns: [0, 1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14] }
                         },
                         {
                             extend: "print",
                             className: "btn-sm",
-                            exportOptions: { columns: [0,1,2,3] }
+                            exportOptions: { columns: [0, 1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14] }
                         },
                     ],
-                    responsive: true,
                     "infoCallback": function(settings, start, end, max, total, pre){
                         $("#applicant-count").html("( " + total + " )");
                         return "Showing " + start + " to " + end + " of " + total + " entries"
                             + ((total !== max) ? " (filtered from " + max + " total entries)" : "");
-                    }
+                    },
+                    "columnDefs": [
+                        {
+                            "targets": [12, 13, 14],
+                            "visible": false,
+                            "searchable": false
+                        }
+                    ]
                 });
             }
         };
 
         TableManageButtons = function() {
             "use strict";
-            return { init: function() { handleDataTableButtons(); } };
+            return {init: function() { handleDataTableButtons(); }};
         }();
-
         TableManageButtons.init();
 
         // Slider
-        $("#gpa-slider").slider({
-            step: 0.01,
-            value: 0,
-            min: 0,
-            max: 4,
-        });
+        $("#gpa-slider").slider({ step:0.01, value:0, min:0, max:4 });
 
         // Filtering
         var mySlider = $("input.slider").slider();
@@ -291,48 +305,44 @@
         );
 
         $.fn.dataTableExt.afnFiltering.push(function(oSettings, aData, iDataIndex) {
-            if ( universities.includes(aData[3]) && degrees.includes(aData[6]) && 
-                years.includes(aData[9]) && opportunities.includes(aData[10]) && 
-                highest_degrees.includes(aData[11]) ){
+            if (containsAny(universities, [aData[3], aData[7]]) &&
+                containsAny(degrees, [aData[6], aData[8]]) &&
+                years.includes(aData[9]) &&
+                opportunities.includes(aData[10]) &&
+                highest_degrees.includes(aData[11])){
                 return true;
             }
             return false;
         });
 
         mySlider.on('slide', function() {
-            var value = mySlider.slider('getValue');
-            $('#gpa-value').html(value);
+            $('#gpa-value').html( mySlider.slider('getValue') );
             $("#datatable").DataTable().draw();
         });
-
         $(':checkbox[name="universities"]').on("ifChanged", function() {
             universities = $('[name="' + this.name + '"]:checked').map(function () {
                 return this.value;
             }).toArray().join(',');
             $("#datatable").DataTable().draw();
         });
-
         $(':checkbox[name="degrees"]').on("ifChanged", function() {
             degrees = $('[name="' + this.name + '"]:checked').map(function () {
                 return this.value;
             }).toArray().join(',');
             $("#datatable").DataTable().draw();
         });
-
         $(':checkbox[name="years"]').on("ifChanged", function() {
             years = $('[name="' + this.name + '"]:checked').map(function () {
                 return this.value;
             }).toArray().join(',');
             $("#datatable").DataTable().draw();
         });
-
         $(':checkbox[name="opportunities"]').on("ifChanged", function() {
             opportunities = $('[name="' + this.name + '"]:checked').map(function () {
                 return this.value;
             }).toArray().join(',');
             $("#datatable").DataTable().draw();
         });
-
         $(':checkbox[name="highest_degrees"]').on("ifChanged", function() {
             highest_degrees = $('[name="' + this.name + '"]:checked').map(function () {
                 return this.value;

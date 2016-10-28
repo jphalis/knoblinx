@@ -272,8 +272,10 @@ class AccountSettingsForm(forms.ModelForm):
         Convert the YouTube url into embed format if it's not already.
         """
         _url = self.cleaned_data['video']
-        if 'embed/' not in _url and 'watch?v=' in _url:
-            _url = _url.replace("watch?v=", "embed/")
+        if 'embed/' in _url:
+            raise forms.ValidationError(
+                _('Please use the default url for the video, '
+                  'not the embed url.'))
         return _url
 
     def clean_opp_sought(self):

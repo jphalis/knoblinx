@@ -30,9 +30,11 @@ def report(request, job_pk):
 
     context = {
         'applicants': job.applicants.all().prefetch_related('user'),
+        'domain': request.get_host(),
         'highest_degrees': MyUser.DEGREE_TYPES,
         'job': job,
         'opp_sought': MyUser.OPPORTUNITY_TYPES,
+        'protocol': 'https' if request.is_secure() else 'http',
         'years': years
     }
     return render(request, 'jobs/report.html', context)

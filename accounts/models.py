@@ -308,6 +308,10 @@ class MyUser(AbstractBaseUser, PermissionsMixin):  # TagMixin
     #     """
     #     return self.hobbies.split(',')
 
+    @cached_property
+    def get_video_embed_url(self):
+        return self.video.replace("watch?v=", "embed/")
+
     def has_module_perms(self, app_label):
         """
         Does the user have permissions to view the app `app_label`?

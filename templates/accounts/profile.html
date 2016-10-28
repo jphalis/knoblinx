@@ -97,7 +97,7 @@
                                 <br>
                                 {% if user.video %}
                                     <div class="row" style="padding:0px;">
-                                        <iframe class="col-md-12 col-sm-12 col-xs-12" src="{{ user.video|safe }}" frameborder="0" allowfullscreen></iframe>
+                                        <iframe class="col-md-12 col-sm-12 col-xs-12" src="{{ user.get_video_embed_url|safe }}" frameborder="0" allowfullscreen></iframe>
                                     </div>
                                     <br>
                                 {% endif %}
