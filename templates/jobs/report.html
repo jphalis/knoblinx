@@ -6,7 +6,9 @@
 {% block stylesheets %}
   <link href="{% static 'vendors/datatables.net-bs/css/dataTables.bootstrap.min.css' %}" rel="stylesheet">
   <link href="{% static 'vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css' %}" rel="stylesheet">
-  <link href="{% static 'vendors/slider/slider.css' %}" rel="stylesheet" >
+  <link href="{% static 'vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'vendors/slider/slider.css' %}" rel="stylesheet">
+  <link href="{% static 'vendors/iCheck/skins/flat/green.css' %}" rel="stylesheet">
 {% endblock stylesheets %}
 
 {% block css %}
@@ -15,6 +17,9 @@
       background: #2a3f54; } 
     .slider-selection {
       background: #2a3f54; }
+    .adv-filter {
+      margin-bottom: 18px;
+    }
   </style>
 {% endblock css %}
 
@@ -24,65 +29,120 @@
       <div class="page-title">
         <div class="title_left"><h3>{{ job.title }} <small>Report</small></h3></div>
       </div>
-  
       <div class="clearfix"></div>
-
-      <!-- applicants -->
       <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12">
           <div class="x_panel">
             <div class="x_title">
               <h2>Applicants <span id="applicant-count"></span></h2>
-              <!-- <ul class="nav navbar-right panel_toolbox">
-                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-              </ul> -->
               <div class="clearfix"></div>
             </div>
             <div class="clearfix"></div>
-            <p>
-              <span style="margin-right:1.2em;">Minimum GPA: </span>
-              <input id="gpa-slider" class="slider form-control" data-slider-id='gpa-slider' type="text" />
-              <span id="gpa-value" style="margin-left:1em;">0.00</span>
-            </p>
+            <div class="row adv-filter">
+              <div class="col-md-2 col-sm-2 col-xs-12">
+                <span>Minimum GPA:</span>
+              </div>
+              <div class="col-md-10 col-sm-10 col-xs-12">
+                <input id="gpa-slider" class="slider form-control" data-slider-id='gpa-slider' type="text" />
+                <span id="gpa-value" style="margin-left:1em;">0.00</span>
+              </div>
+            </div>
+            <div class="row adv-filter">
+              <div class="col-md-2 col-sm-2 col-xs-12">
+                <span>Universities:</span>
+              </div>
+              <div class="col-md-4 col-sm-4 col-xs-12" style="height:150px; overflow:auto;">
+                {% for obj in job.universities.all %}
+                  <input type="checkbox" value="{{ obj }}" name="universities" class="flat" checked />
+                  {{ obj }}
+                  <br>
+                {% endfor %}
+              </div>
+              <div class="col-md-2 col-sm-2 col-xs-12">
+                <span>Majors:</span>
+              </div>
+              <div class="col-md-4 col-sm-4 col-xs-12" style="height:150px; overflow:auto;">
+                {% for obj in job.degrees.all %}
+                  <input type="checkbox" value="{{ obj }}" name="degrees" class="flat" checked />
+                  {{ obj }}
+                  <br>
+                {% endfor %}
+              </div>
+            </div>
+            <div class="row adv-filter">
+              <div class="col-md-2 col-sm-2 col-xs-12">
+                <span>Academic Year:</span>
+              </div>
+              <div class="col-md-4 col-sm-4 col-xs-12">
+                {% for obj in years %}
+                  <input type="checkbox" value="{{ obj }}" name="years" class="flat" checked />
+                  {{ obj }}
+                  <br>
+                {% endfor %}
+              </div>
+              <div class="col-md-2 col-sm-2 col-xs-12">
+                <span>Opportunity Sought:</span>
+              </div>
+              <div class="col-md-4 col-sm-4 col-xs-12">
+                {% for obj in opp_sought %}
+                  <input type="checkbox" value="{{ obj.1 }}" name="opportunities" class="flat" checked />
+                  {{ obj.1 }}
+                  <br>
+                {% endfor %}
+              </div>
+            </div>
+            <div class="row adv-filter">
+              <div class="col-md-2 col-sm-2 col-xs-12">
+                <span>Highest Degree Earned:</span>
+              </div>
+              <div class="col-md-4 col-sm-4 col-xs-12">
+                {% for obj in highest_degrees %}
+                  <input type="checkbox" value="{{ obj.1 }}" name="highest_degrees" class="flat" checked />
+                  {{ obj.1 }}
+                  <br>
+                {% endfor %}
+              </div>
+            </div>
             <div class="clearfix"></div>
             <div class="x_content">
-              <table id="datatable-buttons" class="table table-striped jambo_table">
+              <table id="datatable" class="table table-striped jambo_table dt-responsive nowrap" width="100%">
                 <thead>
                   <tr>
                     <th>Name</th>
                     <th>Email</th>
+                    <th>GPA</th>
                     <th>Undergrad University</th>
+                    <th>Resume</th>
+                    <th>Cover Letter</th>
                     <th>Undergrad Degree(s)</th>
                     <th>Graduate University</th>
                     <th>Graduate Degree(s)</th>
-                    <th>GPA</th>
-                    <th>Resume</th>
-                    <th>Cover Letter</th>
+                    <th>Academic Year</th>
+                    <th>Opportunity Sought</th>
+                    <th>Highest Degree Earned</th>
                   </tr>
                 </thead>
-
                 <tbody>
                  {% for obj in applicants %}
                     <tr>
-                      <td><a href="{{ obj.user.get_absolute_url }}">{{ obj.user.get_full_name }}</a></td>
+                      <td>
+                        <a href="{{ obj.user.get_absolute_url }}" style="text-decoration:underline;">
+                          {{ obj.user.get_full_name }}
+                        </a>
+                      </td>
                       <td><a href="mailto:{{ obj.email }}">{{ obj.email }}</a></td>
+                      <td>{{ obj.user.gpa }}</td>
                       <td>{{ obj.user.undergrad_uni }}</td>
                       <td>
-                        {% for degree in obj.get_undergrad_degrees_names %}
-                          {% if not forloop.last %}
-                            {{ degree }}, 
-                          {% else %}
-                            {{ degree }}
-                          {% endif %}
-                        {% endfor %}
+                        <a href="{{ obj.resume.url }}" download>
+                          <i class="fa fa-cloud-download" aria-hidden="true"></i>
+                        </a>
                       </td>
-                      <td>{{ obj.user.grad_uni }}</td>
-                      <td>{{ obj.get_grad_degrees_names }}</td>
-                      <td>{{ obj.user.gpa }}</td>
-                      <td><a href="{{ obj.resume.url }}" download>Download</a></td>
                       <td>
                         {% if obj.cover_letter %}
-                          <a href="#" data-toggle="modal" data-target="#coverLetterModal">View</a>
+                          <a href="#" data-toggle="modal" data-target="#coverLetterModal">
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                          </a>
                           <!-- cover letter modal -->
                           <div class="modal fade" id="coverLetterModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                             <div class="modal-dialog" role="document">
@@ -105,6 +165,24 @@
                           None
                         {% endif %}
                       </td>
+                      <td>
+                        {% for degree in obj.user.get_undergrad_degrees_names %}
+                          {% if not forloop.last %}{{ degree }}, {% else %}{{ degree }}{% endif %}
+                        {% endfor %}
+                      </td>
+                      <td>{{ obj.user.grad_uni }}</td>
+                      <td>
+                        {% if obj.user.get_grad_degrees_names %}
+                          {% for degree in obj.user.get_grad_degrees_names %}
+                            {% if not forloop.last %}{{ degree }}, {% else %}{{ degree }}{% endif %}
+                          {% endfor %}
+                        {% else %}
+                          None
+                        {% endif %}
+                      </td>
+                      <td>{{ obj.user.year_verbose }}</td>
+                      <td>{{ obj.user.opp_sought_verbose }}</td>
+                      <td>{{ obj.user.degree_earned_verbose }}</td>
                     </tr>
                   {% endfor %}
                 </tbody>
@@ -113,7 +191,6 @@
           </div>
         </div>
       </div>
-      <!-- /applicants -->
       <br>
       <br>
     </div>
@@ -131,88 +208,137 @@
   <script src="{% static 'vendors/jszip/jszip.min.js' %}"></script>
   <script src="{% static 'vendors/pdfmake/pdfmake.min.js' %}"></script>
   <script src="{% static 'vendors/pdfmake/vfs_fonts.js' %}"></script>
+  <script src="{% static 'vendors/datatables.net-responsive/js/dataTables.responsive.min.js' %}"></script>
+  <script src="{% static 'vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js' %}"></script>
   <script src="{% static 'vendors/slider/bootstrap-slider.js' %}"></script>
+  <script src="{% static 'vendors/iCheck/icheck.min.js' %}"></script>
 {% endblock js %}
 
 {% block scripts %}
   <script>
     $(document).ready(function($) {
-      // DataTable buttons
-      var handleDataTableButtons = function() {
-        if ($("#datatable-buttons").length) {
-          $("#datatable-buttons").DataTable({
-            dom: "Bfrtip",
-            buttons: [
-              {
-                extend: "copy",
-                className: "btn-sm",
-                exportOptions: { columns: [0,1,2,3] }
-              },
-              {
-                extend: "csv",
-                className: "btn-sm",
-                exportOptions: { columns: [0,1,2,3] }
-              },
-              {
-                extend: "excel",
-                className: "btn-sm",
-                exportOptions: { columns: [0,1,2,3] }
-              },
-              {
-                extend: "pdfHtml5",
-                className: "btn-sm",
-                exportOptions: { columns: [0,1,2,3] }
-              },
-              {
-                extend: "print",
-                className: "btn-sm",
-                exportOptions: { columns: [0,1,2,3] }
-              },
-            ],
-            responsive: true,
-            "infoCallback": function(settings, start, end, max, total, pre){
-              $("#applicant-count").html("( " + total + " )");
-              return "Showing " + start + " to " + end + " of " + total + " entries"
-                 + ((total !== max) ? " (filtered from " + max + " total entries)" : "");
-             }   
-          });
-        }
-      };
+        // DataTable buttons
+        var handleDataTableButtons = function() {
+            if ($("#datatable").length) {
+                $("#datatable").DataTable({
+                    dom: "Bfrtip",
+                    buttons: [
+                        {
+                            extend: "copy",
+                            className: "btn-sm",
+                            exportOptions: { columns: [0,1,2,3] }
+                        },
+                        {
+                            extend: "csv",
+                            className: "btn-sm",
+                            exportOptions: { columns: [0,1,2,3] }
+                        },
+                        {
+                            extend: "excel",
+                            className: "btn-sm",
+                            exportOptions: { columns: [0,1,2,3] }
+                        },
+                        {
+                            extend: "pdfHtml5",
+                            className: "btn-sm",
+                            exportOptions: { columns: [0,1,2,3] }
+                        },
+                        {
+                            extend: "print",
+                            className: "btn-sm",
+                            exportOptions: { columns: [0,1,2,3] }
+                        },
+                    ],
+                    responsive: true,
+                    "infoCallback": function(settings, start, end, max, total, pre){
+                        $("#applicant-count").html("( " + total + " )");
+                        return "Showing " + start + " to " + end + " of " + total + " entries"
+                            + ((total !== max) ? " (filtered from " + max + " total entries)" : "");
+                    }
+                });
+            }
+        };
 
-      TableManageButtons = function() {
-        "use strict";
-        return { init: function() { handleDataTableButtons(); } };
-      }();
+        TableManageButtons = function() {
+            "use strict";
+            return { init: function() { handleDataTableButtons(); } };
+        }();
 
-      TableManageButtons.init();
+        TableManageButtons.init();
 
-      // Slider functions
-      $("#gpa-slider").slider({
-          step: 0.01,
-          value: 0,
-          min: 0,
-          max: 4,
-      });
+        // Slider
+        $("#gpa-slider").slider({
+            step: 0.01,
+            value: 0,
+            min: 0,
+            max: 4,
+        });
 
-      var mySlider = $("input.slider").slider();
+        // Filtering
+        var mySlider = $("input.slider").slider();
+        var universities = $('[name="universities"]:checked').map(function () { return this.value; }).toArray().join(',');
+        var degrees = $('[name="degrees"]:checked').map(function () { return this.value; }).toArray().join(',');
+        var years = $('[name="years"]:checked').map(function () { return this.value; }).toArray().join(',');
+        var opportunities = $('[name="opportunities"]:checked').map(function () { return this.value; }).toArray().join(',');
+        var highest_degrees = $('[name="highest_degrees"]:checked').map(function () { return this.value; }).toArray().join(',');
 
-      $.fn.dataTable.ext.search.push(
-        function (settings, data, dataIndex) {
-          var min = parseFloat( mySlider.slider('getValue'), 0 );
-          var gpa = parseFloat( data[6] ) || 0; // use data for the gpa column
-          if (min <= gpa) { 
-            return true; 
-          }
-          return false;
-        }
-      );
+        $.fn.dataTable.ext.search.push(
+            function (settings, data, dataIndex) {
+                var min = parseFloat( mySlider.slider('getValue'), 0 );
+                var gpa = parseFloat( data[2] ) || 0; // use data for the gpa column
+                if (min <= gpa) { return true; } return false;
+            }
+        );
 
-      mySlider.on('slide', function() {
-        var value = mySlider.slider('getValue');
-        $('#gpa-value').html(value);
-        $("#datatable-buttons").DataTable().draw();
-      });
+        $.fn.dataTableExt.afnFiltering.push(function(oSettings, aData, iDataIndex) {
+            if ( universities.includes(aData[3]) && degrees.includes(aData[6]) && 
+                years.includes(aData[9]) && opportunities.includes(aData[10]) && 
+                highest_degrees.includes(aData[11]) ){
+                return true;
+            }
+            return false;
+        });
 
+        mySlider.on('slide', function() {
+            var value = mySlider.slider('getValue');
+            $('#gpa-value').html(value);
+            $("#datatable").DataTable().draw();
+        });
+
+        $(':checkbox[name="universities"]').on("ifChanged", function() {
+            universities = $('[name="' + this.name + '"]:checked').map(function () {
+                return this.value;
+            }).toArray().join(',');
+            $("#datatable").DataTable().draw();
+        });
+
+        $(':checkbox[name="degrees"]').on("ifChanged", function() {
+            degrees = $('[name="' + this.name + '"]:checked').map(function () {
+                return this.value;
+            }).toArray().join(',');
+            $("#datatable").DataTable().draw();
+        });
+
+        $(':checkbox[name="years"]').on("ifChanged", function() {
+            years = $('[name="' + this.name + '"]:checked').map(function () {
+                return this.value;
+            }).toArray().join(',');
+            $("#datatable").DataTable().draw();
+        });
+
+        $(':checkbox[name="opportunities"]').on("ifChanged", function() {
+            opportunities = $('[name="' + this.name + '"]:checked').map(function () {
+                return this.value;
+            }).toArray().join(',');
+            $("#datatable").DataTable().draw();
+        });
+
+        $(':checkbox[name="highest_degrees"]').on("ifChanged", function() {
+            highest_degrees = $('[name="' + this.name + '"]:checked').map(function () {
+                return this.value;
+            }).toArray().join(',');
+            $("#datatable").DataTable().draw();
+        });
     });
   </script>
 {% endblock scripts %}

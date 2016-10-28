@@ -247,6 +247,13 @@ class MyUser(AbstractBaseUser, PermissionsMixin):  # TagMixin
         """
         return dict(MyUser.YEAR_TYPES)[self.year]
 
+    @cached_property
+    def degree_earned_verbose(self):
+        """
+        Returns the verbose of the user's degree_earned.
+        """
+        return dict(MyUser.DEGREE_TYPES)[self.degree_earned]
+
     @property
     def user_profile_pic(self):
         """
@@ -270,6 +277,22 @@ class MyUser(AbstractBaseUser, PermissionsMixin):  # TagMixin
         Returns a list of pks for the user's grad_degree.
         """
         return map(str, self.grad_degree.values_list('pk', flat=True))
+
+    @cached_property
+    def get_undergrad_degrees_names(self):
+        """
+        Returns a list of names for the user's undergrad_degree.
+        """
+        return map(str, self.undergrad_degree.all().values_list('name',
+                                                                flat=True))
+
+    @cached_property
+    def get_grad_degrees_names(self):
+        """
+        Returns a list of names for the user's grad_degree.
+        """
+        return map(str, self.grad_degree.values_list('name',
+                                                         flat=True))
 
     @cached_property
     def get_hobbies_pk(self):

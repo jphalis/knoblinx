@@ -1,12 +1,12 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import cache_page
 from django.views.generic.edit import DeleteView
 
-from accounts.models import Company
+from accounts.models import Company, MyUser
 from activity.models import Activity
 from activity.signals import activity_item
 from core.decorators import user_is_company_collab
@@ -22,10 +22,18 @@ from .models import Applicant, Job
 @cache_page(60 * 3)
 def report(request, job_pk):
     job = get_object_or_404(Job, pk=job_pk)
+    years = []
+
+    for year in MyUser.YEAR_TYPES:
+        if str(year[0]) in job.years:
+            years.append(str(year[1]))
 
     context = {
-        'applicants': job.applicants.all(),
-        'job': job
+        'applicants': job.applicants.all().prefetch_related('user'),
+        'highest_degrees': MyUser.DEGREE_TYPES,
+        'job': job,
+        'opp_sought': MyUser.OPPORTUNITY_TYPES,
+        'years': years
     }
     return render(request, 'jobs/report.html', context)
 
@@ -54,9 +62,7 @@ def create(request, company_pk):
             description=form.cleaned_data['description']
         )
         messages.success(request, 'Your job has been created!')
-        return HttpResponseRedirect(reverse(
-            'jobs:detail',
-            kwargs={'username': company.username, 'job_pk': new_job.pk}))
+        return HttpResponseRedirect(new_job.get_absolute_url())
 
     context = {
         'company': company,
@@ -76,37 +82,29 @@ def apply(request, job_pk):
     elif not user.undergrad_uni:
         messages.error(request, 'Please add your university first.')
         return redirect('accounts:account_settings')
+    elif not user.undergrad_degree:
+        messages.error(request, 'Please add your degree first.')
+        return redirect('accounts:account_settings')
     elif not user.is_confirmed:
         messages.error(request, 'Please confirm your account before applying.')
-        return redirect(reverse(
-            'jobs:detail',
-            kwargs={'username': job.company.username, 'job_pk': job_pk}))
+        return redirect('/')
 
-    if not job.applicants.filter(pk=user.pk).exists():
+    if not job.applicants.filter(user__pk=user.pk).exists():
         form = ApplicantApplyForm(request.POST or None,
                                   request.FILES or None,
                                   instance=user, user=user)
 
         if form.is_valid():
-            _user_undergrad_degree = '({})'.format(
-                user.undergrad_degree) if user.undergrad_degree else ''
             applicant = Applicant.objects.create(
                 user=user,
                 resume=form.cleaned_data['resume'],
-                name='{0} {1}'.format(user.first_name, user.last_name),
                 email=form.cleaned_data['email'],
-                university='{0} {1}'.format(user.undergrad_uni,
-                                            _user_undergrad_degree),
                 cover_letter=form.cleaned_data['cover_letter']
             )
             job.applicants.add(applicant)
 
-            # Send company an email with applicants information?
-
             messages.success(request, 'Thank you for applying!')
-            return HttpResponseRedirect(reverse(
-                'jobs:detail',
-                kwargs={'username': job.company.username, 'job_pk': job_pk}))
+            return HttpResponseRedirect(job.get_absolute_url())
 
         context = {
             'form': form,
@@ -130,8 +128,6 @@ def detail(request, job_pk, username):
 
     if job.company.user == user or _is_company_collab:
         viewer_can_delete = True
-
-    print Job.objects.filter(degrees__pk__in=user.get_undergrad_degrees_pk)
 
     context = {
         'all_post_count': all_post_count,
@@ -160,9 +156,7 @@ def edit(request, username, job_pk):
         )
         messages.success(request,
                          'Your job listing has been updated!')
-        return HttpResponseRedirect(reverse(
-            'jobs:detail',
-            kwargs={'job_pk': job.pk, 'username': job.company.username}))
+        return HttpResponseRedirect(job.get_absolute_url())
 
     context = {
         'form': form,

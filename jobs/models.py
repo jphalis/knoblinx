@@ -44,21 +44,6 @@ class Applicant(TimeStampedModel):
         _job = Job.objects.get(applicants__pk=self.pk)
         return '{0} ({1})'.format(_job.title, _job.company.name)
 
-    @cached_property
-    def get_undergrad_degrees_names(self):
-        """
-        Returns a list of names for the applicant's undergrad_degree.
-        """
-        return map(str, self.user.undergrad_degree.all().values_list('name', flat=True))
-
-    @cached_property
-    def get_grad_degrees_names(self):
-        """
-        Returns a list of names for the applicant's grad_degree.
-        """
-        _degrees = map(str, self.user.grad_degree.values_list('name', flat=True))
-        return _degrees if _degrees else None
-
 
 @python_2_unicode_compatible
 class Job(TimeStampedModel):

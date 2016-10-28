@@ -37,8 +37,7 @@ def exp_edit(request, exp_pk):
         form.save()
         messages.success(request,
                          "You have successfully updated your experience.")
-        return redirect(reverse(
-            'profile', kwargs={"username": user.username}))
+        return redirect(user.get_absolute_url())
 
     context = {
         'form': form,
@@ -60,8 +59,7 @@ class ExpDelete(DeleteView, LoginRequiredMixin):
         return exp
 
     def get_success_url(self):
-        user = self.request.user
-        return reverse_lazy('profile', kwargs={"username": user.username})
+        return reverse_lazy(self.request.user.get_absolute_url())
 
     def delete(self, request, *args, **kwargs):
         """

@@ -27,15 +27,45 @@
                 <span>{{ job.title }} ({{ job.location }}) <small>{{ job.company.name }}</small></span>
               </h6>
               <div class="applicant-info">
-                <span class="key">Resume:</span>
-                <span class="value">{{ form.resume }}</span><br>
                 <span class="key">Name:</span>
                 <span class="value">{{ user.get_full_name }}</span><br>
                 <span class="key">Email:</span>
                 <span class="value">{{ form.email }}</span><br>
                 <span class="key">Education:</span>
-                <span class="value">{{ user.undergrad_uni }} <small>({{ user.undergrad_degree }})</small></span>
-                <br>
+                <span class="value">
+                  <em>Undergraduate:</em> {{ user.undergrad_uni }}
+                  <small>(
+                    {% for degree in user.get_undergrad_degrees_names %}
+                      {% if not forloop.last %}
+                        {{ degree }}, 
+                      {% else %}
+                        {{ degree }}
+                      {% endif %}
+                    {% endfor %})
+                  </small>
+                </span>
+                {% if user.grad_uni %}
+                  <span class="value">
+                    <em>Graduate:</em> {{ user.grad_uni }}
+                    {% if user.grad_degree %}
+                      <small>(
+                        {% for degree in user.get_grad_degrees_names %}
+                          {% if not forloop.last %}
+                            {{ degree }}, 
+                          {% else %}
+                            {{ degree }}
+                          {% endif %}
+                        {% endfor %})
+                      </small>
+                    {% endif %}
+                  </span>
+                {% endif %}
+                <span class="value"><em>Academic Year:</em> {{ user.year_verbose }}</span>
+                <span class="value"><em>GPA:</em> {{ user.gpa }}</span><br>
+                <span class="key">Opportunity Sought:</span>
+                <span class="value">{{ user.opp_sought_verbose }} position</span><br>
+                <span class="key">Resume:</span>
+                <span class="value">{{ form.resume }}</span><br>
                 <span class="key">Cover Letter:</span>
                 <div class="panel panel-danger"><div class="panel-body">{{ form.cover_letter }}</div></div>
               </div>

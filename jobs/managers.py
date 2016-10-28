@@ -13,7 +13,7 @@ from activity.signals import activity_item
 
 
 class ApplicantManager(models.Manager):
-    def create(self, user, resume, name, email, university, cover_letter='',
+    def create(self, user, resume, email, cover_letter='',
                **extra_fields):
         """
         Creates an applicant.
@@ -22,12 +22,12 @@ class ApplicantManager(models.Manager):
             raise ValueError('There must be a user assigned to this object.')
         elif not resume:
             raise ValueError('Applicants must include their resume.')
+        elif not email:
+            raise ValueError('Applicants must include their email address.')
 
         applicant = self.model(user=user,
                                resume=resume,
-                               name=name,
                                email=email,
-                               university=university,
                                cover_letter=cover_letter,
                                **extra_fields)
         applicant.save(using=self._db)
