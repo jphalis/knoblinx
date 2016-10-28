@@ -90,10 +90,6 @@ var ZeroClipboard_TableTools = {
 		}
 	},
 
-	log: function ( str ) {
-		console.log( 'Flash: '+str );
-	},
-
 	register: function(id, client) {
 		// register new client to receive events
 		this.clients[id] = client;
