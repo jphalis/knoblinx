@@ -90,9 +90,7 @@
                         <div class="x_content">
                             <div class="col-md-3 col-sm-3 col-xs-12 profile_left">
                                 <div class="profile_img">
-                                    <div id="crop-avatar">
-                                        <img class="img-responsive img-circle" src="{{ request.user.user_profile_pic }}" alt="Avatar" />
-                                    </div>
+                                    <img id="profile-picture" class="img-responsive img-circle" src="{{ request.user.user_profile_pic }}" alt="Avatar" style="width:100%; max-height:214px;"/>
                                 </div>
                                 <br>
                                 {% if user.video %}

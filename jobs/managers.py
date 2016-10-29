@@ -104,7 +104,7 @@ class JobManager(models.Manager):
     def create(self, user, company, title, contact_email, location,
                description, list_date_start, list_date_end,
                min_gpa=0.00, universities=School.objects.active(),
-               years=",".join(str(year) for year in MyUser.YEAR_TYPES[0]),
+               years=",".join(str(year[0]) for year in MyUser.YEAR_TYPES),
                degrees=Degree.objects.active(),
                **extra_fields):
         """

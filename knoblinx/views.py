@@ -23,13 +23,28 @@ from jobs.models import Job
 def generate_data(request):
     import random
     from random import randint
+    from urllib import urlopen
     from datetime import datetime, timedelta
     from django.conf import settings
+    from django.core.files import File
+    from django.core.files.temp import NamedTemporaryFile
     from accounts.degrees import degrees
     from accounts.hobbies import hobbies
     from accounts.models import Degree, Hobby, MyUser, School
     from accounts.schools import schools
     from jobs.models import Applicant
+
+    image_url = 'http://cdn.scahw.com.au/cdn-1cfaa3a9e77a520/imagevaultfiles/id_301664/cf_3/random-animals-16.jpg'
+    img_temp = NamedTemporaryFile(delete=True)
+    img_temp.write(urlopen(image_url).read())
+    img_temp.flush()
+    pic = File(img_temp)
+
+    resume_url = 'http://cdn.hloom.com/images/279-Goldfish-Bowl.jpg'
+    resume_temp = NamedTemporaryFile(delete=True)
+    resume_temp.write(urlopen(resume_url).read())
+    resume_temp.flush()
+    resume = File(resume_temp)
 
     # Create hobbies
     if not Hobby.objects.filter(name=hobbies[0]).exists():
@@ -55,27 +70,40 @@ def generate_data(request):
         for degree in degrees:
             Degree.objects.create(name=degree)
 
-    # Create demo user
-    if not MyUser.objects.filter(email='demo@demo.com').exists():
-        demo_user = MyUser.objects.create_user(
-            email='demo@demo.com',
-            first_name='Sample',
-            last_name='User',
+    # Create demo student user
+    if not MyUser.objects.filter(email='student@demo.com').exists():
+        student_demo = MyUser.objects.create_user(
+            email='student@demo.com',
+            first_name='Student',
+            last_name='Sample',
             password='demo',
-            profile_pic=settings.STATIC_URL + 'img/default-profile-pic.jpg',
-            resume=settings.STATIC_URL + 'img/default-profile-pic.jpg',
             gpa=3.45,
             degree_earned=MyUser.BACHELOR,
             year=MyUser.SENIOR,
             opp_sought=MyUser.FULL_TIME,
         )
-        demo_user.is_confirmed = True
-        demo_user.video = 'https://www.youtube.com/embed/_OBlgSz8sSM'
-        demo_user.undergrad_uni = School.objects.get(name='Brown University')
-        demo_user.undergrad_degree.add(Degree.objects.get(name='Business'))
-        demo_user.save()
+        student_demo.profile_pic.save("image_%s" % student_demo.username, pic),
+        student_demo.resume.save("resume_%s" % student_demo.username, resume),
+        student_demo.is_confirmed = True
+        student_demo.account_type = MyUser.STUDENT
+        student_demo.video = 'https://www.youtube.com/watch?v=_OBlgSz8sSM'
+        student_demo.undergrad_uni = School.objects.get(name='Brown University')
+        student_demo.undergrad_degree.add(Degree.objects.get(name='Business'))
+        student_demo.save()
         for hobby in demo_hobbies:
-            demo_user.hobbies.add(hobby)
+            student_demo.hobbies.add(hobby)
+
+    # Create demo employer user
+    if not MyUser.objects.filter(email='employer@demo.com').exists():
+        employer_demo = MyUser.objects.create_user(
+            email='employer@demo.com',
+            first_name='Employer',
+            last_name='Sample',
+            password='demo'
+        )
+        employer_demo.is_confirmed = True
+        employer_demo.account_type = MyUser.EMPLOYER
+        employer_demo.save()
 
     # Create users
     users = [
@@ -110,14 +138,15 @@ def generate_data(request):
                 first_name=user[0],
                 last_name=user[1],
                 password='demo',
-                profile_pic=settings.STATIC_URL + 'img/default-profile-pic.jpg',
-                resume=settings.STATIC_URL + 'img/default-profile-pic.jpg',
                 gpa=randint(int(2), int(100 * 4)) / 100.0,
                 degree_earned=random.choice([x[0] for x in MyUser.DEGREE_TYPES]),
                 year=random.choice([x[0] for x in MyUser.YEAR_TYPES]),
                 opp_sought=random.choice([x[0] for x in MyUser.OPPORTUNITY_TYPES])
             )
             user.is_confirmed = True
+            user.account_type = MyUser.STUDENT
+            user.profile_pic.save("image_%s" % user.username, pic),
+            user.resume.save("resume_%s" % user.username, resume),
             user.undergrad_uni = School.objects.all().order_by('?').first()
             user.undergrad_degree.add(Degree.objects.all().order_by('?').first())
             user.save()
@@ -140,13 +169,15 @@ def generate_data(request):
                 password='demo'
             )
             user.is_confirmed = True
+            user.account_type = MyUser.EMPLOYER
             user.save()
 
     companies = [
         ['Goldman Sachs', MyUser.objects.get(first_name='Jeff')],
         ['JPMorgan Chase', MyUser.objects.get(first_name='Pablo')],
         ['Morgan Stanley', MyUser.objects.get(first_name='Jaime')],
-        ['American Express', MyUser.objects.get(first_name='Naome')]
+        ['American Express', MyUser.objects.get(first_name='Naome')],
+        ['KPMG', MyUser.objects.get(first_name='Employer')],
     ]
     if not Company.objects.filter(name=companies[0][0]).exists():
         for company in companies:
@@ -199,8 +230,7 @@ def generate_data(request):
             )
 
     # Add applicants to jobs
-    created_applicants = Applicant.objects.all()
-    for applicant in created_applicants:
+    for applicant in Applicant.objects.all():
         job = Job.objects.all().order_by('?').first()
         job.applicants.add(applicant)
 
