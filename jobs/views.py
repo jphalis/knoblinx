@@ -1,9 +1,11 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy
-from django.http import HttpResponseForbidden, HttpResponseRedirect
+from django.http import (HttpResponseForbidden, HttpResponseRedirect,
+                         JsonResponse)
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import cache_page
+from django.views.decorators.http import require_http_methods
 from django.views.generic.edit import DeleteView
 
 from accounts.models import Company, MyUser
@@ -35,9 +37,32 @@ def report(request, job_pk):
         'job': job,
         'opp_sought': MyUser.OPPORTUNITY_TYPES,
         'protocol': 'https' if request.is_secure() else 'http',
+        'statuses': Applicant.STATUS_TYPES,
         'years': years
     }
     return render(request, 'jobs/report.html', context)
+
+
+@login_required
+@user_is_company_collab
+@require_http_methods(['POST'])
+def accept_app_ajax(request, job_pk):
+    applicant = get_object_or_404(Applicant,
+                                  pk=request.POST.get('app_pk'))
+    applicant.status = Applicant.ACCEPTED
+    applicant.save(update_fields=['status'])
+    return JsonResponse({'new_status': applicant.status_verbose})
+
+
+@login_required
+@user_is_company_collab
+@require_http_methods(['POST'])
+def reject_app_ajax(request, job_pk):
+    applicant = get_object_or_404(Applicant,
+                                  pk=request.POST.get('app_pk'))
+    applicant.status = Applicant.REJECTED
+    applicant.save(update_fields=['status'])
+    return JsonResponse({'new_status': applicant.status_verbose})
 
 
 @login_required

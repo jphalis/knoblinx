@@ -34,7 +34,8 @@ class ApplicantAdmin(admin.ModelAdmin):
     raw_id_fields = ['user']
     fieldsets = (
         (None,
-            {'fields': ('user', 'resume', 'email', 'cover_letter',)}),
+            {'fields': ('status', 'user', 'resume', 'email',
+                        'cover_letter',)}),
         (_('Dates'),
             {'fields': ('created', 'modified',)}),
     )

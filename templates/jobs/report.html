@@ -13,13 +13,11 @@
 
 {% block css %}
   <style>
-    .slider-handle {
-      background: #2a3f54; } 
-    .slider-selection {
-      background: #2a3f54; }
-    .adv-filter {
-      margin-bottom: 18px;
-    }
+    .slider-handle { background: #2a3f54; } 
+    .slider-selection { background: #2a3f54; }
+    .adv-filter { margin-bottom: 18px; }
+    .accepted { color:#01bc8c; }
+    .rejected { color:#ef6f6c; }
   </style>
 {% endblock css %}
 
@@ -102,12 +100,24 @@
                   <br>
                 {% endfor %}
               </div>
+              <div class="col-md-2 col-sm-2 col-xs-12">
+                <span>Applicant Status:</span>
+              </div>
+              <div class="col-md-4 col-sm-4 col-xs-12">
+                {% for obj in statuses %}
+                  <input type="checkbox" value="{{ obj.1 }}" name="statuses" class="flat" checked />
+                  {{ obj.1 }}
+                  <br>
+                {% endfor %}
+              </div>
             </div>
             <div class="clearfix"></div>
             <div class="x_content">
               <table id="datatable" class="table table-striped jambo_table dt-responsive nowrap" width="100%">
                 <thead>
                   <tr>
+                    <th></th>
+                    <th>Status</th>
                     <th>Name</th>
                     <th>Email</th>
                     <th>GPA</th>
@@ -120,20 +130,29 @@
                     <th>Academic Year</th>
                     <th>Opportunity Sought</th>
                     <th>Highest Degree Earned</th>
-                    <th>User_Url</th>
-                    <th>User_Video</th>
-                    <th>User_Resume_Url</th>
+                    <!-- hidden columns -->
+                    <th>Applicant Profile</th>
+                    <th>Applicant Video</th>
+                    <th>Applicant Resume</th>
+                    <th>Applicant Status</th>
+                    <!-- /hidden columns -->
                   </tr>
                 </thead>
                 <tbody>
                  {% for obj in applicants %}
-                    <tr>
+                    <tr class="applicant_item">
+                      <td></td>
+                      <td>
+                        <i class="fa fa-check accept_btn{% if obj.status == 1 %} accepted{% endif %}" aria-hidden="true" data-pk="{{ obj.pk }}"></i>
+                        &nbsp;
+                        <i class="fa fa-times reject_btn{% if obj.status == 2 %} rejected{% endif %}" aria-hidden="true" data-pk="{{ obj.pk }}"></i>
+                      </td>
                       <td>
                         <a href="{{ obj.user.get_absolute_url }}" style="text-decoration:underline;">
                           {{ obj.user.get_full_name }}
                         </a>
                       </td>
-                      <td><a href="mailto:{{ obj.email }}">{{ obj.email }}</a></td>
+                      <td><a href="mailto:{{ obj.email }}">{{ obj.email|truncatechars:15 }}</a></td>
                       <td>{{ obj.user.gpa }}</td>
                       <td>{{ obj.user.undergrad_uni }}</td>
                       <td>
@@ -186,9 +205,12 @@
                       <td>{{ obj.user.year_verbose }}</td>
                       <td>{{ obj.user.opp_sought_verbose }}</td>
                       <td>{{ obj.user.degree_earned_verbose }}</td>
+                      <!-- hidden columns -->
                       <td>{{ protocol }}://{{ domain }}{{ obj.user.get_absolute_url }}</td>
                       <td>{{ obj.user.video }}</td>
                       <td>{{ protocol }}://{{ domain }}{{ obj.resume.url }}</td>
+                      <td class="applicant_status">{{ obj.status_verbose }}</td>
+                      <!-- /hidden columns -->
                     </tr>
                   {% endfor %}
                 </tbody>
@@ -222,16 +244,16 @@
 
 {% block scripts %}
   <script>
-    function containsAny(haystack, needles) {
-        for (var i = 0; i < needles.length; i++) {
-            if (haystack.indexOf(needles[i]) !== -1) { return true; }
+    function containsAny(haystack, needles){
+        for (var i = 0; i < needles.length; i++){
+            if (haystack.indexOf(needles[i]) !== -1){ return true; }
         }
         return false;
     }
 
-    $(document).ready(function($) {
+    $(document).ready(function($){
         // DataTable buttons
-        var handleDataTableButtons = function() {
+        var handleDataTableButtons = function(){
             if ($("#datatable").length) {
                 $("#datatable").DataTable({
                     dom: "Bfrtip",
@@ -240,27 +262,32 @@
                         {
                             extend: "copy",
                             className: "btn-sm",
-                            exportOptions: { columns: [0, 1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14] }
+                            exportOptions: { columns:[2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17] },
+                            title: "{{ job.title }} Report"
                         },
                         {
                             extend: "csv",
                             className: "btn-sm",
-                            exportOptions: { columns: [0, 1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14] }
+                            exportOptions: { columns:[2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17] },
+                            title: "{{ job.title }} Report"
                         },
                         {
                             extend: "excel",
                             className: "btn-sm",
-                            exportOptions: { columns: [0, 1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14] }
+                            exportOptions: { columns:[2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17] },
+                            title: "{{ job.title }} Report"
                         },
                         {
                             extend: "pdfHtml5",
                             className: "btn-sm",
-                            exportOptions: { columns: [0, 1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14] }
+                            exportOptions: { columns:[2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17] },
+                            title: "{{ job.title }} Report"
                         },
                         {
                             extend: "print",
                             className: "btn-sm",
-                            exportOptions: { columns: [0, 1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14] }
+                            exportOptions: { columns:[2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17] },
+                            title: "{{ job.title }} Report"
                         },
                     ],
                     "infoCallback": function(settings, start, end, max, total, pre){
@@ -268,20 +295,19 @@
                         return "Showing " + start + " to " + end + " of " + total + " entries"
                             + ((total !== max) ? " (filtered from " + max + " total entries)" : "");
                     },
+                    "order": [[2, 'asc']],
                     "columnDefs": [
-                        {
-                            "targets": [12, 13, 14],
-                            "visible": false,
-                            "searchable": false
-                        }
+                        { "targets":[14, 15, 16], "visible":false, "searchable":false },
+                        // { "targets":[17], "visible":false },
+                        { "targets":[0, 1, 6, 7, 14, 15, 16, 17], "orderable":false }
                     ]
                 });
             }
         };
 
-        TableManageButtons = function() {
+        TableManageButtons = function(){
             "use strict";
-            return {init: function() { handleDataTableButtons(); }};
+            return {init: function(){ handleDataTableButtons(); }};
         }();
         TableManageButtons.init();
 
@@ -290,64 +316,119 @@
 
         // Filtering
         var mySlider = $("input.slider").slider();
-        var universities = $('[name="universities"]:checked').map(function () { return this.value; }).toArray().join(',');
-        var degrees = $('[name="degrees"]:checked').map(function () { return this.value; }).toArray().join(',');
-        var years = $('[name="years"]:checked').map(function () { return this.value; }).toArray().join(',');
-        var opportunities = $('[name="opportunities"]:checked').map(function () { return this.value; }).toArray().join(',');
-        var highest_degrees = $('[name="highest_degrees"]:checked').map(function () { return this.value; }).toArray().join(',');
+        var universities = $('[name="universities"]:checked').map(function(){ return this.value; }).toArray().join(',');
+        var degrees = $('[name="degrees"]:checked').map(function(){ return this.value; }).toArray().join(',');
+        var years = $('[name="years"]:checked').map(function(){ return this.value; }).toArray().join(',');
+        var opportunities = $('[name="opportunities"]:checked').map(function(){ return this.value; }).toArray().join(',');
+        var highest_degrees = $('[name="highest_degrees"]:checked').map(function(){ return this.value; }).toArray().join(',');
+        var statuses = $('[name="statuses"]:checked').map(function(){ return this.value; }).toArray().join(',');
 
         $.fn.dataTable.ext.search.push(
-            function (settings, data, dataIndex) {
-                var min = parseFloat( mySlider.slider('getValue'), 0 );
-                var gpa = parseFloat( data[2] ) || 0; // use data for the gpa column
+            function(settings, data, dataIndex){
+                var min = parseFloat(mySlider.slider('getValue'), 0);
+                var gpa = parseFloat(data[3]) || 0; // use data for the gpa column
                 if (min <= gpa) { return true; } return false;
             }
         );
 
-        $.fn.dataTableExt.afnFiltering.push(function(oSettings, aData, iDataIndex) {
-            if (containsAny(universities, [aData[3], aData[7]]) &&
-                containsAny(degrees, [aData[6], aData[8]]) &&
-                years.includes(aData[9]) &&
-                opportunities.includes(aData[10]) &&
-                highest_degrees.includes(aData[11])){
+        $.fn.dataTableExt.afnFiltering.push(function(oSettings, aData, iDataIndex){
+            if (containsAny(universities, [aData[5], aData[9]]) &&
+                containsAny(degrees, [aData[8], aData[10]]) &&
+                years.includes(aData[11]) &&
+                opportunities.includes(aData[12]) &&
+                highest_degrees.includes(aData[13]) &&
+                statuses.includes(aData[17])){
                 return true;
             }
             return false;
         });
 
-        mySlider.on('slide', function() {
+        mySlider.on('slide', function(){
             $('#gpa-value').html( mySlider.slider('getValue') );
             $("#datatable").DataTable().draw();
         });
-        $(':checkbox[name="universities"]').on("ifChanged", function() {
-            universities = $('[name="' + this.name + '"]:checked').map(function () {
+        $(':checkbox[name="universities"]').on("ifChanged", function(){
+            universities = $('[name="' + this.name + '"]:checked').map(function(){
                 return this.value;
             }).toArray().join(',');
             $("#datatable").DataTable().draw();
         });
-        $(':checkbox[name="degrees"]').on("ifChanged", function() {
-            degrees = $('[name="' + this.name + '"]:checked').map(function () {
+        $(':checkbox[name="degrees"]').on("ifChanged", function(){
+            degrees = $('[name="' + this.name + '"]:checked').map(function(){
                 return this.value;
             }).toArray().join(',');
             $("#datatable").DataTable().draw();
         });
-        $(':checkbox[name="years"]').on("ifChanged", function() {
-            years = $('[name="' + this.name + '"]:checked').map(function () {
+        $(':checkbox[name="years"]').on("ifChanged", function(){
+            years = $('[name="' + this.name + '"]:checked').map(function(){
                 return this.value;
             }).toArray().join(',');
             $("#datatable").DataTable().draw();
         });
-        $(':checkbox[name="opportunities"]').on("ifChanged", function() {
-            opportunities = $('[name="' + this.name + '"]:checked').map(function () {
+        $(':checkbox[name="opportunities"]').on("ifChanged", function(){
+            opportunities = $('[name="' + this.name + '"]:checked').map(function(){
                 return this.value;
             }).toArray().join(',');
             $("#datatable").DataTable().draw();
         });
-        $(':checkbox[name="highest_degrees"]').on("ifChanged", function() {
-            highest_degrees = $('[name="' + this.name + '"]:checked').map(function () {
+        $(':checkbox[name="highest_degrees"]').on("ifChanged", function(){
+            highest_degrees = $('[name="' + this.name + '"]:checked').map(function(){
                 return this.value;
             }).toArray().join(',');
             $("#datatable").DataTable().draw();
+        });
+        $(':checkbox[name="statuses"]').on("ifChanged", function(){
+            statuses = $('[name="' + this.name + '"]:checked').map(function(){
+                return this.value;
+            }).toArray().join(',');
+            $("#datatable").DataTable().draw();
+        });
+
+        $(".accept_btn").click(function(e) {
+            e.preventDefault();
+            var t = $(this),
+                a = $(e.target);
+            t.addClass("accepted");
+            t.closest("td").find(".reject_btn").removeClass("rejected");
+            $.ajax({
+                type: "POST",
+                url: "{% url 'jobs:accept_app_ajax' job.pk %}",
+                data: {
+                    app_pk: $(this).attr("data-pk"),
+                    csrfmiddlewaretoken: "{{ csrf_token }}"
+                },
+                dataType: "json",
+                success: function(e) {
+                    $("#datatable").DataTable().cell(t.parent().parent().find('.applicant_status')).data(e.new_status)
+                    $("#datatable").DataTable().draw();
+                },
+                error: function() {
+                    alert("Sorry, there was an error with your request. Please try again later.");
+                }
+            })
+        });
+        $(".reject_btn").click(function(e) {
+            e.preventDefault();
+            var t = $(this),
+                a = $(e.target);
+            t.addClass("rejected");
+            t.closest("td").find(".accept_btn").removeClass("accepted");
+            $.ajax({
+                type: "POST",
+                url: "{% url 'jobs:reject_app_ajax' job.pk %}",
+                data: {
+                    app_pk: $(this).attr("data-pk"),
+                    csrfmiddlewaretoken: "{{ csrf_token }}"
+                },
+                dataType: "json",
+                success: function(e) {
+                    $("#datatable").DataTable().cell(t.parent().parent().find('.applicant_status')).data(e.new_status)
+                    $("#datatable").DataTable().draw();
+                },
+                error: function() {
+                    alert("Sorry, there was an error with your request. Please try again later.");
+                }
+            })
         });
     });
   </script>

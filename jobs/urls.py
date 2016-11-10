@@ -22,4 +22,8 @@ urlpatterns = [
         views.edit, name="edit"),
     url(r"^(?P<job_pk>\d+)/report/$",
         views.report, name="report"),
+    url(r'^(?P<job_pk>\d+)/approve/$',
+        views.accept_app_ajax, name='accept_app_ajax'),
+    url(r'^(?P<job_pk>\d+)/reject/$',
+        views.reject_app_ajax, name='reject_app_ajax'),
 ]

@@ -25,6 +25,15 @@ def get_resume_path(instance, filename):
 
 @python_2_unicode_compatible
 class Applicant(TimeStampedModel):
+    PENDING = 0
+    ACCEPTED = 1
+    REJECTED = 2
+    STATUS_TYPES = (
+        (PENDING, _('Pending')),
+        (ACCEPTED, _('Accepted')),
+        (REJECTED, _('Rejected')),
+    )
+    status = models.IntegerField(choices=STATUS_TYPES, default=PENDING)
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     resume = models.FileField(upload_to=get_resume_path)
     email = models.EmailField(max_length=120)
@@ -43,6 +52,13 @@ class Applicant(TimeStampedModel):
     def job_title(self):
         _job = Job.objects.get(applicants__pk=self.pk)
         return '{0} ({1})'.format(_job.title, _job.company.name)
+
+    @cached_property
+    def status_verbose(self):
+        """
+        Returns the verbose of the applicant's status.
+        """
+        return dict(Applicant.STATUS_TYPES)[self.status]
 
 
 @python_2_unicode_compatible

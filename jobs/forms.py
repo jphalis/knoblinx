@@ -139,7 +139,7 @@ class JobCreateForm(forms.ModelForm):
 
     class Meta:
         model = Job
-        fields = ('contact_email', 'title', 'description', 'location',
+        fields = ('id', 'contact_email', 'title', 'description', 'location',
                   'min_gpa', 'universities', 'years', 'degrees',
                   'list_date_start', 'list_date_end',)
 
