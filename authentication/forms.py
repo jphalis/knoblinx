@@ -37,7 +37,8 @@ from core.utils import clean_passwords
 
 class MyUserCreationForm(UserCreationForm):
     """
-    A form that creates a user, with no privileges, from the given fields.
+    A form that creates a user, with no privileges, from the given
+    fields.
     """
     def __init__(self, *args, **kargs):
         super(MyUserCreationForm, self).__init__(*args, **kargs)
@@ -51,13 +52,13 @@ class MyUserCreationForm(UserCreationForm):
         """
         Verify that the new email is not already taken.
         """
-        value = self.cleaned_data['email'].lower()
-        if self.initial.get('email') == value:
-            return value
-        if MyUser.objects.filter(email__iexact=value).exists():
+        _value = self.cleaned_data['email'].lower()
+        if self.initial.get('email') == _value:
+            return _value
+        if MyUser.objects.filter(email__iexact=_value).exists():
             raise forms.ValidationError(
                 _('This email is already taken. Please try a different one.'))
-        return value
+        return _value
 
 
 class CompanyCreationForm(forms.ModelForm):
@@ -75,12 +76,12 @@ class CompanyCreationForm(forms.ModelForm):
         """
         Verify that the new username is not already taken.
         """
-        value = self.cleaned_data['username'].lower()
-        if Company.objects.filter(username__iexact=value).exists():
+        _value = self.cleaned_data['username'].lower()
+        if Company.objects.filter(username__iexact=_value).exists():
             raise forms.ValidationError(
                 _('This username is already taken. '
                   'Please try a different one.'))
-        return value
+        return _value
 
 
 class CompanySignupForm(forms.Form):
@@ -120,8 +121,7 @@ class CompanySignupForm(forms.Form):
 class LoginForm(forms.Form):
     email = forms.EmailField(
         label=_("Email"),
-        widget=forms.EmailInput(
-            attrs={'placeholder': 'Email'}),
+        widget=forms.EmailInput(attrs={'placeholder': 'Email'}),
         max_length=120
     )
     password = forms.CharField(
@@ -133,32 +133,30 @@ class LoginForm(forms.Form):
 
     def clean_email(self):
         """
-        Makes the value of the email lowercase.
+        Makes the value of the email lowercase, and verifies the
+        account is not disabled.
         """
-        value = self.cleaned_data.get("email").lower()
-        if MyUser.objects.filter(Q(email__iexact=value) &
+        _value = self.cleaned_data.get("email").lower()
+        if MyUser.objects.filter(Q(email__iexact=_value) &
                                  Q(is_active=False)).exists():
             raise forms.ValidationError("This account has been disabled")
-        return value
+        return _value
 
 
 class SignupForm(forms.Form):
     first_name = forms.CharField(
         label=_('First Name'),
-        widget=forms.TextInput(
-            attrs={'placeholder': 'First Name'},),
+        widget=forms.TextInput(attrs={'placeholder': 'First Name'},),
         max_length=50
     )
     last_name = forms.CharField(
         label=_('Last Name'),
-        widget=forms.TextInput(
-            attrs={'placeholder': 'Last Name'},),
+        widget=forms.TextInput(attrs={'placeholder': 'Last Name'},),
         max_length=50
     )
     email = forms.EmailField(
         label=_("Email"),
-        widget=forms.EmailInput(
-            attrs={'placeholder': 'Email'}),
+        widget=forms.EmailInput(attrs={'placeholder': 'Email'}),
         max_length=120
     )
     password = forms.CharField(
@@ -178,11 +176,11 @@ class SignupForm(forms.Form):
         """
         Verify that the new email is not already taken.
         """
-        value = self.cleaned_data['email'].lower()
-        if MyUser.objects.filter(email__iexact=value):
+        _value = self.cleaned_data['email'].lower()
+        if MyUser.objects.filter(email__iexact=_value).exists():
             raise forms.ValidationError(
                 _('This email is already taken. Please try a different one.'))
-        return value
+        return _value
 
     def clean_password_confirm(self):
         clean_passwords(data=self.cleaned_data,
@@ -194,8 +192,7 @@ class SignupForm(forms.Form):
 class PasswordResetForm(forms.Form):
     email = forms.EmailField(
         label=_("Email"),
-        widget=forms.widgets.EmailInput(
-            attrs={'placeholder': 'Email'})
+        widget=forms.widgets.EmailInput(attrs={'placeholder': 'Email'})
     )
 
     def send_mail(self, subject_template_name, email_template_name,

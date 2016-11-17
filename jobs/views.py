@@ -11,7 +11,7 @@ from django.views.generic.edit import DeleteView
 from accounts.models import Company, MyUser
 from activity.models import Activity
 from activity.signals import activity_item
-from core.decorators import user_is_company_collab
+from core.decorators import account_type_required, user_is_company_collab
 from core.mixins import LoginRequiredMixin
 from .forms import ApplicantApplyForm, JobCreateForm
 from .models import Applicant, Job
@@ -143,9 +143,11 @@ def apply(request, job_pk):
 
 
 @login_required
+@account_type_required
 @cache_page(60 * 3)
 def detail(request, job_pk, username):
     user = request.user
+
     job = get_object_or_404(Job, pk=job_pk)
     viewer_has_applied = job.applicants.filter(user=request.user).exists()
     viewer_can_delete = False
@@ -170,8 +172,7 @@ def detail(request, job_pk, username):
 @user_is_company_collab
 def edit(request, username, job_pk):
     job = Job.objects.get(pk=job_pk)
-    form = JobCreateForm(request.POST or None,
-                         instance=job)
+    form = JobCreateForm(request.POST or None, instance=job)
 
     if form.is_valid():
         form.save()

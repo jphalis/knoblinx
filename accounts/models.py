@@ -8,8 +8,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 
-from core.models import TimeStampedModel
-# from tags.models import TagMixin
+from core.models import ActiveStatusModel, TimeStampedModel
 from .managers import (CompanyManager, DegreeManager, ExperienceManager,
                        HobbyManager, MyUserManager, SchoolManager)
 
@@ -17,10 +16,8 @@ from .managers import (CompanyManager, DegreeManager, ExperienceManager,
 
 
 @python_2_unicode_compatible
-class Hobby(models.Model):
+class Hobby(ActiveStatusModel):
     name = models.CharField(max_length=120)
-
-    is_active = models.BooleanField(default=True)
 
     objects = HobbyManager()
 
@@ -35,12 +32,10 @@ class Hobby(models.Model):
 
 
 @python_2_unicode_compatible
-class School(models.Model):
+class School(ActiveStatusModel):
     name = models.CharField(max_length=120)
     location = models.CharField(max_length=120, blank=True)
     email = models.CharField(max_length=100)
-
-    is_active = models.BooleanField(default=True)
 
     objects = SchoolManager()
 
@@ -55,7 +50,7 @@ class School(models.Model):
 
 
 @python_2_unicode_compatible
-class Degree(models.Model):
+class Degree(ActiveStatusModel):
     ASSOCIATES = 0
     BACHELORS = 1
     MASTERS = 2
@@ -69,8 +64,6 @@ class Degree(models.Model):
     degree_type = models.IntegerField(choices=DEGREE_TYPES,
                                       blank=True, null=True)
     name = models.CharField(max_length=120)
-
-    is_active = models.BooleanField(default=True)
 
     objects = DegreeManager()
 
@@ -99,7 +92,7 @@ def get_resume_path(instance, filename):
 
 
 @python_2_unicode_compatible
-class MyUser(AbstractBaseUser, PermissionsMixin):  # TagMixin
+class MyUser(AbstractBaseUser, PermissionsMixin, ActiveStatusModel):
     STUDENT = 0
     EMPLOYER = 1
     ACCOUNT_TYPES = (
@@ -187,7 +180,6 @@ class MyUser(AbstractBaseUser, PermissionsMixin):  # TagMixin
     date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
     modified = models.DateTimeField(_('last modified'), auto_now=True)
 
-    is_active = models.BooleanField(_('active'), default=True)
     is_confirmed = models.BooleanField(_('confirmed'), default=False)
     is_staff = models.BooleanField(_('staff'), default=False)
 
@@ -292,7 +284,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):  # TagMixin
         Returns a list of names for the user's grad_degree.
         """
         return map(str, self.grad_degree.values_list('name',
-                                                         flat=True))
+                                                     flat=True))
 
     @cached_property
     def get_hobbies_pk(self):
@@ -300,13 +292,6 @@ class MyUser(AbstractBaseUser, PermissionsMixin):  # TagMixin
         Returns a list of pks for the user's hobbies.
         """
         return map(str, self.hobbies.values_list('pk', flat=True))
-
-    # @cached_property
-    # def hobbies_split(self):
-    #     """
-    #     Returns a comma-separated list of the user's hobbies.
-    #     """
-    #     return self.hobbies.split(',')
 
     @cached_property
     def get_video_embed_url(self):
@@ -333,7 +318,7 @@ def get_company_logo_path(instance, filename):
 
 
 @python_2_unicode_compatible
-class Company(TimeStampedModel):
+class Company(TimeStampedModel, ActiveStatusModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              related_name='company_owner',
                              null=True, on_delete=models.SET_NULL)
@@ -347,8 +332,6 @@ class Company(TimeStampedModel):
                              null=True, blank=True)
     website = models.URLField(max_length=150, null=True, blank=True)
     bio = models.TextField(max_length=500, blank=True)
-
-    is_active = models.BooleanField(_('active'), default=True)
 
     objects = CompanyManager()
 
@@ -376,8 +359,8 @@ class Company(TimeStampedModel):
     @property
     def company_logo(self):
         """
-        Returns the logo of a company. If there is no logo,
-        a default one will be rendered.
+        Returns the logo of a company. If there is no logo, a default
+        one will be rendered.
         """
         if self.logo:
             return "{0}{1}".format(settings.MEDIA_URL, self.logo)

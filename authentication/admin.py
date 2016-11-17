@@ -1,8 +1,6 @@
 from django.contrib import admin
 from django.utils.translation import ugettext as _
 
-from django.contrib.contenttypes.models import ContentType
-
 from accounts.models import MyUser
 from .models import EmailConfirmation
 

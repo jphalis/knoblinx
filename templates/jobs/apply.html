@@ -23,8 +23,12 @@
             <form action="." method="POST" enctype="multipart/form-data" role="form" class="col-md-8 col-lg-8">
               {% csrf_token %}
               <h6 class="applicant-headline">
-                <span class="icon"><i class="fa fa-briefcase" aria-hidden="true"></i></span>
-                <span>{{ job.title }} ({{ job.location }}) <small>{{ job.company.name }}</small></span>
+                <span class="icon">
+                  <i class="fa fa-briefcase" aria-hidden="true"></i>
+                </span>
+                <span>
+                  {{ job.title }} ({{ job.location }}) <small>{{ job.company.name }}</small>
+                </span>
               </h6>
               <div class="applicant-info">
                 <span class="key">Name:</span>
@@ -37,7 +41,7 @@
                   <small>(
                     {% for degree in user.get_undergrad_degrees_names %}
                       {% if not forloop.last %}
-                        {{ degree }}, 
+                        {{ degree }},
                       {% else %}
                         {{ degree }}
                       {% endif %}
@@ -51,7 +55,7 @@
                       <small>(
                         {% for degree in user.get_grad_degrees_names %}
                           {% if not forloop.last %}
-                            {{ degree }}, 
+                            {{ degree }},
                           {% else %}
                             {{ degree }}
                           {% endif %}
@@ -60,17 +64,24 @@
                     {% endif %}
                   </span>
                 {% endif %}
-                <span class="value"><em>Academic Year:</em> {{ user.year_verbose }}</span>
+                <span class="value">
+                  <em>Academic Year:</em> {{ user.year_verbose }}
+                </span>
                 <span class="value"><em>GPA:</em> {{ user.gpa }}</span><br>
                 <span class="key">Opportunity Sought:</span>
-                <span class="value">{{ user.opp_sought_verbose }} position</span><br>
+                <span class="value">{{ user.opp_sought_verbose }} position</span>
+                <br>
                 <span class="key">Resume:</span>
                 <span class="value">{{ form.resume }}</span><br>
                 <span class="key">Cover Letter:</span>
-                <div class="panel panel-danger"><div class="panel-body">{{ form.cover_letter }}</div></div>
+                <div class="panel panel-danger">
+                  <div class="panel-body">{{ form.cover_letter }}</div>
+                </div>
               </div>
               <div class="ln_solid"></div>
-              <button id="submitButton" type="submit" class="btn btn-block btn-success">SUBMIT APPLICATION</button>
+              <button id="submitButton" type="submit" class="btn btn-block btn-success">
+                SUBMIT APPLICATION
+              </button>
             </form>
           </div>
         </div>
@@ -86,20 +97,17 @@
 
 {% block scripts %}
   <script type="text/javascript">
-    $(document).ready(function() {
-      // Toggle form submit content when clicked
-      var submitButton = $('#submitButton');
+    $(document).ready(function(){
+        // Toggle form submit content when clicked
+        var submitButton = $('#submitButton');
 
-      submitButton.on('click', function() {
-        // disable the button to prevent multiple submissions
-        submitButton.attr('disabled', 'disabled').addClass('btn-disabled');
-        submitButton.parents('form:first').submit();
-      });
+        submitButton.on('click', function(){
+            // disable the button to prevent multiple submissions
+            submitButton.attr('disabled', 'disabled').addClass('btn-disabled');
+            submitButton.parents('form:first').submit();
+        });
 
-      $(function() {
-        // bootstrap WYSIHTML5 - text editor
-        $(".textarea").wysihtml5();
-      });
+        $(function(){ $(".textarea").wysihtml5(); });
     });
   </script>
 {% endblock scripts %}

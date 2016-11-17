@@ -30,14 +30,20 @@
         <h3>General</h3>
         <ul class="nav side-menu">
           <li>
-            <a href="{% url 'home' %}"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
+            <a href="{% url 'home' %}">
+              <i class="fa fa-home" aria-hidden="true"></i> Home
+            </a>
           </li>
           {% if not request.user.account_type == None %}
             <li>
-              <a href="{{ request.user.get_absolute_url }}"><i class="fa fa-user" aria-hidden="true"></i> Profile</a>
+              <a href="{{ request.user.get_absolute_url }}">
+                <i class="fa fa-user" aria-hidden="true"></i> Profile
+              </a>
             </li>
             <li>
-              <a href="{% url 'accounts:account_settings' %}"><i class="fa fa-cog" aria-hidden="true"></i> Settings</a>
+              <a href="{% url 'accounts:account_settings' %}">
+                <i class="fa fa-cog" aria-hidden="true"></i> Settings
+              </a>
             </li>
           {% endif %}
         </ul>
@@ -46,13 +52,19 @@
         <h3 class="company-name"></h3>
         <ul class="nav side-menu">
           <li>
-            <a href="#" class="company-dash"><i class="fa fa-tachometer" aria-hidden="true"></i> Dashboard</a>
+            <a href="#" class="company-dash">
+              <i class="fa fa-tachometer" aria-hidden="true"></i> Dashboard
+            </a>
           </li>
           <li>
-            <a href="#" class="company-url"><i class="fa fa-user" aria-hidden="true"></i> Profile</a>
+            <a href="#" class="company-url">
+              <i class="fa fa-user" aria-hidden="true"></i> Profile
+            </a>
           </li>
           <li>
-            <a href="#" class="company-settings"><i class="fa fa-tachometer" aria-hidden="true"></i> Settings</a>
+            <a href="#" class="company-settings">
+              <i class="fa fa-tachometer" aria-hidden="true"></i> Settings
+            </a>
           </li>
         </ul>
       </div>

@@ -14,6 +14,7 @@ from .forms import ContactForm
 @never_cache
 def inquiry(request):
     form = ContactForm(request.POST or None)
+
     if form.is_valid() and 'contact_form' in request.POST:
         name = form.cleaned_data['name']
         company = form.cleaned_data['company']

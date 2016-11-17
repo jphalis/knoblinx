@@ -63,21 +63,22 @@ class Applicant(TimeStampedModel):
 
 @python_2_unicode_compatible
 class Job(TimeStampedModel):
-    company = models.ForeignKey(
-        Company, related_name='job_owner', on_delete=models.CASCADE)
-    applicants = models.ManyToManyField(
-        Applicant, related_name='job_applicants', blank=True)
+    company = models.ForeignKey(Company,
+                                related_name='job_owner',
+                                on_delete=models.CASCADE)
+    applicants = models.ManyToManyField(Applicant,
+                                        related_name='job_applicants',
+                                        blank=True)
     title = models.CharField(max_length=120)
     location = models.CharField(max_length=120)
     contact_email = models.EmailField(max_length=120, null=True)
     description = models.TextField(max_length=5000)
     min_gpa = models.DecimalField(_('Miniumum GPA'), max_digits=3,
                                   decimal_places=2, default=0.00)
-    universities = models.ManyToManyField(
-        School, related_name='job_universities')
+    universities = models.ManyToManyField(School,
+                                          related_name='job_universities')
     years = models.CharField(max_length=120)
-    degrees = models.ManyToManyField(
-        Degree, related_name='job_degrees')
+    degrees = models.ManyToManyField(Degree, related_name='job_degrees')
 
     list_date_start = models.DateTimeField(_('Listing Start Date'), null=True)
     list_date_end = models.DateTimeField(_('Listing Expiration'), null=True)
@@ -153,8 +154,7 @@ class Job(TimeStampedModel):
     @cached_property
     def listing_start_date(self):
         """
-        Returns the listing start date in the format:
-        Month, day, year
+        Returns the listing start date in the format: Month, day, year
         """
         return self.list_date_start.strftime("%B %d, %Y")
 

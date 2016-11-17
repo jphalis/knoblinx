@@ -40,3 +40,14 @@ def user_is_company_collab(function):
     wrap.__doc__ = function.__doc__
     wrap.__name__ = function.__name__
     return wrap
+
+
+def account_type_required(function):
+    def wrap(request, *args, **kwargs):
+        if request.user.account_type is None:
+            raise PermissionDenied
+        return function(request, *args, **kwargs)
+
+    wrap.__doc__ = function.__doc__
+    wrap.__name__ = function.__name__
+    return wrap

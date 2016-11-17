@@ -13,7 +13,7 @@
       padding: 0px;
       color: #fff;
       border: none;
-      background-color: #fff; 
+      background-color: #fff;
       box-shadow: rgba(0, 0, 0, 0.0980392) 0px 1px 1px;
       margin-bottom: 12px;
     }
@@ -28,7 +28,9 @@
       <div class="">
         <div class="page-title">
           <div class="title_left">
-            <h3>You searched for: <small style="font-size:0.9em;">{{ query }}</small></h3>
+            <h3>
+              You searched for: <small style="font-size:0.9em;">{{ query }}</small>
+            </h3>
           </div>
           {% include 'search/_search_bar.html' %}
         </div>
@@ -100,7 +102,9 @@
                     {% for obj in jobs %}
                       <div class="box box-widget widget-user-2">
                         <div class="widget-user-header bg-job" style="margin-left: 0px;">
-                          <h3 class="widget-user-username widget-job">{{ obj.title }}</h3>
+                          <h3 class="widget-user-username widget-job">
+                            {{ obj.title }}
+                          </h3>
                           <h5 class="widget-user-desc widget-job">
                             <a href="{{ obj.company.get_absolute_url }}">
                               {{ obj.company.name }}
@@ -128,7 +132,9 @@
                     <div class="col-md-4">
                       <div class="box box-widget widget-user-2">
                         <div class="widget-user-header bg-job" style="margin-left: 0px;">
-                          <h3 class="widget-user-username widget-job">{{ obj.title }}</h3>
+                          <h3 class="widget-user-username widget-job">
+                            {{ obj.title }}
+                          </h3>
                           <h5 class="widget-user-desc widget-job">
                             <a href="{{ obj.company.get_absolute_url }}">
                               {{ obj.company.name }}

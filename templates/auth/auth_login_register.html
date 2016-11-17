@@ -5,8 +5,8 @@
 {% block title %}KnobLinx / Authenticate{% endblock title %}
 
 {% block stylesheets %}
-    <link href="{% static 'vendors/animate.css/animate.min.css' %}" rel="stylesheet">
-    <link href="{% static 'custom/css/login.min.css' %}" rel="stylesheet">
+  <link href="{% static 'vendors/animate.css/animate.min.css' %}" rel="stylesheet">
+  <link href="{% static 'custom/css/login.min.css' %}" rel="stylesheet">
 {% endblock stylesheets %}
 
 {% block css %}
@@ -25,103 +25,111 @@
 {% endblock css %}
 
 {% block content %}
-    <div>
-        <a class="hiddenanchor" id="signup"></a>
-        <a class="hiddenanchor" id="signin"></a>
+  <div>
+    <a class="hiddenanchor" id="signup"></a>
+    <a class="hiddenanchor" id="signin"></a>
+    <div class="login_wrapper">
+      <div class="animate form login_form">
+        <img src="{% static 'img/knoblinx_logo.png' %}" style="width: 100%;">
+        <section class="login_content">
+          <form class="login" method="POST" action=".">
+            {% csrf_token %}
+            <fieldset>
+              <legend class="legend">Log in</legend>
+              <div class="input">
+                <input type="email" placeholder="Email" name="email" required />
+                <span>
+                  <i class="fa fa-envelope-o" aria-hidden="true"></i>
+                </span>
+              </div>
+              <div class="input">
+                <input type="password" placeholder="Password" name="password" required />
+                <span><i class="fa fa-lock" aria-hidden="true"></i></span>
+              </div>
+              <input type="hidden" name="next" value="{{ next }}" />
+              <button type="submit" class="submit" name="login_form">
+                <i class="fa fa-long-arrow-right"></i>
+              </button>
+            </fieldset>
+          </form>
 
-        <div class="login_wrapper">
-            <div class="animate form login_form">
-                <img src="{% static 'img/knoblinx_logo.png' %}" style="width: 100%;">
-                <section class="login_content">
-                    <form class="login" method="POST" action=".">
-                        {% csrf_token %}
-                        <fieldset>
-                            <legend class="legend">Log in</legend>
-                            <div class="input">
-                                <input type="email" placeholder="Email" name="email" required />
-                                <span><i class="fa fa-envelope-o" aria-hidden="true"></i></span>
-                            </div>
-                            <div class="input">
-                                <input type="password" placeholder="Password" name="password" required />
-                                <span><i class="fa fa-lock" aria-hidden="true"></i></span>
-                            </div>
-                            <input type="hidden" name="next" value="{{ next }}" />
-                            <button type="submit" class="submit" name="login_form"><i class="fa fa-long-arrow-right"></i></button>
-                        </fieldset>
-                    </form>
-
-                    <div class="clearfix"></div>
-                        <div class="separator">
-                            <p class="change_link">Not a member?
-                                <a href="#signup" class="to_register"> Join now </a>
-                            </p>
-                            <p class="change_link">
-                                <a href="{% url 'authentication:password_reset' %}">Forgot your password?</a>
-                            </p>
-                            <br/>
-                            <div>
-                                <!-- <h1 class="login_title">KnobLinx</h1> -->
-                                <p class="login_copyright">
-                                    ©2016 All Rights Reserved. 
-                                    <a href="{% url 'privacy_policy' %}">Privacy</a> and 
-                                    <a href="{% url 'terms_of_use' %}">Terms</a>
-                                </p>
-                            </div>
-                        </div>
-                </section>
+          <div class="clearfix"></div>
+          <div class="separator">
+            <p class="change_link">Not a member?
+              <a href="#signup" class="to_register"> Join now </a>
+            </p>
+            <p class="change_link">
+              <a href="{% url 'authentication:password_reset' %}">
+                Forgot your password?
+              </a>
+            </p>
+            <br/>
+            <div>
+              <!-- <h1 class="login_title">KnobLinx</h1> -->
+              <p class="login_copyright">
+                ©2016 All Rights Reserved.
+                <a href="{% url 'privacy_policy' %}">Privacy</a> and
+                <a href="{% url 'terms_of_use' %}">Terms</a>
+              </p>
             </div>
+          </div>
+        </section>
+      </div>
 
-            <div id="register" class="animate form registration_form">
-                <img src="{% static 'img/knoblinx_logo.png' %}" style="width: 100%;">
-                <section class="login_content">
-                    <form class="login" method="POST" action=".">
-                        {% csrf_token %}
-                        <fieldset>
-                            <legend class="legend register_legend">Sign up</legend>
-                            <div class="input">
-                                <input type="first_name" placeholder="First name" name="first_name" required />
-                                <span><i class="fa fa-user" aria-hidden="true"></i></span>
-                            </div>
-                            <div class="input">
-                                <input type="last_name" placeholder="Last name" name="last_name" required />
-                                <span><i class="fa fa-user" aria-hidden="true"></i></span>
-                            </div>
-                            <small>If you are a student, please use your school email.</small>
-                            <div class="input">
-                                <input type="email" placeholder="Email" name="email" required />
-                                <span><i class="fa fa-envelope-o" aria-hidden="true"></i></span>
-                            </div>
-                            <div class="input">
-                                <input type="password" placeholder="Password" name="password" required />
-                                <span><i class="fa fa-lock" aria-hidden="true"></i></i></span>
-                            </div>
-                            <div class="input">
-                                <input type="password" placeholder="Confirm password" name="password_confirm" required />
-                                <span><i class="fa fa-lock" aria-hidden="true"></i></span>
-                            </div>
-                            <input type="hidden" name="next" value="{{ next }}" />
-                            <button type="submit" class="submit register_submit" name="register_form"><i class="fa fa-long-arrow-right" aria-hidden="true"></i></button>
-                        </fieldset>
-                    </form>
-                    <div class="clearfix"></div>
+      <div id="register" class="animate form registration_form">
+        <img src="{% static 'img/knoblinx_logo.png' %}" style="width: 100%;">
+        <section class="login_content">
+          <form class="login" method="POST" action=".">
+            {% csrf_token %}
+            <fieldset>
+              <legend class="legend register_legend">Sign up</legend>
+              <div class="input">
+                <input type="first_name" placeholder="First name" name="first_name" required />
+                <span><i class="fa fa-user" aria-hidden="true"></i></span>
+              </div>
+              <div class="input">
+                <input type="last_name" placeholder="Last name" name="last_name" required />
+                <span><i class="fa fa-user" aria-hidden="true"></i></span>
+              </div>
+              <small>If you are a student, please use your school email.</small>
+              <div class="input">
+                <input type="email" placeholder="Email" name="email" required />
+                <span><i class="fa fa-envelope-o" aria-hidden="true"></i></span>
+              </div>
+              <div class="input">
+                <input type="password" placeholder="Password" name="password" required />
+                <span><i class="fa fa-lock" aria-hidden="true"></i></i></span>
+              </div>
+              <div class="input">
+                <input type="password" placeholder="Confirm password" name="password_confirm" required />
+                <span><i class="fa fa-lock" aria-hidden="true"></i></span>
+              </div>
+              <input type="hidden" name="next" value="{{ next }}" />
+              <button type="submit" class="submit register_submit" name="register_form">
+                <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+              </button>
+            </fieldset>
+          </form>
 
-                    <div class="separator">
-                        <p class="change_link">Already on KnobLinx?
-                            <a href="#signin" class="to_register"> Log in </a>
-                        </p>
-                        <div>
-                            <!-- <h1 class="login_title">KnobLinx</h1> -->
-                            <p class="login_copyright">
-                                ©2016 All Rights Reserved. 
-                                <a href="{% url 'privacy_policy' %}">Privacy</a> and 
-                                <a href="{% url 'terms_of_use' %}">Terms</a>
-                            </p>
-                        </div>
-                    </div>
-                </section>
+          <div class="clearfix"></div>
+
+          <div class="separator">
+            <p class="change_link">Already on KnobLinx?
+              <a href="#signin" class="to_register"> Log in </a>
+            </p>
+            <div>
+              <!-- <h1 class="login_title">KnobLinx</h1> -->
+              <p class="login_copyright">
+                ©2016 All Rights Reserved.
+                <a href="{% url 'privacy_policy' %}">Privacy</a> and
+                <a href="{% url 'terms_of_use' %}">Terms</a>
+              </p>
             </div>
-        </div>
+          </div>
+        </section>
+      </div>
     </div>
+  </div>
 {% endblock content %}
 
 {% block scripts %}

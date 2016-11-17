@@ -57,7 +57,7 @@
           <div class="col-md-12">
             <div class="error-title">Whoops!</div>
             <div class="error-text">Page not found</div>
-            <div class="image-divider") center center no-repeat;"></div>
+            <div class="image-divider" style="center center no-repeat;"></div>
             <div class="error-text space">or</div>
             <a href="{% url 'home' %}" class="home-button">Back Home</a>
           </div>
@@ -72,7 +72,7 @@
         <div class="row">
           <div id="morphsearch" class="morphsearch animated" data-animation="fromTop288" data-animation-delay="2000">
             <form class="morphsearch-form" role="search" action="{% url 'search' %}">
-              <input class="morphsearch-input" type="search" name="q" placeholder="Search Something"/>
+              <input class="morphsearch-input" type="search" name="q" placeholder="Search Something" />
               <button class="morphsearch-submit" type="submit">Search</button>
             </form>
 
@@ -82,13 +82,16 @@
                 <h2><span class="fa fa-file-text-o"></span>Pages</h2>
                 <ul class="page-links">
                   <li>
-                    <span class="fa fa-chevron-right"></span><a href="{% url 'terms_of_use' %}">Terms of Use</a>
+                    <span class="fa fa-chevron-right"></span>
+                    <a href="{% url 'terms_of_use' %}">Terms of Use</a>
                   </li>
                   <li>
-                    <span class="fa fa-chevron-right"></span><a href="{% url 'privacy_policy' %}">Privacy Policy</a>
+                    <span class="fa fa-chevron-right"></span>
+                    <a href="{% url 'privacy_policy' %}">Privacy Policy</a>
                   </li>
                   <li>
-                    <span class="fa fa-chevron-right"></span><a href="{% url 'contact:inquiry' %}">Contact Us</a>
+                    <span class="fa fa-chevron-right"></span>
+                    <a href="{% url 'contact:inquiry' %}">Contact Us</a>
                   </li>
                 </ul>
               </div>
@@ -110,7 +113,7 @@
       </div>
     </section>
     <!-- /search-section -->
-    
+
     <!-- background section -->
     <section class="error-background">
       <img class="cloud-small cloud animated" src="{% static 'img/cloud-1.png' %}" data-animation="fromLeft25" data-animation-delay="3000" data-xrange="20" data-yrange="20" alt="">
@@ -121,7 +124,7 @@
       <img class="shark animated" src="{% static 'img/shark.png' %}" data-animation="fromLeft70" data-animation-delay="3200" alt="">
     </section>
     <!-- /background section -->
-    
+
     <!-- jQuery -->
     <script src="{% static 'vendors/jquery/jquery.min.js' %}" type="text/javascript"></script>
     <!-- Plax -->

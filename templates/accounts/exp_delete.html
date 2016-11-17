@@ -4,33 +4,39 @@
 {% block title %}KnobLinx / Delete Experience{% endblock title %}
 
 {% block content %}
-    <div class="right_col" role="main">
-        <div class="">
-            <div class="page-title">
-                <div class="title_left"><h3>Delete</h3></div>
+  <div class="right_col" role="main">
+    <div class="">
+      <div class="page-title">
+        <div class="title_left"><h3>Delete</h3></div>
+      </div>
+      <div class="clearfix"></div>
+      <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
+          <div class="x_panel">
+            <div class="experience-item">
+              <span class="date">
+                {{ object.experience_start_date }} - {{ object.experience_end_date }}
+              </span>
+              <div class="role">
+                <div class="title">{{ object.title }}</div>
+                <div class="company">{{ object.company }}</div>
+                <span class="description">{{ object.description|safe }}</span>
+              </div>
             </div>
-            <div class="clearfix"></div>
-            <div class="row">
-                <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
-                    <div class="x_panel">
-                        <div class="experience-item">
-                            <span class="date">{{ object.experience_start_date }} - {{ object.experience_end_date }}</span>
-                            <div class="role">
-                                <div class="title">{{ object.title }}</div>
-                                <div class="company">{{ object.company }}</div>
-                                <span class="description">{{ object.description|safe }}</span>
-                            </div>
-                        </div>
-                        <form action="." method="POST" class="pull-right">
-                            {% csrf_token %}
-                            <button id="cancelButton" class="btn btn-default" style="margin-right:7px;">Cancel</button>
-                            <button id="submitButton" class='btn btn-danger active' type="submit">Delete</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+            <form action="." method="POST" class="pull-right">
+              {% csrf_token %}
+              <button id="cancelButton" class="btn btn-default" style="margin-right:7px;">
+                Cancel
+              </button>
+              <button id="submitButton" class='btn btn-danger active' type="submit">
+                Delete
+              </button>
+            </form>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 {% endblock content %}
 
 {% block scripts %}

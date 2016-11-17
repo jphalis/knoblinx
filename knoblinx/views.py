@@ -184,14 +184,14 @@ def generate_data(request):
             Company.objects.create(user=company[1], name=company[0])
 
     # Create jobs
-    description = '''Affert officiis consequat ut his. Vix cu ferri 
-    nostrum contentiones, in pri partem principes, pri id aliquid 
-    pericula. Nam atqui intellegat at. Et soleat perfecto mei, elitr 
-    abhorreant his an. Ex soleat habemus splendide mei, duo eu suas iisque, 
-    id eam justo argumentum. In sea cetero erroribus vituperatoribus. 
-    Dolorum senserit ad pri, no est nusquam definitiones. 
-    Has ipsum tincidunt ne. Eu mea aperiri euismod, vix in nominati inimicus. 
-    At simul adipiscing nec, dolore laboramus pro no, sea tale fierent ne. 
+    description = '''Affert officiis consequat ut his. Vix cu ferri
+    nostrum contentiones, in pri partem principes, pri id aliquid
+    pericula. Nam atqui intellegat at. Et soleat perfecto mei, elitr
+    abhorreant his an. Ex soleat habemus splendide mei, duo eu suas iisque,
+    id eam justo argumentum. In sea cetero erroribus vituperatoribus.
+    Dolorum senserit ad pri, no est nusquam definitiones.
+    Has ipsum tincidunt ne. Eu mea aperiri euismod, vix in nominati inimicus.
+    At simul adipiscing nec, dolore laboramus pro no, sea tale fierent ne.
     An corpora detracto corrumpit pri, epicurei intellegam quo in, dicit verterem id sit'''
     start = datetime.now()
     end = start + timedelta(days=21)
@@ -253,7 +253,7 @@ def get_company_ajax(request):
         company = Company.objects.get(Q(user=user) | Q(collaborators=user))
         data.update({
             'company_name': company.name,
-            'company_username': company.username,
+            'company_username': company.username
         })
     except:
         company = None
@@ -291,10 +291,10 @@ def home(request):
         return render(request, 'jobs/list.html', context)
     elif user.account_type == MyUser.EMPLOYER:
         company_qs = Company.objects.filter(
-            Q(user=user) | Q(collaborators=user) & Q(is_active=True))
+            Q(user=user) | Q(collaborators=user), is_active=True)
 
         if company_qs.exists():
-            company = company_qs[0]
+            company = company_qs.first()
             jobs = Job.objects.own(company=company)
             active_job_count = jobs.filter(
                 Q(list_date_start__lte=timezone.now()) &
@@ -307,7 +307,7 @@ def home(request):
                 'jobs_count': jobs.count,
                 'active_job_count': active_job_count,
                 'collaborator_count': company.collaborators.count() + 1,
-                'collaborators': company.get_collaborators_info,
+                'collaborators': company.get_collaborators_info
             }
 
             try:
@@ -323,13 +323,8 @@ def home(request):
     else:
         uni_emails = School.objects.active().values_list('email', flat=True)
         username, domain = user.email.split('@')
-        registered_uni = False
-
-        if domain.endswith(tuple(uni_emails)):
-            registered_uni = True
-
         context = {
-            'registered_uni': registered_uni
+            'registered': True if domain.endswith(tuple(uni_emails)) else False
         }
     return render(request, 'auth/selection.html', context)
 

@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
 from django.http import (HttpResponseForbidden, HttpResponseRedirect,
                          JsonResponse)
@@ -13,6 +13,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic.edit import DeleteView
 
 from activity.signals import activity_item
+from core.decorators import account_type_required
 from core.mixins import LoginRequiredMixin
 from jobs.models import Job
 from .forms import (AccountEmployerSettingsForm, AccountSettingsForm,
@@ -52,11 +53,10 @@ class ExpDelete(DeleteView, LoginRequiredMixin):
     template_name = 'accounts/exp_delete.html'
 
     def get_object(self):
-        user = self.request.user
-        exp = Experience.objects.get(pk=self.kwargs['exp_pk'])
-        if user != exp.user:
+        _exp = Experience.objects.get(pk=self.kwargs['exp_pk'])
+        if self.request.user != _exp.user:
             raise HttpResponseForbidden()
-        return exp
+        return _exp
 
     def get_success_url(self):
         return reverse_lazy(self.request.user.get_absolute_url())
@@ -80,10 +80,6 @@ def profile(request, username):
     # User Profile
     try:
         user = MyUser.objects.get(username=username)
-
-        if not user.is_active:
-            return HttpResponseForbidden()
-
         form = ExperienceForm(request.POST or None,
                               instance=user, user=user)
 
@@ -116,13 +112,9 @@ def profile(request, username):
         user = None
 
     # Company profile
-    if not user:
+    if user is None:
         company = get_object_or_404(
             Company, Q(is_active=True), username=username)
-
-        if not company.is_active:
-            return HttpResponseForbidden()
-
         _user_can_edit = False
         _is_company_collab = company.collaborators.filter(pk=request.user.pk)
 
@@ -144,13 +136,11 @@ def profile(request, username):
 
 
 @login_required
+@account_type_required
 @never_cache
 @sensitive_post_parameters()
 def account_settings(request):
     user = get_object_or_404(MyUser, Q(is_active=True), pk=request.user.pk)
-
-    if user.account_type is None:
-        return HttpResponseForbidden()
 
     if user.account_type == MyUser.STUDENT:
         form = AccountSettingsForm(request.POST or None,
@@ -162,11 +152,7 @@ def account_settings(request):
             if form.is_valid():
                 form.email = form.cleaned_data['email']
                 form.username = form.cleaned_data['username']
-                form.profile_pic = form.cleaned_data['profile_pic']
                 form.video = form.cleaned_data['video']
-                form.opp_sought = form.cleaned_data['opp_sought']
-                form.year = form.cleaned_data['year']
-                form.degree_earned = form.cleaned_data['degree_earned']
                 form.undergrad_degree = form.cleaned_data['undergrad_degree']
                 form.grad_degree = form.cleaned_data['grad_degree']
                 password = form.cleaned_data['password_new_confirm']
@@ -205,7 +191,7 @@ def account_settings(request):
     context = {
         'form': form,
         'is_employer': user.account_type == MyUser.EMPLOYER,
-        'user': user,
+        'user': user
     }
     return render(request, 'accounts/settings.html', context)
 
@@ -285,7 +271,7 @@ def company_settings(request, username):
         context = {
             'collab_form': collab_form,
             'company': company,
-            'form': form,
+            'form': form
         }
         return render(request, 'accounts/company_settings.html', context)
     return HttpResponseForbidden()

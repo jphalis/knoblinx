@@ -58,7 +58,7 @@ class EmailConfirmationManager(models.Manager):
         obj = get_object_or_404(self.model, user=user)
         if obj.key_valid():
             obj.user.is_confirmed = True
-            obj.user.save()
+            obj.user.save(update_fields=['is_confirmed'])
             obj.delete()
             return True
         return False

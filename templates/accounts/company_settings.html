@@ -5,136 +5,151 @@
 {% block title %}{{ company.name }} / Settings{% endblock title %}
 
 {% block content %}
-    <div class="right_col" role="main">
-        <div class="">
-            <div class="page-title">
-                <div class="title_left">
-                    <h3>Company Settings</h3>
-                </div>
-            </div>
-        </div>
-        <div class="clearfix"></div>
-        <div class="row">
-            <div class="col-md-12 col-sm-12 col-xs-12">
-                <div class="x_panel">
-                    <div class="x_content">
-                        <br/>
-                        <form action="." method="POST" enctype="multipart/form-data" role="form">
-                            {% csrf_token %}
-                            <fieldset>
-                                <div class="row">
-                                    <div class="form-group col-md-6 col-sm-6 col-xs-12 {% if form.name.errors %}has-error{% endif %}">
-                                        <label for="{{ form.name.auto_id }}" class="control-label">
-                                            {{ form.name.label }}
-                                        </label>
-                                        {{ form.name|add_class:"form-control" }}
-                                        {{ form.name.errors }}
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="form-group col-md-6 col-sm-6 col-xs-12 {% if form.username.errors %}has-error{% endif %}">
-                                        <label for="{{ form.username.auto_id }}" class="control-label">
-                                            {{ form.username.label }}
-                                        </label>
-                                        {{ form.username|add_class:"form-control" }}
-                                        {{ form.username.errors }}
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="form-group col-md-6 col-sm-6 col-xs-12 {% if form.logo.errors %}has-error{% endif %}">
-                                        <label for="{{ form.logo.auto_id }}" class="control-label">
-                                            {{ form.logo.label }}
-                                        </label>
-                                        {{ form.logo|add_class:"form-control" }}
-                                        {{ form.logo.errors }}
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="form-group col-md-6 col-sm-6 col-xs-12 {% if form.website.errors %}has-error{% endif %}">
-                                        <label for="{{ form.website.auto_id }}" class="control-label">
-                                            {{ form.website.label }}
-                                        </label>
-                                        {{ form.website|add_class:"form-control" }}
-                                        {{ form.website.errors }}
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="form-group col-md-6 col-sm-6 col-xs-12 {% if form.bio.errors %}has-error{% endif %}">
-                                        <label for="{{ form.bio.auto_id }}" class="control-label">
-                                            {{ form.bio.label }}
-                                        </label>
-                                        {{ form.bio|add_class:"form-control" }}
-                                        {{ form.bio.errors }}
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="control-group col-md-6 col-sm-6 col-xs-12 {% if collab_form.email.errors %}has-error{% endif %}">
-                                        <label class="control-label">
-                                            Collaborators <small>(These users will have administrative access to your company.)</small>
-                                        </label>
-                                        <ul>
-                                            <li>
-                                                <p>
-                                                    {{ company.user.get_full_name }},
-                                                    {{ company.user.email }}
-                                                </p>
-                                            </li>
-                                            {% if company.collaborators %}
-                                                {% for obj in company.collaborators.all %}
-                                                    <li>
-                                                        <p>
-                                                            {{ obj.get_full_name }},
-                                                            {{ obj.email }}
-                                                            {% if not obj == request.user %}
-                                                                <a href="#" class="remove_collab_btn" data-user="{{ obj.pk }}" data-company="{{ company.pk }}">
-                                                                    <i class="fa fa-times" style="margin-left:7px;" aria-hidden="true"></i>
-                                                                </a>
-                                                            {% endif %}
-                                                        </p>
-                                                    </li>
-                                                {% endfor %}
-                                            {% endif %}
-                                        </ul>
-                                        <a class="btn btn-default" data-toggle="modal" href="#addModal">Add Collaborator</a>
-                                        <!-- add collaborator modal -->
-                                        <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-hidden="false" style="display:none;">
-                                            <div class="modal-dialog modal-md">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                                        <h4 class="modal-title">Add Collaborator</h4>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <label>Email</label>
-                                                        <p>{{ collab_form.email }}</p>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button data-dismiss="modal" class="btn btn-default">Close</button>
-                                                        <button class="btn btn-primary active" type="submit">Add</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- /add collaborator modal -->
-                                        {{ collab_form.email.errors }}
-                                    </div>
-                                </div>
-
-                                <div class="ln_solid"></div>
-                                <div class="row">
-                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                        <button id="submitButton" type="submit" class="btn btn-primary btn-block active">Update</button>
-                                    </div>
-                                </div>
-                            </fieldset>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <br>
-        <br>
+  <div class="right_col" role="main">
+    <div class="">
+      <div class="page-title">
+        <div class="title_left"><h3>Company Settings</h3></div>
+      </div>
     </div>
+
+    <div class="clearfix"></div>
+
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+          <div class="x_content">
+            <br/>
+            <form action="." method="POST" enctype="multipart/form-data" role="form">
+              {% csrf_token %}
+              <fieldset>
+
+                <div class="row">
+                  <div class="form-group col-md-6 col-sm-6 col-xs-12 {% if form.name.errors %}has-error{% endif %}">
+                    <label for="{{ form.name.auto_id }}" class="control-label">
+                      {{ form.name.label }}
+                    </label>
+                    {{ form.name|add_class:"form-control" }}
+                    {{ form.name.errors }}
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="form-group col-md-6 col-sm-6 col-xs-12 {% if form.username.errors %}has-error{% endif %}">
+                    <label for="{{ form.username.auto_id }}" class="control-label">
+                      {{ form.username.label }}
+                    </label>
+                    {{ form.username|add_class:"form-control" }}
+                    {{ form.username.errors }}
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="form-group col-md-6 col-sm-6 col-xs-12 {% if form.logo.errors %}has-error{% endif %}">
+                    <label for="{{ form.logo.auto_id }}" class="control-label">
+                      {{ form.logo.label }}
+                    </label>
+                    {{ form.logo|add_class:"form-control" }}
+                    {{ form.logo.errors }}
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="form-group col-md-6 col-sm-6 col-xs-12 {% if form.website.errors %}has-error{% endif %}">
+                    <label for="{{ form.website.auto_id }}" class="control-label">
+                      {{ form.website.label }}
+                    </label>
+                    {{ form.website|add_class:"form-control" }}
+                    {{ form.website.errors }}
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="form-group col-md-6 col-sm-6 col-xs-12 {% if form.bio.errors %}has-error{% endif %}">
+                    <label for="{{ form.bio.auto_id }}" class="control-label">
+                      {{ form.bio.label }}
+                    </label>
+                    {{ form.bio|add_class:"form-control" }}
+                    {{ form.bio.errors }}
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="control-group col-md-6 col-sm-6 col-xs-12 {% if collab_form.email.errors %}has-error{% endif %}">
+                    <label class="control-label">
+                        Collaborators <small>(These users will have administrative access to your company.)</small>
+                    </label>
+                    <ul>
+                      <li>
+                        <p>
+                            {{ company.user.get_full_name }},
+                            {{ company.user.email }}
+                        </p>
+                      </li>
+                      {% if company.collaborators %}
+                        {% for obj in company.collaborators.all %}
+                          <li>
+                            <p>
+                              {{ obj.get_full_name }},
+                              {{ obj.email }}
+                              {% if not obj == request.user %}
+                                <a href="#" class="remove_collab_btn" data-user="{{ obj.pk }}" data-company="{{ company.pk }}">
+                                  <i class="fa fa-times" style="margin-left:7px;" aria-hidden="true"></i>
+                                </a>
+                              {% endif %}
+                            </p>
+                          </li>
+                        {% endfor %}
+                      {% endif %}
+                    </ul>
+                    <a class="btn btn-default" data-toggle="modal" href="#addModal">
+                      Add Collaborator
+                    </a>
+                    <!-- add collaborator modal -->
+                    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-hidden="false" style="display:none;">
+                      <div class="modal-dialog modal-md">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                              ×
+                            </button>
+                            <h4 class="modal-title">Add Collaborator</h4>
+                          </div>
+                          <div class="modal-body">
+                            <label>Email</label>
+                            <p>{{ collab_form.email }}</p>
+                          </div>
+                          <div class="modal-footer">
+                            <button data-dismiss="modal" class="btn btn-default">
+                              Close
+                            </button>
+                            <button class="btn btn-primary active" type="submit">
+                              Add
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- /add collaborator modal -->
+                    {{ collab_form.email.errors }}
+                  </div>
+                </div>
+
+                <div class="ln_solid"></div>
+                <div class="row">
+                  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <button id="submitButton" type="submit" class="btn btn-primary btn-block active">
+                      Update
+                    </button>
+                  </div>
+                </div>
+              </fieldset>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br><br>
+  </div>
 {% endblock content %}
 
 {% block scripts %}

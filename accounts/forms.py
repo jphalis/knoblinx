@@ -92,39 +92,34 @@ class ExperienceForm(forms.ModelForm):
             self.cleaned_data['date_start'], '%m/%Y').strftime('%Y-%m-01')
 
     def clean_date_end(self):
-        date_end = self.cleaned_data['date_end']
-        if not date_end:
+        _date_end = self.cleaned_data['date_end']
+        if not _date_end:
             return None
-        return datetime.strptime(date_end, '%m/%Y').strftime('%Y-%m-01')
+        return datetime.strptime(_date_end, '%m/%Y').strftime('%Y-%m-01')
 
 
 class AccountSettingsForm(forms.ModelForm):
     """
-    A form used for users to update their account
-    information.
+    A form used for users to update their account information.
     """
     first_name = forms.CharField(
         label=_('First Name *'),
-        widget=forms.TextInput(
-            attrs={'class': 'form-control'}),
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
         max_length=50
     )
     last_name = forms.CharField(
         label=_('Last Name *'),
-        widget=forms.TextInput(
-            attrs={'class': 'form-control'}),
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
         max_length=50
     )
     email = forms.EmailField(
         label=_('Email *'),
-        widget=forms.EmailInput(
-            attrs={'class': 'form-control'}),
+        widget=forms.EmailInput(attrs={'class': 'form-control'}),
         max_length=120
     )
     username = forms.SlugField(
         label=_('Username *'),
-        widget=forms.TextInput(
-            attrs={'class': 'form-control'}),
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
         max_length=120
     )
     password_new = forms.CharField(
@@ -139,21 +134,19 @@ class AccountSettingsForm(forms.ModelForm):
     )
     profile_pic = forms.ImageField(
         label=_('Profile Picture *'),
-        widget=ClearableFileInput(
-            attrs={'class': 'form-control'})
+        widget=ClearableFileInput(attrs={'class': 'form-control'})
     )
     video = forms.CharField(
         label=_('Profile Video'),
-        widget=forms.TextInput(
-            attrs={'class': 'form-control'}),
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
         max_length=250,
         required=False,
-        help_text='Upload your video to <a href="https://www.youtube.com/upload">YouTube</a> first'
+        help_text='Upload your video to '
+                  '<a href="https://www.youtube.com/upload">YouTube</a> first'
     )
     resume = forms.FileField(
         label=_('Resume *'),
-        widget=ClearableFileInput(
-            attrs={'class': 'form-control'})
+        widget=ClearableFileInput(attrs={'class': 'form-control'})
     )
     opp_sought = forms.ChoiceField(
         label=_('Opportunity Sought *'),
@@ -214,12 +207,6 @@ class AccountSettingsForm(forms.ModelForm):
                    'name': 'hobbies'}),
         queryset=[],
     )
-    # hobbies = forms.CharField(
-    #     label=_("Hobbies and Interests"),
-    #     widget=forms.TextInput(),
-    #     max_length=250,
-    #     required=False
-    # )
 
     class Meta:
         model = MyUser
@@ -245,8 +232,6 @@ class AccountSettingsForm(forms.ModelForm):
         Verify that the new email is not already taken.
         """
         _email = self.cleaned_data['email'].lower()
-        if self.initial.get('email') == _email:
-            return _email
         if MyUser.objects.filter(
                 Q(email__iexact=_email) & ~Q(pk=self.user.pk)).exists():
             raise forms.ValidationError(
@@ -258,8 +243,6 @@ class AccountSettingsForm(forms.ModelForm):
         Verify that the new username is not already taken.
         """
         _username = self.cleaned_data['username'].lower()
-        if self.initial.get('username') == _username:
-            return _username
         if MyUser.objects.filter(
                 Q(username__iexact=_username) & ~Q(id=self.user.id)).exists():
             raise forms.ValidationError(
@@ -278,54 +261,29 @@ class AccountSettingsForm(forms.ModelForm):
                   'not the embed url.'))
         return _url
 
-    def clean_opp_sought(self):
-        _opp = self.cleaned_data['opp_sought']
-        if not _opp:
-            raise forms.ValidationError(
-                _('You must choose your opportunity sought.'))
-        return _opp
-
-    def clean_year(self):
-        _year = self.cleaned_data['year']
-        if _year is None:
-            raise forms.ValidationError(
-                _('You must choose your current academic year.'))
-        return _year
-
-    def clean_degree_earned(self):
-        _degree = self.cleaned_data['degree_earned']
-        if not _degree:
-            raise forms.ValidationError(
-                _('You must select your degree(s) earned.'))
-        return _degree
-
     def clean_undergrad_degree(self):
+        """
+        Verify that the user has selected up to two undergraduate degrees.
+        """
         _degrees = self.cleaned_data['undergrad_degree']
-        if _degrees:
-            if _degrees.count() > 2:
-                raise forms.ValidationError(
-                    _('You may only select up to 2 degrees.'))
-            return _degrees
-        raise forms.ValidationError(
-            _('Please choose your undergraduate degree(s).'))
-
-    def clean_grad_degree(self):
-        _degrees = self.cleaned_data['grad_degree']
-        if _degrees and _degrees.count() > 2:
+        if _degrees.count() > 2:
             raise forms.ValidationError(
                 _('You may only select up to 2 degrees.'))
         return _degrees
 
-    def clean_hobbies(self):
-        _hobbies = self.cleaned_data['hobbies']
-        if not _hobbies:
+    def clean_grad_degree(self):
+        """
+        Verify that the user has selected up to two graduate degrees.
+        """
+        _degrees = self.cleaned_data['grad_degree']
+        if _degrees.count() > 2:
             raise forms.ValidationError(
-                _('You must select at least one hobby or interest.'))
-        return _hobbies
+                _('You may only select up to 2 degrees.'))
+        return _degrees
 
     def clean_password_new_confirm(self):
         _password_confirm = self.cleaned_data['password_new_confirm']
-        if not _password_confirm == '':
+        if _password_confirm != '':
             clean_passwords(data=self.cleaned_data,
                             password1="password_new",
                             password2="password_new_confirm")
@@ -334,31 +292,26 @@ class AccountSettingsForm(forms.ModelForm):
 
 class AccountEmployerSettingsForm(forms.ModelForm):
     """
-    A form used for employers to update their account
-    information.
+    A form used for employers to update their account information.
     """
     first_name = forms.CharField(
         label=_('First Name *'),
-        widget=forms.TextInput(
-            attrs={'class': 'form-control'}),
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
         max_length=50
     )
     last_name = forms.CharField(
         label=_('Last Name *'),
-        widget=forms.TextInput(
-            attrs={'class': 'form-control'}),
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
         max_length=50
     )
     email = forms.EmailField(
         label=_('Email *'),
-        widget=forms.EmailInput(
-            attrs={'class': 'form-control'}),
+        widget=forms.EmailInput(attrs={'class': 'form-control'}),
         max_length=120
     )
     username = forms.SlugField(
         label=_('Username *'),
-        widget=forms.TextInput(
-            attrs={'class': 'form-control'}),
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
         max_length=120
     )
     gender = forms.ChoiceField(
@@ -389,8 +342,6 @@ class AccountEmployerSettingsForm(forms.ModelForm):
         Verify that the new email is not already taken.
         """
         _email = self.cleaned_data['email'].lower()
-        if self.initial.get('email') == _email:
-            return _email
         if MyUser.objects.filter(
                 Q(email__iexact=_email) & ~Q(pk=self.user.pk)).exists():
             raise forms.ValidationError(
@@ -402,10 +353,8 @@ class AccountEmployerSettingsForm(forms.ModelForm):
         Verify that the new username is not already taken.
         """
         _username = self.cleaned_data['username'].lower()
-        if self.initial.get('username') == _username:
-            return _username
         if MyUser.objects.filter(
-                Q(username__iexact=_username) & ~Q(id=self.user.id)).exists():
+                Q(username__iexact=_username) & ~Q(pk=self.user.pk)).exists():
             raise forms.ValidationError(
                 _('This username is already taken. '
                   'Please try a different one.'))
@@ -413,7 +362,7 @@ class AccountEmployerSettingsForm(forms.ModelForm):
 
     def clean_password_new_confirm(self):
         _password_confirm = self.cleaned_data['password_new_confirm']
-        if not _password_confirm == '':
+        if _password_confirm != '':
             clean_passwords(data=self.cleaned_data,
                             password1="password_new",
                             password2="password_new_confirm")
@@ -423,8 +372,7 @@ class AccountEmployerSettingsForm(forms.ModelForm):
 class AddCollaboratorForm(forms.Form):
     email = email = forms.EmailField(
         label=_('Email *'),
-        widget=forms.EmailInput(
-            attrs={'class': 'form-control'}),
+        widget=forms.EmailInput(attrs={'class': 'form-control'}),
         max_length=120,
         required=False
     )
@@ -452,8 +400,7 @@ class CompanySettingsForm(forms.ModelForm):
         max_length=120
     )
     logo = forms.ImageField(
-        widget=ClearableFileInput(
-            attrs={'class': 'form-control'}),
+        widget=ClearableFileInput(attrs={'class': 'form-control'}),
         help_text='Max height is 150px',
         required=False
     )
@@ -485,8 +432,6 @@ class CompanySettingsForm(forms.ModelForm):
         Verify that the new username is not already taken.
         """
         _username = self.cleaned_data['username'].lower()
-        if self.initial.get('username') == _username:
-            return _username
         if Company.objects.filter(
                 Q(username__iexact=_username) &
                 ~Q(pk=self.company.pk)).exists():
@@ -497,9 +442,9 @@ class CompanySettingsForm(forms.ModelForm):
 
 
 class MyUserChangeForm(UserChangeForm):
-    """A form for updating users. Includes all the fields on
-    the user, but replaces the password field with admin's
-    password hash display field.
+    """A form for updating users. Includes all the fields on the user,
+    but replaces the password field with admin's password hash display
+    field.
     """
     def __init__(self, *args, **kargs):
         super(MyUserChangeForm, self).__init__(*args, **kargs)

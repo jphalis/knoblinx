@@ -85,58 +85,60 @@
     <!-- Extra in-line jQuery scripts -->
     <script type="text/javascript">
       $(document).ready(function(){
-        {% if request.user.is_authenticated %}
-          $.ajax({
-            url: "{% url 'get_company_ajax' %}",
-            type: "POST",
-            data: { csrfmiddlewaretoken: "{{ csrf_token }}" },
-            success: function(data){
-              var companyUsername = data.company_username
-              if (companyUsername) {
-                // $("#company-logo").attr("src", data.company_logo);
-                $(".company-name").text(data.company_name);
-                $("a.company-dash").attr("href", "{% url 'home' %}");
-                $("a.company-url").attr("href", "{% url 'profile' 333 %}".replace(333, companyUsername));
-                $("a.company-settings").attr("href", "{% url 'accounts:company_settings' 333 %}".replace(333, companyUsername));
-                $(".company-url").show();
-                $("#company-sidebar").show();
-              }
-              else {
-                $("#user-sidebar").show();
-              }
-            },
-            error: function(rs, e){ }
-          })
-        {% endif %}
+          {% if request.user.is_authenticated %}
+            $.ajax({
+                url: "{% url 'get_company_ajax' %}",
+                type: "POST",
+                data: { csrfmiddlewaretoken: "{{ csrf_token }}" },
+                success: function(data){
+                    var companyUsername = data.company_username
+                    if (companyUsername){
+                        // $("#company-logo").attr("src", data.company_logo);
+                        $(".company-name").text(data.company_name);
+                        $("a.company-dash").attr("href", "{% url 'home' %}");
+                        $("a.company-url").attr(
+                            "href", "{% url 'profile' 333 %}".replace(333, companyUsername));
+                        $("a.company-settings").attr(
+                            "href", "{% url 'accounts:company_settings' 333 %}".replace(333, companyUsername));
+                        $(".company-url").show();
+                        $("#company-sidebar").show();
+                    }
+                    else {
+                        $("#user-sidebar").show();
+                    }
+                },
+                error: function(rs, e){ }
+            })
+          {% endif %}
 
-        // top banner messages
-        {% if messages %}
-          {% for message in messages %}
-            var n = noty({
-              theme: 'relax', // or 'defaultTheme'
-              type: '{% if "success" in message.tags %}success{% elif "info" in message.tags %}information{% elif "warning" in message.tags %}warning{% else %}error{% endif %}',
-              text: '{% if "safe" in message.tags %}{{ message|safe }}{% else %}{{ message }}{% endif %}',
-              dismissQueue: true,
-              animation: {
-                open: {height: 'toggle'},
-                close: {height: 'toggle'},
-                easing: 'swing',
-                speed: 500 // opening & closing animation speed
-              },
-              timeout: 3000, // false
-              modal: true,
-              callback: {
-                onShow: function() {},
-                afterShow: function() {},
-                onClose: function() {},
-                afterClose: function() {},
-                onCloseClick: function() {},
-              },
-            });
-          {% endfor %}
-        {% endif %}
+          // top banner messages
+          {% if messages %}
+            {% for message in messages %}
+              var n = noty({
+                  theme: 'relax', // or 'defaultTheme'
+                  type: '{% if "success" in message.tags %}success{% elif "info" in message.tags %}information{% elif "warning" in message.tags %}warning{% else %}error{% endif %}',
+                  text: '{% if "safe" in message.tags %}{{ message|safe }}{% else %}{{ message }}{% endif %}',
+                  dismissQueue: true,
+                  animation: {
+                      open: { height: 'toggle' },
+                      close: { height: 'toggle' },
+                      easing: 'swing',
+                      speed: 500 // opening & closing animation speed
+                  },
+                  timeout: 3000, // false
+                  modal: true,
+                  callback: {
+                      onShow: function() {},
+                      afterShow: function() {},
+                      onClose: function() {},
+                      afterClose: function() {},
+                      onCloseClick: function() {},
+                  },
+              });
+            {% endfor %}
+          {% endif %}
 
-        {% block jquery %}{% endblock jquery %}
+          {% block jquery %}{% endblock jquery %}
       });
     </script>
 

@@ -64,9 +64,15 @@ class Activity(TimeStampedModel):
 
     @property
     def time_since(self):
+        """
+        Returns the time since the notification was created.
+        """
         return naturaltime(self.created)
 
     def get_target_url(self):
+        """
+        Returns the target_url of the object.
+        """
         return reverse('jobs:detail',
                        kwargs={'username': self.sender_object.username,
                                'job_pk': self.target_object_id})

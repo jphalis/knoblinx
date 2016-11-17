@@ -12,15 +12,21 @@
     <!-- top tiles -->
     <div class="row tile_count">
       <div class="col-md-4 col-sm-4 col-xs-12 tile_stats_count">
-        <span class="count_top"><i class="fa fa-briefcase" aria-hidden="true"></i> Jobs Created</span>
+        <span class="count_top">
+          <i class="fa fa-briefcase" aria-hidden="true"></i> Jobs Created
+        </span>
         <div class="count">{{ jobs_count }}</div>
       </div>
       <div class="col-md-4 col-sm-4 col-xs-12 tile_stats_count">
-        <span class="count_top"><i class="fa fa-briefcase" aria-hidden="true"></i> Active Jobs</span>
+        <span class="count_top">
+          <i class="fa fa-briefcase" aria-hidden="true"></i> Active Jobs
+        </span>
         <div class="count green">{{ active_job_count }}</div>
       </div>
       <div class="col-md-4 col-sm-4 col-xs-12 tile_stats_count">
-        <span class="count_top"><i class="fa fa-user" aria-hidden="true"></i> Company Administrators</span>
+        <span class="count_top">
+          <i class="fa fa-user" aria-hidden="true"></i> Company Administrators
+        </span>
         <div class="count">{{ collaborator_count }}</div>
       </div>
     </div>
@@ -32,8 +38,14 @@
           <div class="x_title">
             <h2>Jobs Created</h2>
             <ul class="nav navbar-right panel_toolbox">
-              <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-              <li><a href="{% url 'jobs:create' company.pk %}"><i class="fa fa-plus" aria-hidden="true"></i></a></li>
+              <li>
+                <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+              </li>
+              <li>
+                <a href="{% url 'jobs:create' company.pk %}">
+                  <i class="fa fa-plus" aria-hidden="true"></i>
+                </a>
+              </li>
             </ul>
             <div class="clearfix"></div>
           </div>
@@ -62,13 +74,21 @@
                     <td>{{ job.applicant_count }}</td>
                     <td>{{ job.is_active_job }}</td>
                     <td>
-                      <a href="{{ job.get_absolute_url }}"><i class="fa fa-search" aria-hidden="true"></i></a>
+                      <a href="{{ job.get_absolute_url }}">
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                      </a>
                       &nbsp;
-                      <a href="{{ job.get_edit_url }}"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                      <a href="{{ job.get_edit_url }}">
+                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                      </a>
                       &nbsp;
-                      <a href="{{ job.get_delete_url }}"><i class="fa fa-times" aria-hidden="true"></i></a>
+                      <a href="{{ job.get_delete_url }}">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                      </a>
                       &nbsp;
-                      <a href="{{ job.get_report_url }}"><i class="fa fa-bar-chart" aria-hidden="true"></i></a>
+                      <a href="{{ job.get_report_url }}">
+                        <i class="fa fa-bar-chart" aria-hidden="true"></i>
+                      </a>
                     </td>
                   </tr>
                 {% endfor %}
@@ -86,7 +106,9 @@
             <div class="x_title">
               <h2>Recent Activity</h2>
               <ul class="nav navbar-right panel_toolbox">
-                <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+                <li>
+                  <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                </li>
               </ul>
               <div class="clearfix"></div>
             </div>
@@ -100,10 +122,14 @@
                           <div class="block_content">
                             <h2 class="title">
                               {% if obj.target_object %}
-                                <a href="{{ obj.get_target_url }}">{{ obj.target_object }}</a>
+                                <a href="{{ obj.get_target_url }}">
+                                  {{ obj.target_object }}
+                                </a>
                               {% endif %}
                             </h2>
-                            <div class="byline"><span>{{ obj.time_since }}</span></div>
+                            <div class="byline">
+                              <span>{{ obj.time_since }}</span>
+                            </div>
                             <p class="excerpt">{{ obj }}</p>
                           </div>
                         </div>
@@ -124,10 +150,20 @@
             <div class="col-md-12 col-sm-12 col-xs-12">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2>Collaborators <small style="margin-left:0px;">of {{ company.name }}</small></h2>
+                  <h2>
+                    Collaborators <small style="margin-left:0px;">of {{ company.name }}</small>
+                  </h2>
                   <ul class="nav navbar-right panel_toolbox">
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-                    <li><a href="{% url 'accounts:company_settings' company.username %}"><i class="fa fa-pencil" aria-hidden="true"></i></a></li>
+                    <li>
+                      <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="{% url 'accounts:company_settings' company.username %}">
+                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                      </a>
+                    </li>
                   </ul>
                   <div class="clearfix"></div>
                 </div>
@@ -140,12 +176,16 @@
                       <div class="card_content card_padding">
                         <div class="card_share">
                           <div class="card_social">
-                            <a class="share-icon mail" href="mailto:{{ company.user.email }}"><span class="fa fa-envelope"></span></a>
+                            <a class="share-icon mail" href="mailto:{{ company.user.email }}">
+                              <span class="fa fa-envelope"></span>
+                            </a>
                           </div>
                           <a id="share" class="share-toggle share-icon" href="#"></a>
                         </div>
                         <article class="card_article">
-                          <h2>{{ company.user.first_name }} {{ company.user.last_name }}</h2>
+                          <h2>
+                            {{ company.user.first_name }} {{ company.user.last_name }}
+                          </h2>
                           <p>
                             <a href="mailto:{{ company.user.email }}">
                               <i class="fa fa-envelope-o" aria-hidden="true"></i> {{ company.user.email }}
@@ -164,7 +204,9 @@
                         <div class="card_content card_padding">
                           <div class="card_share">
                             <div class="card_social">
-                              <a class="share-icon mail" href="mailto:{{ user.email }}"><span class="fa fa-envelope"></span></a>
+                              <a class="share-icon mail" href="mailto:{{ user.email }}">
+                                <span class="fa fa-envelope"></span>
+                              </a>
                             </div>
                             <a id="share" class="share-toggle share-icon" href="#"></a>
                           </div>

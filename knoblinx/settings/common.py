@@ -70,7 +70,6 @@ INSTALLED_APPS = (
     'authentication',
     'jobs',
     'search',
-    # 'tags',
 )
 
 

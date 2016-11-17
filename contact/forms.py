@@ -14,8 +14,7 @@ class ContactForm(forms.Form):
         required=False
     )
     email = forms.EmailField(
-        widget=forms.TextInput(
-            attrs={"placeholder": "Email"})
+        widget=forms.TextInput(attrs={"placeholder": "Email"})
     )
     message = forms.CharField(
         max_length=1000,

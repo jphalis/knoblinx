@@ -92,7 +92,7 @@ def auth_login_register(request):
     context = {
         'login_form': login_form,
         'next': next_url,
-        'register_form': register_form,
+        'register_form': register_form
     }
     return render(request, 'auth/auth_login_register.html', context)
 
@@ -101,10 +101,9 @@ def auth_login_register(request):
 def company_register(request):
     user = request.user
 
-    if not user.is_confirmed or user.account_type is not None:
-        return HttpResponseForbidden()
-
-    if Company.objects.filter(user=user).exists():
+    if not user.is_confirmed or \
+            user.account_type is not None or \
+            Company.objects.filter(user=user).exists():
         return HttpResponseForbidden()
 
     form = CompanySignupForm(request.POST or None,
@@ -140,16 +139,9 @@ def student_register(request):
     if request.method == 'POST':
 
         if form.is_valid():
-            form.resume = form.cleaned_data['resume']
-            form.gpa = form.cleaned_data['gpa']
-            form.profile_pic = form.cleaned_data['profile_pic']
             form.video = form.cleaned_data['video']
-            form.opp_sought = form.cleaned_data['opp_sought']
-            form.year = form.cleaned_data['year']
-            form.degree_earned = form.cleaned_data['degree_earned']
             form.undergrad_degree = form.cleaned_data['undergrad_degree']
             form.grad_degree = form.cleaned_data['grad_degree']
-            form.hobbies = form.cleaned_data['hobbies']
             form.save()
             user.account_type = MyUser.STUDENT
             user.save(update_fields=['account_type'])
@@ -160,7 +152,7 @@ def student_register(request):
 
     context = {
         'form': form,
-        'user': user,
+        'user': user
     }
     return render(request, 'auth/student_register.html', context)
 
@@ -199,32 +191,32 @@ def password_reset(request, from_email=settings.DEFAULT_FROM_EMAIL,
                    html_email_template_name='auth/password_reset_email.html'):
     if request.user.is_authenticated():
         return HttpResponseForbidden()
+
+    if request.method == "POST":
+        form = password_reset_form(request.POST)
+
+        if form.is_valid():
+            opts = {
+                'use_https': request.is_secure(),
+                'token_generator': token_generator,
+                'from_email': from_email,
+                'email_template_name': email_template_name,
+                'subject_template_name': subject_template_name,
+                'request': request,
+                'html_email_template_name': html_email_template_name,
+            }
+            form.save(**opts)
+
+            messages.success(
+                request,
+                "If that email is registered to an account, "
+                "instructions for resetting your password "
+                "will be sent soon. Please make sure to check "
+                "your junk email/spam folder if you do not "
+                "receive an email.")
     else:
-        if request.method == "POST":
-            form = password_reset_form(request.POST)
-
-            if form.is_valid():
-                opts = {
-                    'use_https': request.is_secure(),
-                    'token_generator': token_generator,
-                    'from_email': from_email,
-                    'email_template_name': email_template_name,
-                    'subject_template_name': subject_template_name,
-                    'request': request,
-                    'html_email_template_name': html_email_template_name,
-                }
-                form.save(**opts)
-
-                messages.success(
-                    request,
-                    "If that email is registered to an account, "
-                    "instructions for resetting your password "
-                    "will be sent soon. Please make sure to check "
-                    "your junk email/spam folder if you do not "
-                    "receive an email.")
-        else:
-            form = password_reset_form()
-        return render(request, template_name, {'form': form})
+        form = password_reset_form()
+    return render(request, template_name, {'form': form})
 
 
 @sensitive_post_parameters()
@@ -256,8 +248,9 @@ def password_reset_confirm(request, uidb64=None, token=None,
         validlink = False
         form = None
         messages.error(request, "Password reset unsuccessful")
+
     context = {
         'form': form,
-        'validlink': validlink,
+        'validlink': validlink
     }
     return render(request, 'auth/password_set.html', context)
