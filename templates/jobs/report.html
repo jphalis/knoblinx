@@ -13,7 +13,7 @@
 
 {% block css %}
   <style>
-    .slider-handle { background: #2a3f54; } 
+    .slider-handle { background: #2a3f54; }
     .slider-selection { background: #2a3f54; }
     .adv-filter { margin-bottom: 18px; }
     .accepted { color:#01bc8c; }
@@ -327,7 +327,7 @@
         $.fn.dataTable.ext.search.push(
             function(settings, data, dataIndex){
                 var min = parseFloat(mySlider.slider('getValue'), 0);
-                var gpa = parseFloat(data[3]) || 0; // use data for the gpa column
+                var gpa = parseFloat(data[4]) || 0; // use data for the gpa column
                 if (min <= gpa) { return true; } return false;
             }
         );
