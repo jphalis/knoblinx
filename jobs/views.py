@@ -69,7 +69,6 @@ def reject_app_ajax(request, job_pk):
 @user_is_company_collab
 def create(request, company_pk):
     user = request.user
-    company = Company.objects.get(pk=company_pk)
     form = JobCreateForm(request.POST or None,
                          initial={'contact_email': user.email})
 
@@ -92,7 +91,7 @@ def create(request, company_pk):
         return HttpResponseRedirect(new_job.get_absolute_url())
 
     context = {
-        'company': company,
+        'company': Company.objects.get(pk=company_pk),
         'form': form
     }
     return render(request, 'jobs/create.html', context)
@@ -147,23 +146,16 @@ def apply(request, job_pk):
 @cache_page(60 * 3)
 def detail(request, job_pk, username):
     user = request.user
-
     job = get_object_or_404(Job, pk=job_pk)
-    viewer_has_applied = job.applicants.filter(user=request.user).exists()
-    viewer_can_delete = False
-    all_post_count = Job.objects.all().count()
-    recent_posts = Job.objects.recent()[:7]
     _is_company_collab = job.company.collaborators.filter(pk=user.pk).exists()
-
-    if job.company.user == user or _is_company_collab:
-        viewer_can_delete = True
+    can_del = True if job.company.user == user or _is_company_collab else False
 
     context = {
-        'all_post_count': all_post_count,
+        'all_post_count': Job.objects.all().count(),
         'job': job,
-        'recent_posts': recent_posts,
-        'viewer_can_delete': viewer_can_delete,
-        'viewer_has_applied': viewer_has_applied
+        'recent_posts': Job.objects.recent()[:7],
+        'viewer_can_delete': can_del,
+        'viewer_has_applied': job.applicants.filter(user=request.user).exists()
     }
     return render(request, 'jobs/detail.html', context)
 

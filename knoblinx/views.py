@@ -267,8 +267,6 @@ def home(request):
 
     if user.account_type == MyUser.STUDENT:
         jobs = Job.objects.qualified(user=user)
-        all_post_count = Job.objects.all().count()
-        recent_posts = Job.objects.recent()[:7]
 
         paginator = Paginator(jobs, 12)  # Show 12 jobs per page
         page = request.GET.get('page')
@@ -283,9 +281,9 @@ def home(request):
             jobs = paginator.page(paginator.num_pages)
 
         context = {
-            'all_post_count': all_post_count,
+            'all_post_count': Job.objects.all().count(),
             'jobs': jobs,
-            'recent_posts': recent_posts,
+            'recent_posts': Job.objects.recent()[:7],
             'user': user
         }
         return render(request, 'jobs/list.html', context)

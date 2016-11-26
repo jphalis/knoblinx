@@ -18,8 +18,8 @@ class ActivityManager(models.Manager):
         """
         Returns all of the activity items the company has created.
         """
-        return super(ActivityManager, self).get_queryset() \
-            .filter(sender_object_id=company.id)
+        return super(ActivityManager, self).get_queryset().filter(
+            sender_object_id=company.id)
 
 
 @python_2_unicode_compatible
@@ -58,9 +58,9 @@ class Activity(TimeStampedModel):
             # "action": self.action_object,
             "sender": self.sender_object,
             "target": self.target_object,
-            "verb": self.verb,
+            "verb": self.verb
         }
-        return '{}'.format(context['verb'])
+        return str(context['verb'])
 
     @property
     def time_since(self):

@@ -109,8 +109,7 @@ class ExperienceManager(models.Manager):
         """
         Returns all of the user's experiences.
         """
-        return super(ExperienceManager, self).get_queryset().filter(
-            user=user)
+        return super(ExperienceManager, self).get_queryset().filter(user=user)
 
 
 class SchoolManager(models.Manager):
@@ -118,8 +117,7 @@ class SchoolManager(models.Manager):
         """
         Returns all active schools.
         """
-        return super(SchoolManager, self).get_queryset().filter(
-            is_active=True)
+        return super(SchoolManager, self).get_queryset().filter(is_active=True)
 
 
 class DegreeManager(models.Manager):
@@ -127,8 +125,7 @@ class DegreeManager(models.Manager):
         """
         Returns all active degrees.
         """
-        return super(DegreeManager, self).get_queryset().filter(
-            is_active=True)
+        return super(DegreeManager, self).get_queryset().filter(is_active=True)
 
 
 class HobbyManager(models.Manager):
@@ -136,5 +133,4 @@ class HobbyManager(models.Manager):
         """
         Returns all active hobbies.
         """
-        return super(HobbyManager, self).get_queryset().filter(
-            is_active=True)
+        return super(HobbyManager, self).get_queryset().filter(is_active=True)

@@ -31,8 +31,7 @@ def exp_edit(request, exp_pk):
     if user != exp.user:
         return HttpResponseForbidden()
 
-    form = ExperienceForm(request.POST or None,
-                          instance=exp, user=user)
+    form = ExperienceForm(request.POST or None, instance=exp, user=user)
 
     if request.method == 'POST' and form.is_valid():
         form.save()
@@ -80,8 +79,7 @@ def profile(request, username):
     # User Profile
     try:
         user = MyUser.objects.get(username=username)
-        form = ExperienceForm(request.POST or None,
-                              instance=user, user=user)
+        form = ExperienceForm(request.POST or None, instance=user, user=user)
 
         if request.method == 'POST':
 

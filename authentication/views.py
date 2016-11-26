@@ -106,8 +106,7 @@ def company_register(request):
             Company.objects.filter(user=user).exists():
         return HttpResponseForbidden()
 
-    form = CompanySignupForm(request.POST or None,
-                             request.FILES or None)
+    form = CompanySignupForm(request.POST or None, request.FILES or None)
 
     if form.is_valid():
         new_company = Company.objects.create(

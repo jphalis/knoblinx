@@ -19,22 +19,20 @@ class SearchListView(LoginRequiredMixin, ListView):
         return Company.objects.filter(name__icontains=query)
 
     def jobs(self, query):
-        results = Job.objects.filter(
+        return Job.objects.filter(
             Q(list_date_start__lte=timezone.now()) &
             Q(list_date_end__gt=timezone.now()) &
             Q(title__icontains=query) |
             Q(location__icontains=query)
         )
-        return results
 
     def users(self, query):
-        results = MyUser.objects.filter(
+        return MyUser.objects.filter(
             Q(is_active=True) &
             Q(email__icontains=query) |
             Q(first_name__icontains=query) |
             Q(last_name__icontains=query)
         )
-        return results
 
     def recent_jobs(self):
         return Job.objects.recent()[:18]
@@ -54,6 +52,4 @@ class SearchListView(LoginRequiredMixin, ListView):
         companies = self.companies(query)
         jobs = self.jobs(query)
         users = self.users(query)
-        all_results = list(chain(companies, jobs, users))
-        # all_results.sort(key=lambda x: x.created)
-        return all_results
+        return list(chain(companies, jobs, users))

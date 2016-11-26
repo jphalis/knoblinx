@@ -49,6 +49,7 @@ class Applicant(TimeStampedModel):
     def __str__(self):
         return str(self.user.get_full_name)
 
+    @property
     def job_title(self):
         _job = Job.objects.get(applicants__pk=self.pk)
         return '{0} ({1})'.format(_job.title, _job.company.name)
@@ -101,6 +102,7 @@ class Job(TimeStampedModel):
                        kwargs={"job_pk": self.pk,
                                "username": self.company.username})
 
+    @property
     def get_edit_url(self):
         """
         Returns the edit url for the job.
@@ -109,12 +111,14 @@ class Job(TimeStampedModel):
                        kwargs={"job_pk": self.pk,
                                "username": self.company.username})
 
+    @property
     def get_delete_url(self):
         """
         Returns the delete url for the job.
         """
         return reverse('jobs:delete', kwargs={"job_pk": self.pk})
 
+    @property
     def get_report_url(self):
         """
         Returns the report url for the job.
