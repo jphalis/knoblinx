@@ -9,6 +9,7 @@ from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 
 from core.models import ActiveStatusModel, TimeStampedModel
+from core.validators import validate_resume_ext
 from .managers import (CompanyManager, DegreeManager, ExperienceManager,
                        HobbyManager, MyUserManager, SchoolManager)
 
@@ -153,7 +154,9 @@ class MyUser(AbstractBaseUser, PermissionsMixin, ActiveStatusModel):
                                     null=True, blank=True)
     video = models.CharField(_('profile video'), max_length=250, blank=True,
                              help_text='Preferably embed from YouTube')
-    resume = models.FileField(upload_to=get_resume_path, null=True, blank=True)
+    resume = models.FileField(upload_to=get_resume_path,
+                              validators=[validate_resume_ext],
+                              null=True, blank=True)
     undergrad_uni = models.ForeignKey(School,
                                       related_name='undergrad_university',
                                       null=True, blank=True)
