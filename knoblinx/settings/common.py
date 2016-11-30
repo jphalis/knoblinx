@@ -68,6 +68,7 @@ INSTALLED_APPS = (
     'accounts',
     'activity',
     'authentication',
+    'core',
     'jobs',
     'search',
 )

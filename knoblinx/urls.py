@@ -29,13 +29,6 @@ admin.site.site_header = admin.site.site_title = "KnobLinx Administration"
 admin.site.index_title = "KnobLinx"
 
 urlpatterns = [
-
-
-    url(r'^generate/', views.generate_data, name='generate_data'),
-
-
-
-
     # ADMIN
     url(r'^hidden/secure/knoblinx/admin/', include(admin.site.urls)),
 

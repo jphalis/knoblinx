@@ -64,15 +64,6 @@
           </a>
         </li>
 
-
-
-        {% if request.user.is_superuser %}
-          <li class="">
-            <a href="{% url 'generate_data' %}">
-              <i class="fa fa-pencil"></i>
-            </a>
-          </li>
-        {% endif %}
       </ul>
     </nav>
   </div>

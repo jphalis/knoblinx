@@ -11,6 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from accounts.models import Company, Degree, School
 from core.models import TimeStampedModel
+from core.validators import validate_resume_ext
 from .managers import ApplicantManager, JobManager
 
 # Create your models here.
@@ -35,7 +36,8 @@ class Applicant(TimeStampedModel):
     )
     status = models.IntegerField(choices=STATUS_TYPES, default=PENDING)
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
-    resume = models.FileField(upload_to=get_resume_path)
+    resume = models.FileField(upload_to=get_resume_path,
+                              validators=[validate_resume_ext])
     email = models.EmailField(max_length=120)
     cover_letter = models.TextField(max_length=1000, blank=True)
 
