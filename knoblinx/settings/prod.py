@@ -82,14 +82,7 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-# Heroku
-DATABASES['default'] = dj_database_url.config()
-DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql_psycopg2'
-DATABASES['default']['NAME'] = 'd59gok79akv9e1'
-DATABASES['default']['USER'] = 'kfxndftiwnacbl'
-DATABASES['default']['PASSWORD'] = 'JP9gXFBIWSFchQgqu5TCad7AqD'
-DATABASES['default']['HOST'] = 'ec2-54-163-249-150.compute-1.amazonaws.com'
-DATABASES['default']['PORT'] = '5432'
+DATABASES['default'].update(dj_database_url.config())  # For Heroku only
 
 
 #############
@@ -184,10 +177,9 @@ if USING_S3:
         STATIC_ROOT = '/home/ubuntu/{0}/{1}/static/static'.format(
             FULL_DOMAIN, APP_NAME)
 
-    date_three_months_later = datetime.date.today() + datetime.timedelta(3 * 365 / 12)
-    expires = date_three_months_later.strftime('%A, %d %B %Y 20:00:00 EST')
+    three_months = datetime.date.today() + datetime.timedelta(3 * 365 / 12)
     AWS_HEADERS = {
-        'Expires': expires,
+        'Expires': three_months.strftime('%A, %d %B %Y 20:00:00 EST'),
         'Cache-Control': 'max-age=86400',
     }
 

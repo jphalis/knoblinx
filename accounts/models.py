@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-from django.core.urlresolvers import reverse
+from django.urls import reverse_lazy
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
@@ -205,7 +205,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin, ActiveStatusModel):
         """
         Returns the url for the user.
         """
-        return reverse('profile', kwargs={"username": self.username})
+        return reverse_lazy('profile', kwargs={"username": self.username})
 
     @cached_property
     def get_full_name(self):
@@ -350,14 +350,14 @@ class Company(TimeStampedModel, ActiveStatusModel):
         """
         Returns the url for the company.
         """
-        return reverse('profile', kwargs={"username": self.username})
+        return reverse_lazy('profile', kwargs={"username": self.username})
 
     def get_edit_url(self):
         """
         Returns the url for the company settings.
         """
-        return reverse('accounts:company_settings',
-                       kwargs={"username": self.username})
+        return reverse_lazy('accounts:company_settings',
+                            kwargs={"username": self.username})
 
     @property
     def company_logo(self):
@@ -410,7 +410,7 @@ class Experience(models.Model):
         """
         Returns the url for the experience.
         """
-        return reverse('accounts:exp_edit', kwargs={"exp_pk": self.pk})
+        return reverse_lazy('accounts:exp_edit', kwargs={"exp_pk": self.pk})
 
     @cached_property
     def experience_start_date(self):

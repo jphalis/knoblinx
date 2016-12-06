@@ -2,8 +2,8 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from django.contrib.humanize.templatetags.humanize import naturaltime
-from django.core.urlresolvers import reverse
 from django.db import models
+from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.functional import cached_property
@@ -100,32 +100,32 @@ class Job(TimeStampedModel):
         """
         Returns the url for the job.
         """
-        return reverse('jobs:detail',
-                       kwargs={"job_pk": self.pk,
-                               "username": self.company.username})
+        return reverse_lazy('jobs:detail',
+                            kwargs={"job_pk": self.pk,
+                                    "username": self.company.username})
 
     @property
     def get_edit_url(self):
         """
         Returns the edit url for the job.
         """
-        return reverse('jobs:edit',
-                       kwargs={"job_pk": self.pk,
-                               "username": self.company.username})
+        return reverse_lazy('jobs:edit',
+                            kwargs={"job_pk": self.pk,
+                                    "username": self.company.username})
 
     @property
     def get_delete_url(self):
         """
         Returns the delete url for the job.
         """
-        return reverse('jobs:delete', kwargs={"job_pk": self.pk})
+        return reverse_lazy('jobs:delete', kwargs={"job_pk": self.pk})
 
     @property
     def get_report_url(self):
         """
         Returns the report url for the job.
         """
-        return reverse('jobs:report', kwargs={"job_pk": self.pk})
+        return reverse_lazy('jobs:report', kwargs={"job_pk": self.pk})
 
     @cached_property
     def get_applicants_info(self):

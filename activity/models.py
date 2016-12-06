@@ -3,8 +3,8 @@ from __future__ import unicode_literals
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
-from django.core.urlresolvers import reverse
 from django.db import models
+from django.urls import reverse_lazy
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
@@ -73,6 +73,6 @@ class Activity(TimeStampedModel):
         """
         Returns the target_url of the object.
         """
-        return reverse('jobs:detail',
-                       kwargs={'username': self.sender_object.username,
-                               'job_pk': self.target_object_id})
+        return reverse_lazy('jobs:detail',
+                            kwargs={'username': self.sender_object.username,
+                                    'job_pk': self.target_object_id})
