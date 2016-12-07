@@ -159,9 +159,9 @@ if USING_S3:
     AWS_PRELOAD_METADATA = True
     AWS_S3_SECURE_URLS = True
 
-    STATICFILES_STORAGE = '{}.s3utils.StaticRootS3BotoStorage'.format(APP_NAME)
+    STATICFILES_STORAGE = '{}.utils.StaticRootS3BotoStorage'.format(APP_NAME)
     STATIC_S3_PATH = 'media/'
-    DEFAULT_FILE_STORAGE = '{}.s3utils.MediaRootS3BotoStorage'.format(APP_NAME)
+    DEFAULT_FILE_STORAGE = '{}.utils.MediaRootS3BotoStorage'.format(APP_NAME)
     DEFAULT_S3_PATH = 'static/'
 
     if USING_CLOUDFRONT:
@@ -177,10 +177,11 @@ if USING_S3:
         STATIC_ROOT = '/home/ubuntu/{0}/{1}/static/static'.format(
             FULL_DOMAIN, APP_NAME)
 
-    three_months = datetime.date.today() + datetime.timedelta(3 * 365 / 12)
+    two_months = datetime.timedelta(days=61)
+    two_months_later = datetime.date.today() + two_months
     AWS_HEADERS = {
-        'Expires': three_months.strftime('%A, %d %B %Y 20:00:00 EST'),
-        'Cache-Control': 'max-age=86400',
+        'Expires': two_months_later.strftime('%A, %d %B %Y 20:00:00 EST'),
+        'Cache-Control': 'max-age=%d' % (int(two_months.total_seconds()), ),
     }
 
 

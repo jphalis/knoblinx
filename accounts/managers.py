@@ -75,7 +75,7 @@ class CompanyManager(models.Manager):
         if not name:
             raise ValueError('Companies must have a name.')
 
-        potential_username = slugify("{0}".format(name))
+        potential_username = slugify("{}".format(name))
 
         try:
             check_company = self.model.objects.get(
