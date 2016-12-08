@@ -36,6 +36,11 @@
                     </span>
                   </span>
                 </p>
+                {% if job.company.logo %}
+                  <p style="text-align:center;">
+                    <img src="{{ job.company.company_logo }}" class="img-rounded" style="height:100px;" alt="{{ job.company.name }}">
+                  </p>
+                {% endif %}
                 <p>{{ job.description|safe }}</p>
                 <hr>
                 {% if viewer_has_applied %}

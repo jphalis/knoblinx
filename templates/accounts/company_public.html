@@ -47,10 +47,8 @@
                 <div class="row text-center">
                   {% if company.logo %}
                     <img src="{{ company.company_logo }}" class="img-rounded" style="height:150px;" alt="{{ company.name }}">
-                    <h3>{{ company.name }}</h3>
-                  {% else %}
-                    <img data-src="holder.js/1200x100/auto/#354458:#fff/text:{{ company.name }}" class="img-responsive img-rounded" alt="{{ company.name }}">
                   {% endif %}
+                  <img data-src="holder.js/1200x100/auto/#354458:#fff/text:{{ company.name }}" class="img-responsive img-rounded" alt="{{ company.name }}">
                 </div>
                 <br>
 

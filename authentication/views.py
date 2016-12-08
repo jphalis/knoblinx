@@ -60,34 +60,41 @@ def auth_login_register(request):
     if register_form.is_valid() and 'register_form' in request.POST:
         email = register_form.cleaned_data['email']
         password = register_form.cleaned_data['password_confirm']
-        new_user = MyUser.objects.create_user(
-            email=email,
-            first_name=register_form.cleaned_data['first_name'],
-            last_name=register_form.cleaned_data['last_name']
-        )
-        new_user.set_password(password)
-        new_user.save()
-        user = authenticate(email=email, password=password)
 
-        if user is not None:
-            login(request, user)
+        # Check if school email is a registered school
+        uni_emails = School.objects.active().values_list('email', flat=True)
+        username, domain = email.split('@')
+        extension = domain.split('.')[1]
 
-            # Confirmation email
-            EmailConfirmation.objects.send_confirmation(user=user,
-                                                        request=request)
-            messages.success(request,
-                             'Thank you for registering! '
-                             'Please check your email to confirm '
-                             'your account.')
+        if extension == 'edu' and not domain.endswith(tuple(uni_emails)):
+            messages.error(request,
+                           'Sorry, that school is not registered with us.')
+        else:
+            new_user = MyUser.objects.create_user(
+                email=email,
+                first_name=register_form.cleaned_data['first_name'],
+                last_name=register_form.cleaned_data['last_name']
+            )
+            new_user.set_password(password)
+            new_user.save()
+            user = authenticate(email=email, password=password)
 
-            uni_emails = School.objects.active().values_list('email',
-                                                             flat=True)
-            username, domain = email.split('@')
+            if user is not None:
+                login(request, user)
 
-            if not domain.endswith(tuple(uni_emails)):
-                messages.error(request,
-                               'Sorry, that school is not registered with us.')
-            return redirect(request.POST.get('next', 'home'))
+                # Confirmation email
+                if settings.DEBUG:
+                    user.is_confirmed = True
+                    user.save(update_fields=['is_confirmed'])
+                else:
+                    EmailConfirmation.objects.send_confirmation(
+                        user=user, request=request)
+
+                messages.success(request,
+                                 'Thank you for registering! '
+                                 'Please check your email to confirm '
+                                 'your account.')
+                return redirect(request.POST.get('next', 'home'))
 
     context = {
         'login_form': login_form,

@@ -128,7 +128,6 @@ def apply(request, job_pk):
                 cover_letter=form.cleaned_data['cover_letter']
             )
             job.applicants.add(applicant)
-
             messages.success(request, 'Thank you for applying!')
             return HttpResponseRedirect(job.get_absolute_url())
 

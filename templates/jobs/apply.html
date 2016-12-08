@@ -34,7 +34,9 @@
                 <span class="key">Name:</span>
                 <span class="value">{{ user.get_full_name }}</span><br>
                 <span class="key">Email:</span>
-                <span class="value">{{ form.email }}</span><br>
+                <span class="value">{{ form.email }}</span>
+                {{ form.email.errors }}
+                <br>
                 <span class="key">Education:</span>
                 <span class="value">
                   <em>Undergraduate:</em> {{ user.undergrad_uni }}
@@ -72,7 +74,9 @@
                 <span class="value">{{ user.opp_sought_verbose }} position</span>
                 <br>
                 <span class="key">Resume:</span>
-                <span class="value">{{ form.resume }}</span><br>
+                <span class="value">{{ form.resume }}</span>
+                {{ form.resume.errors }}
+                <br>
                 <span class="key">Cover Letter:</span>
                 <div class="panel panel-danger">
                   <div class="panel-body">{{ form.cover_letter }}</div>

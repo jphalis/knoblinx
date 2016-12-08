@@ -5,6 +5,7 @@ from django.forms.widgets import ClearableFileInput
 from django.utils.translation import ugettext_lazy as _
 
 from accounts.models import Degree, MyUser, School
+from core.validators import validate_resume_ext
 from .models import Applicant, Job
 
 
@@ -13,7 +14,8 @@ class ApplicantApplyForm(forms.ModelForm):
         label=_('Resume *'),
         widget=ClearableFileInput(
             attrs={'class': 'form-control',
-                   'name': 'resume'})
+                   'name': 'resume'}),
+        validators=[validate_resume_ext]
     )
     email = forms.EmailField(
         label=_('Email *'),
