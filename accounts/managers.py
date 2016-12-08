@@ -34,7 +34,7 @@ class MyUserManager(BaseUserManager):
 
             try:
                 username_exists = self.model.objects.get(
-                    username=potential_username).exists()
+                    username=potential_username)
             except self.model.DoesNotExist:
                 username_exists = None
 
