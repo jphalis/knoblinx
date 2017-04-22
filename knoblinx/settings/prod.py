@@ -177,7 +177,7 @@ if USING_S3:
         MEDIA_URL = '//{0}/{1}'.format(AWS_CLOUDFRONT_DOMAIN, STATIC_S3_PATH)
         STATIC_URL = '//{0}/{1}'.format(AWS_CLOUDFRONT_DOMAIN, DEFAULT_S3_PATH)
     elif USING_EC2:
-        S3_URL = '//{}.s3.amazonaws.com/'.format(AWS_STORAGE_BUCKET_NAME)
+        S3_URL = '//s3.amazonaws.com/{}/'.format(AWS_STORAGE_BUCKET_NAME)
         MEDIA_URL = S3_URL + STATIC_S3_PATH
         STATIC_URL = S3_URL + DEFAULT_S3_PATH
         MEDIA_ROOT = '/home/ubuntu/{0}/{1}/media'.format(
