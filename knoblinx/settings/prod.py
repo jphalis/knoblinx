@@ -27,13 +27,20 @@ ADMINS = (
     ("JP Halis", "jphalisnj@gmail.com"),
 )
 MANAGERS = ADMINS
-FULL_DOMAIN = 'knoblinx.herokuapp.com'
+FULL_DOMAIN = 'knoblinx.com'
+HEROKU_DOMAIN = 'knoblinx.herokuapp.com'
 ALLOWED_HOSTS = [
     '127.0.0.1',
+
+    HEROKU_DOMAIN,
+    '*{}'.format(HEROKU_DOMAIN),
+    '*.{}'.format(HEROKU_DOMAIN),
+    'wwww.{}'.format(HEROKU_DOMAIN),
+
+    FULL_DOMAIN,
     '*{}'.format(FULL_DOMAIN),
     '*.{}'.format(FULL_DOMAIN),
     'wwww.{}'.format(FULL_DOMAIN),
-    FULL_DOMAIN,
 ]
 
 
