@@ -164,12 +164,13 @@ if USING_S3:
     AWS_PRELOAD_METADATA = True
     AWS_S3_ENCRYPTION = False
     AWS_S3_USE_SSL = True
+    AWS_S3_SECURE_URLS = True
     AWS_S3_FILE_OVERWRITE = True
     AWS_S3_ENDPOINT_URL = None
 
-    STATICFILES_STORAGE = '{}.s3utils.StaticRootS3BotoStorage'.format(APP_NAME)
+    STATICFILES_STORAGE = '{}.s3utils.StaticS3BotoStorage'.format(APP_NAME)
     STATIC_S3_PATH = 'media/'
-    DEFAULT_FILE_STORAGE = '{}.s3utils.MediaRootS3BotoStorage'.format(APP_NAME)
+    DEFAULT_FILE_STORAGE = '{}.s3utils.MediaS3BotoStorage'.format(APP_NAME)
     DEFAULT_S3_PATH = 'static/'
 
     if USING_CLOUDFRONT:
