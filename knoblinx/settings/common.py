@@ -74,8 +74,8 @@ INSTALLED_APPS = (
 )
 
 
-ROOT_URLCONF = 'knoblinx.urls'
-WSGI_APPLICATION = 'knoblinx.wsgi.application'
+ROOT_URLCONF = '{}.urls'.format(APP_NAME)
+WSGI_APPLICATION = '{}.wsgi.application'.format(APP_NAME)
 
 
 MIDDLEWARE_CLASSES = (

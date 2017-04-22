@@ -119,7 +119,7 @@ TEMPLATES = [
 # HTML MINIFICATION #
 #####################
 KEEP_COMMENTS_ON_MINIFYING = False
-EXCLUDE_FROM_MINIFYING = ('^hidden/secure/knoblinx/admin/',)
+EXCLUDE_FROM_MINIFYING = ('^hidden/secure/{}/admin/'.format(APP_NAME),)
 
 
 #########
@@ -145,30 +145,30 @@ EXCLUDE_FROM_MINIFYING = ('^hidden/secure/knoblinx/admin/',)
 ###############
 # STATICFILES #
 ###############
-USING_S3 = False
+USING_S3 = True
 USING_CLOUDFRONT = False
 USING_EC2 = False
 
 if USING_S3:
-    AWS_ACCESS_KEY_ID = ''
-    AWS_SECRET_ACCESS_KEY = ''
-    AWS_STORAGE_BUCKET_NAME = ''
-    S3DIRECT_REGION = 'us-east-1'
+    AWS_ACCESS_KEY_ID = 'AKIAIG4VJF72TUI5HXRQ'
+    AWS_SECRET_ACCESS_KEY = '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'
+    AWS_STORAGE_BUCKET_NAME = 'knoblinx'
+    S3DIRECT_REGION = 'us-east-2'
 
     AWS_QUERYSTRING_AUTH = False
     AWS_FILE_EXPIRE = 200
     AWS_PRELOAD_METADATA = True
     AWS_S3_SECURE_URLS = True
 
-    STATICFILES_STORAGE = '{}.utils.StaticRootS3BotoStorage'.format(APP_NAME)
+    STATICFILES_STORAGE = '{}.s3utils.StaticRootS3BotoStorage'.format(APP_NAME)
     STATIC_S3_PATH = 'media/'
-    DEFAULT_FILE_STORAGE = '{}.utils.MediaRootS3BotoStorage'.format(APP_NAME)
+    DEFAULT_FILE_STORAGE = '{}.s3utils.MediaRootS3BotoStorage'.format(APP_NAME)
     DEFAULT_S3_PATH = 'static/'
 
     if USING_CLOUDFRONT:
         AWS_CLOUDFRONT_DOMAIN = ''
-        MEDIA_URL = '//{}/{}'.format(AWS_CLOUDFRONT_DOMAIN, STATIC_S3_PATH)
-        STATIC_URL = '//{}/{}'.format(AWS_CLOUDFRONT_DOMAIN, DEFAULT_S3_PATH)
+        MEDIA_URL = '//{0}/{1}'.format(AWS_CLOUDFRONT_DOMAIN, STATIC_S3_PATH)
+        STATIC_URL = '//{0}/{1}'.format(AWS_CLOUDFRONT_DOMAIN, DEFAULT_S3_PATH)
     elif USING_EC2:
         S3_URL = '//{}.s3.amazonaws.com/'.format(AWS_STORAGE_BUCKET_NAME)
         MEDIA_URL = S3_URL + STATIC_S3_PATH
