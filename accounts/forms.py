@@ -174,18 +174,18 @@ class AccountSettingsForm(forms.ModelForm):
     )
     undergrad_uni = forms.ModelChoiceField(
         label=_('Undergraduate University *'),
-        queryset=[]
+        queryset=School.objects.active()
     )
     undergrad_degree = forms.ModelMultipleChoiceField(
         label=_('Undergraduate Degree(s) *'),
         widget=forms.CheckboxSelectMultiple(
             attrs={'class': 'form-control',
                    'name': 'undergrad_degree'}),
-        queryset=[]
+        queryset=Degree.objects.active()
     )
     grad_uni = forms.ModelChoiceField(
         label=_('Graduate University'),
-        queryset=[],
+        queryset=School.objects.active(),
         required=False
     )
     grad_degree = forms.ModelMultipleChoiceField(
@@ -193,7 +193,7 @@ class AccountSettingsForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple(
             attrs={'class': 'form-control',
                    'name': 'grad_degree'}),
-        queryset=[],
+        queryset=Degree.objects.active(),
         required=False
     )
     degree_earned = forms.ChoiceField(
@@ -205,7 +205,7 @@ class AccountSettingsForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple(
             attrs={'class': 'form-control',
                    'name': 'hobbies'}),
-        queryset=[],
+        queryset=Hobby.objects.active(),
     )
 
     class Meta:
@@ -219,13 +219,6 @@ class AccountSettingsForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
         super(AccountSettingsForm, self).__init__(*args, **kwargs)
-        _schools = School.objects.active()
-        _degrees = Degree.objects.active()
-        self.fields['undergrad_uni'].queryset = _schools
-        self.fields['undergrad_degree'].queryset = _degrees
-        self.fields['grad_uni'].queryset = _schools
-        self.fields['grad_degree'].queryset = _degrees
-        self.fields['hobbies'].queryset = Hobby.objects.active()
 
     def clean_email(self):
         """

@@ -18,63 +18,67 @@
 
     <div class="row">
       <div class="col-md-8">
-        <!-- job postings -->
-        {% for job in jobs %}
-          <div class="featured-post-wide">
-            <!-- <img data-src="holder.js/100%x69/auto/> -->
-            <!-- <img data-src="holder.js/1900x150/auto/{% cycle '#418bca:#fff' '#39dbac:#fff' '#5bc0de:#fff' '#fec503:#fff' '#3a5a97:#fff' '#BE2B2D:#fff' '#CA3DB9:#fff' '#0d8fdb:#fff' %}/text:{{ job.company.name }}" class="img-responsive" alt="Company"> -->
-            <img data-src="holder.js/1900x100/auto/{% cycle '#354458:#fff' '#3a9ad9:#fff' %}/text:{{ job.company.name }}" class="img-responsive" alt="{{ job.company.name }}">
-            <div class="featured-text relative-left">
-              <h3>
-                <a href="{{ job.get_absolute_url }}">{{ job.title }}</a>
-              </h3>
-              <p>{{ job.description|safe|truncatewords_html:30 }}</p>
-              <p class="additional-post-wrap">
-                <span class="additional-post">
-                  <a href="{{ job.company.get_absolute_url }}">
-                    <span class="label label-default square">
-                      <i class="fa fa-user" aria-hidden="true"></i> {{ job.company.name }}
-                    </span>
-                  </a>
-                </span>
-                <span class="additional-post">
-                  <span class="label label-default square">
-                    <i class="fa fa-clock-o" aria-hidden="true"></i> {{ job.listing_start_date }}
+        {% if jobs %}
+          <!-- job postings -->
+          {% for job in jobs %}
+            <div class="featured-post-wide">
+              <!-- <img data-src="holder.js/100%x69/auto/> -->
+              <!-- <img data-src="holder.js/1900x150/auto/{% cycle '#418bca:#fff' '#39dbac:#fff' '#5bc0de:#fff' '#fec503:#fff' '#3a5a97:#fff' '#BE2B2D:#fff' '#CA3DB9:#fff' '#0d8fdb:#fff' %}/text:{{ job.company.name }}" class="img-responsive" alt="Company"> -->
+              <img data-src="holder.js/1900x100/auto/{% cycle '#354458:#fff' '#3a9ad9:#fff' %}/text:{{ job.company.name }}" class="img-responsive" alt="{{ job.company.name }}">
+              <div class="featured-text relative-left">
+                <h3>
+                  <a href="{{ job.get_absolute_url }}">{{ job.title }}</a>
+                </h3>
+                <p>{{ job.description|safe|truncatewords_html:30 }}</p>
+                <p class="additional-post-wrap">
+                  <span class="additional-post">
+                    <a href="{{ job.company.get_absolute_url }}">
+                      <span class="label label-default square">
+                        <i class="fa fa-user" aria-hidden="true"></i> {{ job.company.name }}
+                      </span>
+                    </a>
                   </span>
-                </span>
-              </p>
-              <hr style="margin-top:7px; margin-bottom:7px;">
-              <p class="text-right" style="margin-bottom:0px;">
-                <a href="{{ job.get_absolute_url }}" class="btn btn-default">
-                  View job
-                </a>
-              </p>
+                  <span class="additional-post">
+                    <span class="label label-default square">
+                      <i class="fa fa-clock-o" aria-hidden="true"></i> {{ job.listing_start_date }}
+                    </span>
+                  </span>
+                </p>
+                <hr style="margin-top:7px; margin-bottom:7px;">
+                <p class="text-right" style="margin-bottom:0px;">
+                  <a href="{{ job.get_absolute_url }}" class="btn btn-default">
+                    View job
+                  </a>
+                </p>
+              </div>
             </div>
-          </div>
-        {% endfor %}
-        <!-- /job postings -->
+          {% endfor %}
+          <!-- /job postings -->
 
-        <!-- pagination -->
-        {% if not jobs.paginator.num_pages == 1 %}
-        <ul class="pager">
-          {% if jobs.has_previous %}
-            <li class="previous">
-              <a href="?page={{ jobs.previous_page_number }}">← Previous</a>
-            </li>
+          <!-- pagination -->
+          {% if not jobs.paginator.num_pages == 1 %}
+            <ul class="pager">
+              {% if jobs.has_previous %}
+                <li class="previous">
+                  <a href="?page={{ jobs.previous_page_number }}">← Previous</a>
+                </li>
+              {% endif %}
+
+              <span class="current">
+                Page {{ jobs.number }} of {{ jobs.paginator.num_pages }}
+              </span>
+
+              {% if jobs.has_next %}
+                <li class="next">
+                  <a href="?page={{ jobs.next_page_number }}">Next →</a>
+                </li>
+              {% endif %}
+            </ul>
           {% endif %}
-
-          <span class="current">
-            Page {{ jobs.number }} of {{ jobs.paginator.num_pages }}
-          </span>
-
-          {% if jobs.has_next %}
-            <li class="next">
-              <a href="?page={{ jobs.next_page_number }}">Next →</a>
-            </li>
-          {% endif %}
-        </ul>
-      {% endif %}
-      <!-- /pagination -->
+          <!-- /pagination -->
+        {% else %}
+          <h3>There are no jobs available for you at this time.</h3>
+        {% endif %}
       </div>
 
       <!-- sidebar -->

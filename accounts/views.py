@@ -76,8 +76,8 @@ class ExpDelete(DeleteView, LoginRequiredMixin):
 @login_required
 @cache_page(60 * 3)
 def profile(request, username):
-    # User Profile
     try:
+        # User Profile
         user = MyUser.objects.get(username=username)
         form = ExperienceForm(request.POST or None, instance=user, user=user)
 
@@ -107,10 +107,7 @@ def profile(request, username):
         }
         template = 'accounts/profile.html'
     except MyUser.DoesNotExist:
-        user = None
-
-    # Company profile
-    if user is None:
+        # Company profile
         company = get_object_or_404(
             Company, Q(is_active=True), username=username)
         _user_can_edit = False
@@ -140,7 +137,7 @@ def profile(request, username):
 def account_settings(request):
     user = get_object_or_404(MyUser, Q(is_active=True), pk=request.user.pk)
 
-    if user.account_type == MyUser.STUDENT:
+    if user.account_type == MyUser.STUDENT:  # Student account
         form = AccountSettingsForm(request.POST or None,
                                    request.FILES or None,
                                    instance=user, user=user)
@@ -165,7 +162,7 @@ def account_settings(request):
                                  "You have successfully updated your profile.")
             else:
                 messages.error(request, "There was an error.")
-    else:
+    else:  # Company account
         form = AccountEmployerSettingsForm(request.POST or None,
                                            instance=user, user=user)
 
@@ -209,7 +206,7 @@ def remove_collab(request):
             verb='Removed a collaborator.',
             target=user,
         )
-    except:
+    except ValueError:
         user = None
     return JsonResponse({})
 
@@ -256,15 +253,18 @@ def company_settings(request, username):
                             )
                             messages.success(
                                 request,
-                                "User has been added as a collaborator.")
+                                "User has been added as a collaborator."
+                            )
                         else:
                             messages.error(
                                 request,
-                                "That user does not exist on this website.")
+                                "That user does not exist on this website."
+                            )
                     else:
                         messages.error(
                             request,
-                            "That user is already a collaborator.")
+                            "That user is already a collaborator."
+                        )
 
         context = {
             'collab_form': collab_form,

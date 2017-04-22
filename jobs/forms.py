@@ -95,7 +95,7 @@ class JobCreateForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple(
             attrs={'class': 'form-control',
                    'name': 'universities'}),
-        queryset=[]
+        queryset=School.objects.active()
     )
     years = forms.MultipleChoiceField(
         label=_('Academic Years *'),
@@ -109,7 +109,7 @@ class JobCreateForm(forms.ModelForm):
         widget=forms.CheckboxSelectMultiple(
             attrs={'class': 'form-control',
                    'name': 'degrees'}),
-        queryset=[]
+        queryset=Degree.objects.active()
     )
     list_date_start = forms.DateTimeField(
         label=_('Listing Start Date *'),
@@ -144,11 +144,6 @@ class JobCreateForm(forms.ModelForm):
         fields = ('id', 'contact_email', 'title', 'description', 'location',
                   'min_gpa', 'universities', 'years', 'degrees',
                   'list_date_start', 'list_date_end',)
-
-    def __init__(self, *args, **kwargs):
-        super(JobCreateForm, self).__init__(*args, **kwargs)
-        self.fields['universities'].queryset = School.objects.active()
-        self.fields['degrees'].queryset = Degree.objects.active()
 
     def clean_contact_email(self):
         """

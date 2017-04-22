@@ -130,7 +130,7 @@ class ExperienceAdmin(admin.ModelAdmin):
 
 
 class SchoolAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'location', 'email',)
+    list_display = ('id', 'name', 'location', 'email', 'is_active',)
     list_display_links = ('id', 'name',)
     fieldsets = (
         (None,
@@ -145,7 +145,7 @@ class SchoolAdmin(admin.ModelAdmin):
 
 
 class DegreeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name',)
+    list_display = ('id', 'name', 'is_active',)
     list_display_links = ('id', 'name',)
     fieldsets = (
         (None,
@@ -160,7 +160,7 @@ class DegreeAdmin(admin.ModelAdmin):
 
 
 class HobbyAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name',)
+    list_display = ('id', 'name', 'is_active',)
     list_display_links = ('id', 'name',)
     fieldsets = (
         (None,

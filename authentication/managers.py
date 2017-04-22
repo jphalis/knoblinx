@@ -41,9 +41,7 @@ class EmailConfirmationManager(models.Manager):
             'token': obj.key,
             'protocol': 'https' if use_https else 'http',
         }
-        subject = subject_template_name
-        # Email subject *must not* contain newlines
-        subject = ''.join(subject.splitlines())
+        subject = ''.join(subject_template_name.splitlines())
         body = loader.render_to_string(email_template_name, context)
         email_message = EmailMultiAlternatives(subject, body,
                                                from_email, [obj.user.email])

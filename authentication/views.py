@@ -88,12 +88,14 @@ def auth_login_register(request):
                     user.save(update_fields=['is_confirmed'])
                 else:
                     EmailConfirmation.objects.send_confirmation(
-                        user=user, request=request)
+                        user=user, request=request
+                    )
 
-                messages.success(request,
-                                 'Thank you for registering! '
-                                 'Please check your email to confirm '
-                                 'your account.')
+                messages.success(
+                    request,
+                    'Thank you for registering! Please check your email to '
+                    'confirm your account.'
+                )
                 return redirect(request.POST.get('next', 'home'))
 
     context = {
@@ -108,9 +110,9 @@ def auth_login_register(request):
 def company_register(request):
     user = request.user
 
-    if not user.is_confirmed or \
-            user.account_type is not None or \
-            Company.objects.filter(user=user).exists():
+    if ((not user.is_confirmed) or
+            (user.account_type is not None) or
+            (Company.objects.filter(user=user).exists())):
         return HttpResponseForbidden()
 
     form = CompanySignupForm(request.POST or None, request.FILES or None)
@@ -127,7 +129,8 @@ def company_register(request):
         user.account_type = MyUser.EMPLOYER
         user.save(update_fields=['account_type'])
         return redirect(reverse(
-            'profile', kwargs={"username": new_company.username}))
+            'profile', kwargs={"username": new_company.username})
+        )
     return render(request, 'auth/company_register.html', {'form': form})
 
 
@@ -152,7 +155,8 @@ def student_register(request):
             user.account_type = MyUser.STUDENT
             user.save(update_fields=['account_type'])
             return redirect(reverse(
-                'profile', kwargs={"username": user.username}))
+                'profile', kwargs={"username": user.username})
+            )
         else:
             messages.error(request, "There was an error.")
 
@@ -215,11 +219,11 @@ def password_reset(request, from_email=settings.DEFAULT_FROM_EMAIL,
 
             messages.success(
                 request,
-                "If that email is registered to an account, "
-                "instructions for resetting your password "
-                "will be sent soon. Please make sure to check "
-                "your junk email/spam folder if you do not "
-                "receive an email.")
+                "If that email is registered to an account, instructions for "
+                "resetting your password will be sent soon. Please make sure "
+                "to check your junk email/spam folder if you do not receive "
+                "an email."
+            )
     else:
         form = password_reset_form()
     return render(request, template_name, {'form': form})

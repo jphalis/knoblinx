@@ -1,5 +1,4 @@
 import random
-import string
 
 from django import forms
 from django.contrib.auth.password_validation import validate_password
@@ -28,10 +27,3 @@ def clean_passwords(data, password1, password2):
                 _("You must type the same password each time."))
         validate_password(data[password2])
     return data[password2]
-
-
-def rand_code_generator(size=7, chars=string.ascii_lowercase + string.digits):
-    """
-    Generators a random code using letters and numbers.
-    """
-    return ''.join(random.choice(chars) for _ in range(size))

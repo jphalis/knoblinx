@@ -134,7 +134,8 @@ class Job(TimeStampedModel):
         """
         return self.applicants.values(
             'user__username', 'user__first_name', 'user__last_name',
-            'user__profile_pic', 'user__email')
+            'user__profile_pic', 'user__email'
+        )
 
     @property
     def applicant_count(self):

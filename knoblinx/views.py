@@ -26,8 +26,8 @@ def get_company_ajax(request):
             'company_name': company.name,
             'company_username': company.username
         })
-    except:
-        company = None
+    except Company.DoesNotExist:
+        pass
     return JsonResponse(data)
 
 
@@ -36,9 +36,8 @@ def get_company_ajax(request):
 def home(request):
     user = request.user
 
-    if user.account_type == MyUser.STUDENT:
+    if user.account_type == MyUser.STUDENT:  # Student account
         jobs = Job.objects.qualified(user=user)
-
         paginator = Paginator(jobs, 12)  # Show 12 jobs per page
         page = request.GET.get('page')
 
@@ -58,7 +57,7 @@ def home(request):
             'user': user
         }
         return render(request, 'jobs/list.html', context)
-    elif user.account_type == MyUser.EMPLOYER:
+    elif user.account_type == MyUser.EMPLOYER:  # Company account
         company_qs = Company.objects.filter(
             Q(user=user) | Q(collaborators=user), is_active=True)
 
@@ -81,12 +80,9 @@ def home(request):
 
             try:
                 activity = Activity.objects.own(company=company)[:12]
-            except:
-                activity = None
-
-            if activity:
                 context.update({'activity': activity})
-
+            except Activity.DoesNotExist:
+                pass
             return render(request, 'accounts/company_dash.html', context)
         return HttpResponseForbidden()
     else:
