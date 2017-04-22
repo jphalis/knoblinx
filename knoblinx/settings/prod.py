@@ -119,8 +119,8 @@ TEMPLATES = [
 #####################
 # HTML MINIFICATION #
 #####################
-KEEP_COMMENTS_ON_MINIFYING = False
-EXCLUDE_FROM_MINIFYING = ('^hidden/secure/{}/admin/'.format(APP_NAME),)
+# KEEP_COMMENTS_ON_MINIFYING = False
+# EXCLUDE_FROM_MINIFYING = ('^hidden/secure/{}/admin/'.format(APP_NAME),)
 
 
 #########

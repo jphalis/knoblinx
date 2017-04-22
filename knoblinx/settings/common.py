@@ -80,7 +80,7 @@ WSGI_APPLICATION = '{}.wsgi.application'.format(APP_NAME)
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.cache.UpdateCacheMiddleware',
-    'htmlmin.middleware.HtmlMinifyMiddleware',
+    # 'htmlmin.middleware.HtmlMinifyMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -92,7 +92,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
-    'htmlmin.middleware.MarkRequestMiddleware',
+    # 'htmlmin.middleware.MarkRequestMiddleware',
 )
 
 

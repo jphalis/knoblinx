@@ -20,5 +20,5 @@ if not settings.DEBUG and not settings.USING_S3:
     try:
         from dj_static import Cling
         application = Cling(get_wsgi_application())
-    except:
+    except StandardError:
         pass
