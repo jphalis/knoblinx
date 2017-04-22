@@ -24,6 +24,7 @@ import dj_database_url
 ADMINS = (
     # Uncomment lines below if you want emails about server errors.
     # ("Kirk Sanderson", "kirksanderson1@gmail.com"),
+    ("JP Halis", "jphalisnj@gmail.com"),
 )
 MANAGERS = ADMINS
 FULL_DOMAIN = 'knoblinx.herokuapp.com'
