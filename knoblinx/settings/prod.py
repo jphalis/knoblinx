@@ -171,15 +171,15 @@ if USING_S3:
     STATIC_S3_PATH = 'media/'
     DEFAULT_FILE_STORAGE = '{}.s3utils.MediaS3BotoStorage'.format(APP_NAME)
     DEFAULT_S3_PATH = 'static/'
+    S3_URL = '//s3.amazonaws.com/{}/'.format(AWS_STORAGE_BUCKET_NAME)
+    MEDIA_URL = S3_URL + STATIC_S3_PATH
+    STATIC_URL = S3_URL + DEFAULT_S3_PATH
 
     if USING_CLOUDFRONT:
         AWS_CLOUDFRONT_DOMAIN = ''
         MEDIA_URL = '//{0}/{1}'.format(AWS_CLOUDFRONT_DOMAIN, STATIC_S3_PATH)
         STATIC_URL = '//{0}/{1}'.format(AWS_CLOUDFRONT_DOMAIN, DEFAULT_S3_PATH)
     elif USING_EC2:
-        S3_URL = '//s3.amazonaws.com/{}/'.format(AWS_STORAGE_BUCKET_NAME)
-        MEDIA_URL = S3_URL + STATIC_S3_PATH
-        STATIC_URL = S3_URL + DEFAULT_S3_PATH
         MEDIA_ROOT = '/home/ubuntu/{0}/{1}/media'.format(
             FULL_DOMAIN, APP_NAME)
         STATIC_ROOT = '/home/ubuntu/{0}/{1}/static/static'.format(
