@@ -17,8 +17,6 @@ from .common import *
 import datetime
 import dj_database_url
 
-DEBUG = True
-
 
 ############################
 # HOSTING + AUTHENTICATION #
